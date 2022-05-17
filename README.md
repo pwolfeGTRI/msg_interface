@@ -1,1 +1,3 @@
-# skai-ai-tcp-interface
+# Skai AI Standard Message Definitions & Interface Class
+
+
