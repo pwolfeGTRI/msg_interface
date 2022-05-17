@@ -1,5 +1,11 @@
+#!/usr/bin/python3
+
 import socket
 import struct
+
+
+import time
+from SkaiMessages import *
 
 class TcpSender:
     def __init__(self, host_ip, port, verbose=False) -> None:
@@ -17,15 +23,17 @@ class TcpSender:
             print(f'\tfull message: {msg_bytes_with_len}')
 
 if __name__=='__main__':
-    import time
-    from StandardMessages import StandardMessages
 
-    # create test message data with epoch timestamp
+    # create test message data
     ts = time.time() # use double not float
-    data = [[42, 0.2, 0.21, 0.4, 0.42], [69, 0.2, 0.21, 0.4, 0.42]] # [id, tl_x, tl_y, br_x, br_y]
-    msg_bytes = StandardMessages.pack_bbox_msg(ts, data)
-
-
+    trackid_list = [42, 69]
+    bbox_list = [[0.2, 0.21, 0.4, 0.42], [0.2, 0.21, 0.4, 0.42]]
+    num_faces = 2
+    face_embed_list = []
+    for i in range(num_faces):
+        face_embed_list.append(np.arange(512).tolist())
+     
+    msg_bytes = SkaimotMsg.pack(ts, trackid_list, bbox_list, face_embed_list)
 
     sender = TcpSender('127.0.0.1', 6943)
     sender.send(msg_bytes)

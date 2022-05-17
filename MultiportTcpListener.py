@@ -1,10 +1,11 @@
 #!/usr/bin/python3
+
 import time
 
 import threading
 import socketserver
 import struct
-from StandardMessages import StandardMessages
+from SkaiMessages import *
 
 import code
 
@@ -32,11 +33,10 @@ class MultiportTcpListener:
             t.start()
 
     def multiport_callback(self, data, server_address):
-        print(f'got some data {data} from {server_address}\n')
+        print(f'got some data length {len(data)} from {server_address}\n')
         # store it, unpack, etc do as you wish
-        print(StandardMessages.unpack_bbox_msg(data))
-        
-        
+        unpacked = SkaiMsg.unpack(data)
+        print(unpacked[0:2])
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
         class RequestHandler(socketserver.BaseRequestHandler):
