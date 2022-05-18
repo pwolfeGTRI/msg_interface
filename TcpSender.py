@@ -24,7 +24,10 @@ class TcpSender:
 
 if __name__=='__main__':
 
-    # create test message data
+    # create a sender on port 6942
+    sender = TcpSender('127.0.0.1', 6942)
+
+    # send skaimot message
     ts = time.time() # use double not float
     trackid_list = [42, 69]
     bbox_list = [[0.2, 0.21, 0.4, 0.42], [0.2, 0.21, 0.4, 0.42]]
@@ -32,8 +35,19 @@ if __name__=='__main__':
     face_embed_list = []
     for i in range(num_faces):
         face_embed_list.append(np.arange(512).tolist())
-     
-    msg_bytes = SkaimotMsg.pack(ts, trackid_list, bbox_list, face_embed_list)
+    skaimot_bytes = SkaimotMsg.pack(ts, trackid_list, bbox_list, face_embed_list)
+    sender.send(skaimot_bytes)
+    time.sleep(1)
 
-    sender = TcpSender('127.0.0.1', 6943)
-    sender.send(msg_bytes)
+    # send pose message
+    num_people = 2
+    person_example=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18]
+    pose_list = [person_example for x in range(num_people)]
+    pose_bytes=PoseMsg.pack(ts, pose_list)
+    sender.send(pose_bytes)
+    time.sleep(1)
+
+    # send feet pos message
+    feetpos_list = [[420, 69.2, 0], [69, 69, 0]]
+    feet_bytes = FeetPositionMsg.pack(ts, feetpos_list)
+    sender.send(feet_bytes)

@@ -288,7 +288,7 @@ if __name__=='__main__':
     num_people = 2
     person_example=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18]
     pose_list = [person_example for x in range(num_people)]
-    msg_bytes=PoseMsg.pack(ts,pose_list)
+    msg_bytes=PoseMsg.pack(ts, pose_list)
 
     # unpack message
     ret_id, ret_stamp, ret_list = SkaiMsg.unpack(msg_bytes)

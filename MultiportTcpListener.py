@@ -33,7 +33,7 @@ class MultiportTcpListener:
             t.start()
 
     def multiport_callback(self, data, server_address):
-        print(f'got some data length {len(data)} from {server_address}\n')
+        print(f'\ngot some data length {len(data)} from {server_address}')
         # store it, unpack, etc do as you wish
         unpacked = SkaiMsg.unpack(data)
         print(unpacked)
@@ -41,31 +41,36 @@ class MultiportTcpListener:
     class SinglePortListener(socketserver.ThreadingTCPServer):
         class RequestHandler(socketserver.BaseRequestHandler):
             def handle(self):
+                # note: socket will close at end of handle method
+                while True:
 
-                # assumes first 4 bytes designate length of message 
-                # (packed as network endian unsigned int)
-                length_bytes = self.request.recv(4)
-                length = struct.unpack('!I', length_bytes)[0]                
-                
-                print(f'decoded length of message to be {length} bytes')
+                    # assumes first 4 bytes designate length of message 
+                    # (packed as network endian unsigned int)
+                    bytes_in = self.request.recv(4)
+                    if not bytes_in:
+                        continue # continue if no new message
+                    
+                    # otherwise parse the length
+                    length = struct.unpack('!I', bytes_in)[0]                
+                    print(f'decoded length of message to be {length} bytes')
 
-                data = self.request.recv(length)
+                    data = self.request.recv(length)
 
-                # variables = globals().copy()
-                # variables.update(locals())
-                # shell = code.InteractiveConsole(variables)
-                # shell.interact()
+                    # variables = globals().copy()
+                    # variables.update(locals())
+                    # shell = code.InteractiveConsole(variables)
+                    # shell.interact()
 
-                # socket = self.request.getsockname()
-                # print(
-                #     f'client {self.client_address}\n\twrote {data}\n\tto {self.server.server_address}'
-                # )
+                    # socket = self.request.getsockname()
+                    # print(
+                    #     f'client {self.client_address}\n\twrote {data}\n\tto {self.server.server_address}'
+                    # )
 
-                # send back message in uppercase as confirmation (comment out if not needed)
-                # socket.sendto(data.upper(), self.client_address)
+                    # send back message in uppercase as confirmation (comment out if not needed)
+                    # socket.sendto(data.upper(), self.client_address)
 
-                # call server callback function with data
-                self.server.single_port_callback(data)
+                    # call server callback function with data
+                    self.server.single_port_callback(data)
 
         def __init__(self, server_address, multiport_listener):
             # store reference to parent class
