@@ -36,7 +36,7 @@ class MultiportTcpListener:
         print(f'got some data length {len(data)} from {server_address}\n')
         # store it, unpack, etc do as you wish
         unpacked = SkaiMsg.unpack(data)
-        print(unpacked[0:2])
+        print(unpacked)
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
         class RequestHandler(socketserver.BaseRequestHandler):
