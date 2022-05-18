@@ -9,6 +9,7 @@ from enum import Enum
 
 from abc import ABC, abstractmethod
 
+
 class SkaiMsg(ABC):
     """Skai Abstract Base Class for standard messages"""
 
@@ -43,12 +44,23 @@ class SkaiMsg(ABC):
     def printTimestamp(timestamp):
         print(datetime.fromtimestamp(timestamp))
 
+    @staticmethod
+    def getMessageTypeName(msg_bytes):
+        msgid = SkaiMsg.unpack_msgid(msg_bytes)
+        msgClassRef = MsgType.get_class_from_id(msgid)
+        return msgClassRef.__name__
+
+
 class SkaimotMsg(SkaiMsg):
     """SkaiMOT message packing/unpacking/port definitions"""
     port = 6940
 
     @staticmethod
-    def pack(timestamp, trackid_list=[], bbox_list=[], face_embed_list=[], bbox_embed_list=[]):
+    def pack(timestamp,
+             trackid_list=[],
+             bbox_list=[],
+             face_embed_list=[],
+             bbox_embed_list=[]):
         """ 
         packed data format
             msgid (uint16)
@@ -69,21 +81,21 @@ class SkaimotMsg(SkaiMsg):
 
         """
         # header info
-        msg_bytes = struct.pack('! H d', MsgType.SKAIMOT.value, timestamp)    
-    
+        msg_bytes = struct.pack('! H d', MsgType.SKAIMOT.value, timestamp)
+
         # track id list
         count = len(trackid_list)
         msg_bytes += struct.pack('! H', count)
         if count > 0:
             msg_bytes += struct.pack(f'! {count}I', *trackid_list)
-            
+
         # bbox [ul_x, ul_y, br_x, br_y]
         count = len(bbox_list)
         msg_bytes += struct.pack('! H', count)
         if count > 0:
             for entry in bbox_list:
                 msg_bytes += struct.pack('! 4f', *entry)
-        
+
         # face embedding [512 floats]
         count = len(face_embed_list)
         msg_bytes += struct.pack('! H', count)
@@ -98,7 +110,7 @@ class SkaimotMsg(SkaiMsg):
             for entry in face_embed_list:
                 msg_bytes += struct.pack('! 2048f', *bbox_embed_list)
 
-        return msg_bytes        
+        return msg_bytes
 
     @classmethod
     def unpack(cls, msg_bytes):
@@ -109,51 +121,59 @@ class SkaimotMsg(SkaiMsg):
         bbox_list = []
         face_embed_list = []
         bbox_embed_list = []
-        
+
         # get message id and timestamp
         msgid, timestamp = struct.unpack('! H d', msg_bytes[:10])
         idx = 10
 
         # track id list
-        count = struct.unpack('! H', msg_bytes[idx:idx+2])[0]
+        count = struct.unpack('! H', msg_bytes[idx:idx + 2])[0]
         idx += 2
         if count > 0:
-            trackid_list = struct.unpack(f'! {count}I', msg_bytes[idx:idx+count*4])
-            idx += count*4
+            trackid_list = struct.unpack(f'! {count}I',
+                                         msg_bytes[idx:idx + count * 4])
+            idx += count * 4
 
         # bbox list
-        count = struct.unpack('! H', msg_bytes[idx:idx+2])[0]
+        count = struct.unpack('! H', msg_bytes[idx:idx + 2])[0]
         idx += 2
         if count > 0:
             element_size = 4
             for i in range(count):
-                bbox_list.append( struct.unpack(f'! {element_size}f', msg_bytes[idx:idx+element_size*4]) )
-                idx += element_size*4
+                bbox_list.append(
+                    struct.unpack(f'! {element_size}f',
+                                  msg_bytes[idx:idx + element_size * 4]))
+                idx += element_size * 4
 
         # face embed list
-        count = struct.unpack('! H', msg_bytes[idx:idx+2])[0]
+        count = struct.unpack('! H', msg_bytes[idx:idx + 2])[0]
         idx += 2
         if count > 0:
             element_size = 512
             for i in range(count):
-                face_embed_list.append( struct.unpack(f'! {element_size}f', msg_bytes[idx:idx+element_size*4]) )
-                idx += element_size*4
-        
+                face_embed_list.append(
+                    struct.unpack(f'! {element_size}f',
+                                  msg_bytes[idx:idx + element_size * 4]))
+                idx += element_size * 4
+
         # bbox embed list
-        count = struct.unpack('! H', msg_bytes[idx:idx+2])[0]
+        count = struct.unpack('! H', msg_bytes[idx:idx + 2])[0]
         idx += 2
         if count > 0:
             element_size = 2048
             for i in range(count):
-                bbox_embed_list.append( struct.unpack(f'! {element_size}f', msg_bytes[idx:idx+element_size*4]) )
-                idx += element_size*4
+                bbox_embed_list.append(
+                    struct.unpack(f'! {element_size}f',
+                                  msg_bytes[idx:idx + element_size * 4]))
+                idx += element_size * 4
 
         return msgid, timestamp, trackid_list, bbox_list, face_embed_list, bbox_embed_list
+
 
 class PoseMsg(SkaiMsg):
     """Pose message packing/unpacking/port definitions"""
     port = 6941
-    
+
     @staticmethod
     def pack(timestamp, pose_list=[]):
         """packs 
@@ -171,7 +191,7 @@ class PoseMsg(SkaiMsg):
                 pose list of [36 floats]
 
         """
-        # header info 
+        # header info
         msg_bytes = struct.pack('! H d', MsgType.POSE.value, timestamp)
 
         # pose list
@@ -194,20 +214,23 @@ class PoseMsg(SkaiMsg):
         msgid, timestamp = struct.unpack('! H d', msg_bytes[:10])
         idx = 10
 
-        count = struct.unpack('! H', msg_bytes[idx:idx+2])[0]
+        count = struct.unpack('! H', msg_bytes[idx:idx + 2])[0]
         idx += 2
         if count > 0:
             element_size = 36
             for i in range(count):
-                pose_list.append( struct.unpack(f'! {element_size}f', msg_bytes[idx:idx+element_size*4]) )
-                idx += element_size*4
+                pose_list.append(
+                    struct.unpack(f'! {element_size}f',
+                                  msg_bytes[idx:idx + element_size * 4]))
+                idx += element_size * 4
 
         return msgid, timestamp, pose_list
+
 
 class FeetPositionMsg:
     """Feet position message packing/unpacking/port definitions"""
     port = 6942
-    
+
     @classmethod
     def pack(cls, timestamp, feetpos_list):
         """packs feet position message
@@ -219,7 +242,7 @@ class FeetPositionMsg:
         Returns:
             bytes: packed feet position message bytes
         """
-        # header info 
+        # header info
         msg_bytes = struct.pack('! H d', MsgType.FEETPOS.value, timestamp)
 
         # feet position list
@@ -234,7 +257,7 @@ class FeetPositionMsg:
     @classmethod
     def unpack(cls, msg_bytes):
         print(f'unpacking {cls.__name__}')
-        
+
         # init empty list
         feetpos_list = []
 
@@ -242,15 +265,18 @@ class FeetPositionMsg:
         msgid, timestamp = struct.unpack('! H d', msg_bytes[:10])
         idx = 10
 
-        count = struct.unpack('! H', msg_bytes[idx:idx+2])[0]
+        count = struct.unpack('! H', msg_bytes[idx:idx + 2])[0]
         idx += 2
         if count > 0:
             element_size = 3
             for i in range(count):
-                feetpos_list.append( struct.unpack(f'! {element_size}f', msg_bytes[idx:idx+element_size*4]) )
-                idx += element_size*4
+                feetpos_list.append(
+                    struct.unpack(f'! {element_size}f',
+                                  msg_bytes[idx:idx + element_size * 4]))
+                idx += element_size * 4
 
         return msgid, timestamp, feetpos_list
+
 
 class MsgType(Enum):
     SKAIMOT = 1
@@ -268,36 +294,39 @@ class MsgType(Enum):
         else:
             return None
 
-if __name__=='__main__':
-    # 2 people in frame testing
 
+if __name__ == '__main__':
+    # 2 people in frame testing
     """ test skaimot msg """
     # pack message
-    ts = time.time() # use double not float
+    ts = time.time()  # use double not float
     trackid_list = [42, 69]
     bbox_list = [[0.2, 0.21, 0.4, 0.42], [0.2, 0.21, 0.4, 0.42]]
-    face_embed_list = [ np.arange(512).tolist(), np.arange(512).tolist()]
+    face_embed_list = [np.arange(512).tolist(), np.arange(512).tolist()]
     msg_bytes = SkaimotMsg.pack(ts, trackid_list, bbox_list, face_embed_list)
-    
+
     # unpack message
-    ret_id, ret_stamp, ret_tracklist, ret_bboxlist, ret_face_embed_list, ret_bbox_embed_list = SkaiMsg.unpack(msg_bytes)
-    print(ret_id, ret_stamp, ret_tracklist, ret_bboxlist, ret_face_embed_list, ret_bbox_embed_list)
-            
+    ret_id, ret_stamp, ret_tracklist, ret_bboxlist, ret_face_embed_list, ret_bbox_embed_list = SkaiMsg.unpack(
+        msg_bytes)
+    print(ret_id, ret_stamp, ret_tracklist, ret_bboxlist, ret_face_embed_list,
+          ret_bbox_embed_list)
     """ test pose msg """
     # pack
     num_people = 2
-    person_example=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18]
+    person_example = [
+        1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+        12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18
+    ]
     pose_list = [person_example for x in range(num_people)]
-    msg_bytes=PoseMsg.pack(ts, pose_list)
+    msg_bytes = PoseMsg.pack(ts, pose_list)
 
     # unpack message
     ret_id, ret_stamp, ret_list = SkaiMsg.unpack(msg_bytes)
     print(ret_id, ret_stamp, ret_list)
-
     """ test feet pos msg """
     feetpos_list = [[420, 69.2, 0], [69, 69, 0]]
     msg_bytes = FeetPositionMsg.pack(ts, feetpos_list)
 
     # unpack message
-    ret_id, ret_stamp, ret_list= SkaiMsg.unpack(msg_bytes)
+    ret_id, ret_stamp, ret_list = SkaiMsg.unpack(msg_bytes)
     print(ret_id, ret_stamp, ret_list)

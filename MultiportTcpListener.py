@@ -9,8 +9,23 @@ from SkaiMessages import *
 
 import code
 
+
 class MultiportTcpListener:
+
     def __init__(self, portlist, verbose=False):
+        # type checking
+        if isinstance(portlist, int):
+            portlist = [portlist]
+        if not isinstance(portlist, list):
+            raise TypeError(
+                'portlist must be a list of integers or a single port integer')
+        for p in portlist:
+            if not isinstance(p, int):
+                raise TypeError(
+                    'portlist must be a list of integers or a single port integer'
+                )
+
+        # initialize
         self.verbose = verbose
         self.portlist = portlist
         self.start_listeners()
@@ -39,19 +54,21 @@ class MultiportTcpListener:
         print(unpacked)
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
+
         class RequestHandler(socketserver.BaseRequestHandler):
+
             def handle(self):
                 # note: socket will close at end of handle method
                 while True:
 
-                    # assumes first 4 bytes designate length of message 
+                    # assumes first 4 bytes designate length of message
                     # (packed as network endian unsigned int)
                     bytes_in = self.request.recv(4)
                     if not bytes_in:
-                        continue # continue if no new message
-                    
+                        continue  # continue if no new message
+
                     # otherwise parse the length
-                    length = struct.unpack('!I', bytes_in)[0]                
+                    length = struct.unpack('!I', bytes_in)[0]
                     print(f'decoded length of message to be {length} bytes')
 
                     data = self.request.recv(length)
@@ -96,7 +113,7 @@ class MultiportTcpListener:
 
 if __name__ == '__main__':
     # ports to listen to
-    ports = [6941, 6942, 6943]
+    ports = [SkaimotMsg.port, PoseMsg.port, FeetPositionMsg.port]
 
     # listen
     MultiportTcpListener(portlist=ports)
