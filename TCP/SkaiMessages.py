@@ -63,21 +63,25 @@ class SkaimotMsg(SkaiMsg):
              bbox_embed_list=[]):
         """ 
         packed data format
-            msgid (uint16)
-            timestamp (double)
-            
-            number of tracks (uint16)
-            tracklist [id, id, id]
-            
-            number of bboxes (uint16)
-            bbox_list [ [ul_x, ul_y, br_x, br_y], ... ] floats
-                (where x and y values are floats from 0 to 1)
-            
-            number of face embed (uint16)
-            face_embed_list[ [512 floats], ...]
-            
-            number of bbox embed (uint16)
-            bbox_embed_list[ [2048 floats], ...]
+            msg type id (uint16)
+            num of cameras in camera group (uint16)
+            [
+                timestamp (double)
+
+                number of tracks (uint16)
+                tracklist [id, id, id]
+                
+                number of bboxes (uint16)
+                bbox_list [ [ul_x, ul_y, br_x, br_y], ... ] floats
+                    (where x and y values are floats from 0 to 1)
+                
+                number of face embed (uint16)
+                face_embed_list[ [512 floats], ...]
+                
+                number of bbox embed (uint16)
+                bbox_embed_list[ [2048 floats], ...]
+            ] 
+            ... for num cams in camera group
 
         """
         # header info
@@ -185,14 +189,24 @@ class PoseMsg(SkaiMsg):
 
         Returns:
             bytes: packed data format is    
-                msgid (uint16)
-                timestamp (double)
-                number of people (uint16)
-                pose list of [36 floats]
+                msg type id (uint16)
+                num cameraas in camera group
+                [
+                    timestamp (double)
+                    number of people (uint16)
+                    pose list of [36 floats]
+                ], 
+                ...
+
 
         """
-        # header info
-        msg_bytes = struct.pack('! H d', MsgType.POSE.value, timestamp)
+        # message type id num
+        msg_bytes = struct.pack('! H', MsgType.POSE.value)
+
+        # number of cameras in cam group 
+        msg_bytes += struct.pack('! H', )
+
+        msg_bytes = struct.pack('! d', timestamp)
 
         # pose list
         count = len(pose_list)

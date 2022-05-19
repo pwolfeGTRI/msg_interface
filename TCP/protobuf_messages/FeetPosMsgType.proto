@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+import "SkaiMsgType.proto";
+
+message FeetPosMsg {
+    SkaiMsgType msg_type_id = 3;
+}

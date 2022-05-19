@@ -1,11 +1,14 @@
-# Skai AI Standard Message Definitions & Interface Class
+# Skai AI Standard Message Definitions & Interface Classes
 
 
 ## Message Definition
 See SkaiMessages.py
 
 ## TCP Interface Classes
-See MultiportTcpListener.py and TcpSender.py
+See: 
+- MultiportTcpListener.py
+- TcpSender.py
+- TcpSender.cpp
 
 ## TCP Message Sync
 See TcpMessageSync.py

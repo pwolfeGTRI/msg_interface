@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "SkaiMsgType.proto";
+
+message SkaimotMsg {
+    
+    SkaiMsgType msg_type_id = 1;
+
+
+}
