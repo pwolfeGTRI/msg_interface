@@ -16,6 +16,3 @@ protoc -I=$SRC_DIR --python_out=$PYTHON_DST_DIR $SRC_DIR/*.proto
 
 echo "done"
 echo ""
-echo "C++ outputs in folder $CPP_DST_DIR"
-echo "Python3 outputs in folder $PYTHON_DST_DIR"
-echo ""
