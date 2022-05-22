@@ -3,22 +3,31 @@ syntax = "proto3";
 package skaimsg.feetpos;
 
 message FeetPosProtoMsg {
+
     message CameraFrame {
+        
         // camera mac address turned into serial num
         uint64 camera_id = 1;
 
         // 1e9 * epoch timestamp
         uint64 timestamp = 2;
 
-        message FeetPosInFrame {
-            message xyz {
+        // people in frame
+        message Person {
+
+            // skaimot id num
+            uint64 id = 1;
+
+            message FeetPosition {
                 float x = 1;
                 float y = 2;
                 float z = 3;
             }
-            repeated xyz feetpos = 1;
+            FeetPosition feet_position = 2;
         }
-        repeated FeetPosInFrame people_in_frame = 3;
+        repeated Person people_in_frame = 3;
+
     }
     repeated CameraFrame camera_frames = 1;
+
 }
