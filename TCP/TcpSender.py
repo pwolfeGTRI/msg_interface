@@ -75,7 +75,7 @@ if __name__ == '__main__':
     skaimot_sender = TcpSender('127.0.0.1', SkaimotMsg.port, verbose=verbose)
     pose_sender = TcpSender('127.0.0.1', PoseMsg.port, verbose=verbose)
     feetpos_sender = TcpSender('127.0.0.1',
-                               FeetPositionMsg.port,
+                               FeetPosMsg.port,
                                verbose=verbose)
 
     # create skaimot test message
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     # create feet pos test message
     feetpos_list = [[420, 69.2, 0], [69, 69, 0]]
-    feet_bytes = FeetPositionMsg.pack(ts, feetpos_list)
+    feet_bytes = FeetPosMsg.pack(ts, feetpos_list)
 
     # send 3 frames as a test with slight random offsets
     # wait 4 seconds before sending

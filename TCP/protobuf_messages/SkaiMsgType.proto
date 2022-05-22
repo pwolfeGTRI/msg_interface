@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-enum SkaiMsgType {
-    UnknownMsgType = 0;
-    SkaimotMsgType = 1;
-    PoseMsgType = 2;
-    FeetPosMsgType = 3;
-}

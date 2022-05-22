@@ -1,16 +1,15 @@
 syntax = "proto3";
 
-import "SkaiMsgType.proto";
+package skaimsg.pose;
 
-message PoseMsg {
-    SkaiMsgType msg_type_id = 1;
-
-    uint32 num_cameras_in_group = 2;
+message PoseProtoMsg {
     
-    // one for each camera
     message CameraFrame {
-        uint64 camera_identifier_num = 1;
-        uint64 epoch_timestamp = 2;
+        // camera mac address turned into serial num
+        uint64 camera_id = 1;
+
+        // 1e9 * epoch timestamp
+        uint64 timestamp = 2;
         
         message PosesInFrame {
             message Keypoints {
@@ -37,12 +36,11 @@ message PoseMsg {
                 xy left_ankle = 16;
                 xy right_ankle = 17;
                 xy neck = 18;
-
             }
             repeated Keypoints keypoints = 1;
         }
-        repeated PosesInFrame poses_in_frame = 3;
+        repeated PosesInFrame people_in_frame = 3;
     }
     // one for each camera in the camera group
-    repeated CameraFrame cameraframe = 3;
+    repeated CameraFrame camera_frames = 1;
 }

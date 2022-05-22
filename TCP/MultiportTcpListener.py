@@ -113,7 +113,7 @@ class MultiportTcpListener:
 
 if __name__ == '__main__':
     # ports to listen to
-    ports = [SkaimotMsg.port, PoseMsg.port, FeetPositionMsg.port]
+    ports = [SkaimotMsg.port, PoseMsg.port, FeetPosMsg.port]
 
     # listen
     MultiportTcpListener(portlist=ports)

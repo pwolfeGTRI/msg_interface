@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SRC_DIR=./
-PYTHON_DST_DIR=./generated_msgs/python
-CPP_DST_DIR=./generated_msgs/cpp
+SRC_DIR=protobuf_messages
+PYTHON_DST_DIR=protobuf_messages/generated_msgs/python
+CPP_DST_DIR=protobuf_messages/generated_msgs/cpp
 
 echo ""
 echo "cleaning..."

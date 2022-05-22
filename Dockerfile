@@ -112,8 +112,9 @@ RUN apt install -y sudo && \
 #     # apt-get autoremove
 
 
-# google protobufs installation for C++ and python 3.5 - 3.7
+# google protobufs installation for use with C++ and python 3.5 - 3.7
 ARG PROTOBUFVER=3.19.4
+# install protobuf compiler and C++
 RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unzip && \
     cd /root/ &&\
     wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protobuf-all-${PROTOBUFVER}.tar.gz && \
@@ -124,3 +125,9 @@ RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unz
     make check && \
     make install && \
     ldconfig
+# install python with C++ backend for speed / data efficiency
+RUN cd /root/protobuf-${PROTOBUFVER}/python && \
+  python3 setup.py build --cpp_implementation && \
+  python3 setup.py install --cpp_implementation 
+# cleanup
+RUN cd /root/ && rm protobuf-all-${PROTOBUFVER}.tar.gz && rm -rf protobuf-${PROTOBUFVER}
