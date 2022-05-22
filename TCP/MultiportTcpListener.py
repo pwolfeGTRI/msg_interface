@@ -48,10 +48,10 @@ class MultiportTcpListener:
             t.start()
 
     def multiport_callback(self, data, server_address):
-        print(f'\ngot some data length {len(data)} from {server_address}')
+        
         # store it, unpack, etc do as you wish
-        unpacked = SkaiMsg.unpack(data)
-        print(unpacked)
+        msg_type, msg = SkaiMsg.unpack(data)
+        print(f'\ngot some data length {len(data)} from {server_address} msg type {msg_type}')
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
 
@@ -69,7 +69,7 @@ class MultiportTcpListener:
 
                     # otherwise parse the length
                     length = struct.unpack('!I', bytes_in)[0]
-                    print(f'decoded length of message to be {length} bytes')
+                    # print(f'decoded length of message to be {length} bytes')
 
                     data = self.request.recv(length)
 
@@ -113,7 +113,8 @@ class MultiportTcpListener:
 
 if __name__ == '__main__':
     # ports to listen to
-    ports = [SkaimotMsg.port, PoseMsg.port, FeetPosMsg.port]
+    camgroup_idx = 0
+    ports = [SkaimotMsg.ports[camgroup_idx], PoseMsg.ports[camgroup_idx], FeetPosMsg.ports[camgroup_idx]]
 
     # listen
     MultiportTcpListener(portlist=ports)

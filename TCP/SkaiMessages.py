@@ -78,6 +78,17 @@ class SkaiMsg(ABC):
     def unpack_msgid(msg_bytes):
         return struct.unpack('! H', msg_bytes[:2])[0]
 
+    @classmethod
+    def getMessageTypeName(cls, msg_bytes):
+        msg_type_id = cls.unpack_msgid(msg_bytes)
+        classRef = cls.MsgType.get_class_from_id(msg_type_id)
+        if classRef is not None:
+            return classRef.__name__
+        else:
+            print('msg id not found')
+            return None
+
+
     @staticmethod
     def unpack_timestamp(msg_bytes):
         return struct.unpack('! d', msg_bytes[2:10])[0]
@@ -116,7 +127,7 @@ class SkaimotMsg(SkaiMsg):
     """SkaiMOT message packing/unpacking/port definitions"""
     msg_type = SkaiMsg.MsgType.SKAIMOT
     proto_msg_class = SkaimotProtoMsg
-    port = 6940
+    ports = [6940] # increase to handle more camera groups
 
     """ person metadata setting helper functions """
     
@@ -137,7 +148,7 @@ class PoseMsg(SkaiMsg):
     """Pose message packing/unpacking/port definitions"""
     msg_type = SkaiMsg.MsgType.POSE
     proto_msg_class = PoseProtoMsg
-    port = 6941 # TODO change these to a port range so you can handle multiple camera groups
+    ports = [6941] # increase to handle more camera groups
 
     """ person metadata setting helper functions """
 
@@ -172,7 +183,7 @@ class FeetPosMsg(SkaiMsg):
 
     msg_type = SkaiMsg.MsgType.FEETPOS
     proto_msg_class = FeetPosProtoMsg
-    port = 6969
+    ports = [6969] # increase to handle more camera groups
     
     """ person metadata setting helper functions """
 

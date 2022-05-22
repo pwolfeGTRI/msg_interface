@@ -50,7 +50,7 @@ class TcpSender:
                 if self.verbose:
                     print(
                         # length added in front as an unsigned int
-                        f'sent { SkaiMsg.getMessageTypeName(msg_bytes)} mesage with length {len(msg_bytes)}'
+                        f'sent { SkaiMsg.getMessageTypeName(msg_bytes)} message with length {len(msg_bytes)}'
                     )
                     # print(f'\tfull message: {msg_bytes_with_len}')
                 break
@@ -70,47 +70,120 @@ class TcpSender:
 
 if __name__ == '__main__':
 
+
+    # assume first camera group only for this test
+    cam_group_idx = 0
+
     # create senders
     verbose = True
-    skaimot_sender = TcpSender('127.0.0.1', SkaimotMsg.port, verbose=verbose)
-    pose_sender = TcpSender('127.0.0.1', PoseMsg.port, verbose=verbose)
+    skaimot_sender = TcpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=verbose)
+    pose_sender = TcpSender('127.0.0.1', PoseMsg.ports[cam_group_idx], verbose=verbose)
     feetpos_sender = TcpSender('127.0.0.1',
-                               FeetPosMsg.port,
+                               FeetPosMsg.ports[cam_group_idx],
                                verbose=verbose)
 
-    # create skaimot test message
-    ts = time.time()  # use double not float
-    trackid_list = [42, 69]
-    bbox_list = [[0.2, 0.21, 0.4, 0.42], [0.2, 0.21, 0.4, 0.42]]
-    num_faces = 2
-    face_embed_list = []
-    for i in range(num_faces):
-        face_embed_list.append(np.arange(512).tolist())
-    skaimot_bytes = SkaimotMsg.pack(ts, trackid_list, bbox_list,
-                                    face_embed_list)
-
-    # create pose test message
+    ### example message params ###
+    
+    # testing 2 people in frame, 5 cameras in camera group
     num_people = 2
-    person_example = [
-        1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
-        12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18
-    ]
-    pose_list = [person_example for x in range(num_people)]
-    pose_bytes = PoseMsg.pack(ts, pose_list)
+    num_cams = 5
 
-    # create feet pos test message
-    feetpos_list = [[420, 69.2, 0], [69, 69, 0]]
-    feet_bytes = FeetPosMsg.pack(ts, feetpos_list)
+    # example skaimot track ids 
+    # repeated across cams for testing
+    trackid_list = [42, 69, 113, 1244, 333] 
+
+    # example camera id numbers
+    cam_identifier_macs = ['00:10:FA:66:42:11', '00:10:FA:66:42:21', '00:10:FA:66:42:31', '00:10:FA:66:42:41', '00:10:FA:66:42:51']
+    cam_identifier_nums = SkaiMsg.convert_mac_addr_to_camera_identifier_number(cam_identifier_macs)
+
+    # example timestamp (feel free to reuse everywhere for testing)
+    ts = int(time.time() * 1e9)  # integer version of double * 1e9
+    
+    ### example skaimot message ###
+    bbox = [0.2, 0.21, 0.4, 0.42]
+    face_embed = np.arange(512).tolist()
+    bbox_embed = np.arange(2048).tolist()
+    # create new protobuf message and load with values
+    msg = SkaimotMsg.new_msg()
+    for cam_idx in range(num_cams):
+        
+        # add new camera frame to the message & set id + timestamp
+        camframe = msg.camera_frames.add()
+        camframe.camera_id = cam_identifier_nums[cam_idx]
+        camframe.timestamp = ts # reuse for testing
+
+        # add people to frame
+        for person_idx in range(num_people):
+            person = camframe.people_in_frame.add()
+            # set person's metadata
+            person.id = trackid_list[person_idx]
+            SkaimotMsg.set_bbox(person, bbox)
+            SkaimotMsg.set_face_embed(person, face_embed)
+            # SkaimotMsg.set_bbox_embed(person, bbox_embed) # can't handle over 65535 bytes?
+    skaimot_bytes = SkaimotMsg.pack(msg)
+
+    ### example pose message ###
+    # keypoint x y coordinates scaled between 0 and 1 for width and height
+    example_keypoints = [
+        [0.01, 0.01], [0.02, 0.02], [0.03, 0.03], [0.04, 0.04], [0.05, 0.05], [0.06, 0.06],
+        [0.07, 0.07], [0.08, 0.08], [0.09, 0.09], [0.10, 0.10], [0.11, 0.11], [0.12, 0.12],
+        [0.13, 0.13], [0.14, 0.14], [0.15, 0.15], [0.16, 0.16], [0.17, 0.17], [0.18, 0.18]
+    ]
+            
+    # create new protobuf message and load with values
+    msg = PoseMsg.new_msg()
+    for cam_idx in range(num_cams):
+        
+        # add new camera frame to the message & set id + timestamp
+        camframe = msg.camera_frames.add()
+        camframe.camera_id = cam_identifier_nums[cam_idx]
+        camframe.timestamp = ts # reuse for testing
+        
+        # add people to frame
+        for person_idx in range(num_people):
+            person = camframe.people_in_frame.add()
+            # set person's metadata
+            PoseMsg.set_keypoints(person, example_keypoints) # reuse for testing
+    # pack for sending across network
+    pose_bytes = PoseMsg.pack(msg) # adds message type id in front 
+        
+
+    ### example feet position message ###
+    example_feetpos = [420, 69.2, 0] # xyz float meters to be reused per person
+
+    # create new protobuf message and load with values
+    msg = FeetPosMsg.new_msg()
+    for cam_idx in range(num_cams):
+        
+        # add new camera frame to the message & set id + timestamp
+        camframe = msg.camera_frames.add() 
+        camframe.camera_id = cam_identifier_nums[cam_idx]
+        camframe.timestamp = ts # reuse for testing
+        
+        # add people to frame
+        for person_idx in range(num_people):
+            person = camframe.people_in_frame.add()
+            # set person's metadata
+            person.id = trackid_list[person_idx]
+            FeetPosMsg.set_feet_pos(person, example_feetpos) # reuse same foot_pos for testing
+    
+    # pack for sending across network
+    feet_bytes = FeetPosMsg.pack(msg) # add message type id in front 
+
 
     # send 3 frames as a test with slight random offsets
     # wait 4 seconds before sending
-    time.sleep(4)
-    for i in range(3):
-        skaimot_sender.send(skaimot_bytes)
-        time.sleep(0.0524)
-        pose_sender.send(pose_bytes)
-        time.sleep(0.0112)
-        feetpos_sender.send(feet_bytes)
-        time.sleep(0.25)  # simulate ~4 fps
+    # time.sleep(4)
+    # for i in range(3):
+    #     skaimot_sender.send(skaimot_bytes)
+    #     time.sleep(0.0524)
+    #     pose_sender.send(pose_bytes)
+    #     time.sleep(0.0112)
+    #     feetpos_sender.send(feet_bytes)
+    #     time.sleep(0.25)  # simulate ~4 fps
 
+
+    skaimot_sender.send(skaimot_bytes)
+    # pose_sender.send(pose_bytes)
+    # feetpos_sender.send(feet_bytes)
     print('end')
