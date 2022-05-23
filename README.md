@@ -35,7 +35,7 @@ COPY skai-ai-message-interface/package /root/skaimsginterface_package
 RUN cd /root/skaimsginterface_package && ./install_skaimsginterface.sh
 ```
 
-For how to import and use see `skai-ai-message-interface/package/test_package.py`
+For how to import and use see the main of `skai-ai-message-interface/package/skaimsginterface/tcp/TcpSender.py`
 
 
 ## Message Definitions
