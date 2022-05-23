@@ -4,8 +4,8 @@ import socket
 import struct
 
 import time
-from .SkaiMessages import *
 
+from ..skaimessages import *
 
 class TcpSender:
 

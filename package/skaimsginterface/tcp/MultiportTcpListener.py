@@ -5,7 +5,8 @@ import time
 import threading
 import socketserver
 import struct
-from .SkaiMessages import *
+
+from ..skaimessages import *
 
 import code
 

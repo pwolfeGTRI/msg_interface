@@ -7,7 +7,7 @@ import numpy as np
 from enum import Enum
 from abc import ABC, abstractmethod
 
-from ..protobuf import *
+from .generated_python import *
 
 import code
 

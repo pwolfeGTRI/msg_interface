@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SRC_DIR=skaimsginterface/protobuf/
-PYTHON_DST_DIR=skaimsginterface/protobuf/generated_python
-CPP_DST_DIR=skaimsginterface/protobuf/generated_cpp
+SRC_DIR=protobuf/
+PYTHON_DST_DIR=skaimsginterface/skaimessages/generated_python
+CPP_DST_DIR=skaimsginterface/skaimessages/generated_cpp
 
 echo ""
 echo "cleaning..."

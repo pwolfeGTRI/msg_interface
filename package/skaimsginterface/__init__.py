@@ -1,1 +1,1 @@
-from skaimsginterface import protobuf, tcp 
+from skaimsginterface import skaimessages, tcp
