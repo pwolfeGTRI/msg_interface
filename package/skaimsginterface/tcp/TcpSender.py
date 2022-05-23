@@ -27,10 +27,12 @@ class TcpSender:
         self.connect_to_destination()
 
     def connect_to_destination(self):
+        self.connected = False
         for i in range(self.retryLimit):
             try:
                 self.sock.connect(self.destination)
                 print(f'{self.destination} connected!')
+                self.connected = True
                 break
 
             except ConnectionRefusedError:
@@ -41,6 +43,9 @@ class TcpSender:
 
             print(f'trying again in {self.retryTimeoutSec} seconds')
             time.sleep(self.retryTimeoutSec)
+        
+        if not self.connected:
+            print('failed to connect!')
 
     def send(self, msg_bytes):
         msg_bytes_with_len = struct.pack('!I', len(msg_bytes)) + msg_bytes
