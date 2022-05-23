@@ -4,15 +4,10 @@ import struct
 import time
 from datetime import datetime
 import numpy as np
-
 from enum import Enum
-
 from abc import ABC, abstractmethod
 
-# import protobuf messages
-from protobuf_messages.generated_msgs.python.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
-from protobuf_messages.generated_msgs.python.PoseProtoMsg_pb2 import PoseProtoMsg
-from protobuf_messages.generated_msgs.python.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
+from ..protobuf import *
 
 import code
 

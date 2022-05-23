@@ -5,7 +5,8 @@
 protobuf-3.19.4
 
 # generated protobuf messages folder
-generated_msgs
+generated_python
+generated_cpp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

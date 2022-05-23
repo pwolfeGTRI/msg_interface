@@ -30,7 +30,7 @@ services:
       - ~/.ssh:/root/.ssh:ro # ssh folder from linux host
       
       ## development folder mappings here ##
-      - ./skaimsginterface:${WORKDIR}/skaimsginterface
+      - ./package:${WORKDIR}/package
 
     #### environmental variables to set inside the container ####
     # environment:
@@ -53,7 +53,7 @@ services:
 
     #### container directory to start in ####
     # working_dir: ${WORKDIR}/sources/apps/sample_apps/deepstream_pose_estimation
-    working_dir: ${WORKDIR}/skaimsginterface
+    working_dir: ${WORKDIR}/package
     
 #### create volumes here ####
 # volumes:
