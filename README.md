@@ -37,6 +37,11 @@ RUN cd /root/skaimsginterface_package && ./install_skaimsginterface.sh
 
 For how to import and use see the main of `skai-ai-message-interface/package/skaimsginterface/tcp/TcpSender.py`
 
+## Examples
+```python
+
+```
+
 
 ## Message Definitions
 See SkaiMessages.py and .proto files in protobuf folder

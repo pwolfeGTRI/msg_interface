@@ -34,3 +34,6 @@ COPY package /root/package
 RUN cd /root/package && ./install_skaimsginterface.sh
 # note this copies the same folder being mapped in this case.
 # feel free to put it wherever in your docker
+
+# working on the cpp classes now...
+RUN apt-get install -y cmake

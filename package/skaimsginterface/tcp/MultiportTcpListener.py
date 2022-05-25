@@ -6,14 +6,26 @@ import threading
 import socketserver
 import struct
 
-from ..skaimessages import *
+# from ..skaimessages import *
+from skaimsginterface.skaimessages import *
 
 import code
 
 
 class MultiportTcpListener:
 
-    def __init__(self, portlist, verbose=False):
+    def __init__(self, portlist, multiport_callback_func, verbose=False):
+        """_summary_
+
+        Args:
+            portlist (_type_): ports to listen to 
+            multiport_callback_func (_type_):  your function, which should have params (data, server_address)
+            verbose (bool, optional): _description_. Defaults to False.
+
+        Raises:
+            TypeError: _description_
+            TypeError: _description_
+        """
         # type checking
         if isinstance(portlist, int):
             portlist = [portlist]
@@ -29,6 +41,7 @@ class MultiportTcpListener:
         # initialize
         self.verbose = verbose
         self.portlist = portlist
+        self.multiport_callback_func = multiport_callback_func
         self.start_listeners()
 
     def start_server(self, port):
@@ -49,10 +62,7 @@ class MultiportTcpListener:
             t.start()
 
     def multiport_callback(self, data, server_address):
-        
-        # store it, unpack, etc do as you wish
-        msg_type, msg = SkaiMsg.unpack(data)
-        print(f'\ngot some data length {len(data)} from {server_address} msg type {msg_type}')
+        self.multiport_callback_func(data, server_address)
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
 
@@ -112,13 +122,19 @@ class MultiportTcpListener:
                                                        self.server_address)
 
 
+def example_multiport_callback_func(data, server_address):
+    # store it, unpack, etc do as you wish
+    msg_type, msg = SkaiMsg.unpack(data)
+    print(f'\ngot some data length {len(data)} from {server_address} msg type {msg_type}')
+
+
 if __name__ == '__main__':
     # ports to listen to
     camgroup_idx = 0
     ports = [SkaimotMsg.ports[camgroup_idx], PoseMsg.ports[camgroup_idx], FeetPosMsg.ports[camgroup_idx]]
 
     # listen
-    MultiportTcpListener(portlist=ports)
+    MultiportTcpListener(portlist=ports, multiport_callback_func=example_multiport_callback_func)
 
     # stay active until ctrl+c input
     try:
