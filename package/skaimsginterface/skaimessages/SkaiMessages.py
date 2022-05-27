@@ -195,6 +195,9 @@ class LocalTrackMsg(SkaiMsg):
     proto_msg_class = LocalTrackProtoMsg
     ports = [7000] # increase to handle more camera groups
 
+    # pointer to enum from protobuf
+    CLASSIFICATION = LocalTrackProtoMsg_pb2.Classification
+
     @staticmethod
     def copy_bbox(localbbox, skaimotPerson):
         box = skaimotPerson.box

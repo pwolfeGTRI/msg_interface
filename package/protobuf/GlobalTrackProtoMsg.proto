@@ -3,5 +3,19 @@ syntax = "proto3";
 package skaimsg.globaltrack;
 
 message GlobalTrackProtoMsg {
-    repeated float val = 1;
+    // list of local track id numbers associated with this global track
+    repeated uint64 local_track_id_list = 1;
+      
+    // active or not across all cameras
+    bool active = 2;
+
+    // earliest discovered timestampe (epoch * 1e9)    
+    uint64 time_discovered = 3;
+
+    // TODO:
+    //  classification_list
+    //  interactions_list
+    //  actions_list
+    //  feet_pos_path
+
 }

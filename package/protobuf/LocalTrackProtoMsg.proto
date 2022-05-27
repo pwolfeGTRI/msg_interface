@@ -78,6 +78,13 @@ message Action {
     string action = 2;
 }
 
+// employee vs customer vs uninitialized classification
+enum Classification {
+    INIT = 0;
+    EMPLOYEE = 1;
+    CUSTOMER = 2;
+}
+
 // info associated with single person from a single camera
 message LocalTrackProtoMsg {
     // person's id from skaimot
@@ -88,13 +95,19 @@ message LocalTrackProtoMsg {
 
     // timestamp (epoch * 1e9) when local track first discovered
     uint64 time_discovered = 3;
+
+    // active or not in local camera
+    bool active = 4;
     
+    // classifications over time
+    repeated Classification classification_list = 5;
+
     // metadata lists
-    repeated BoundingBox bbox_list = 4;
-    repeated FeetPosition feet_position_list = 5;
-    repeated Pose pose_list = 6;
-    repeated FaceEmbedding face_embed_list = 7;
-    repeated BBoxEmbedding bbox_embed_list = 8;
-    repeated Action action_list = 9;
+    repeated BoundingBox bbox_list = 6;
+    repeated FeetPosition feet_position_list = 7;
+    repeated Pose pose_list = 8;
+    repeated FaceEmbedding face_embed_list = 9;
+    repeated BBoxEmbedding bbox_embed_list = 10;
+    repeated Action action_list = 11;
 
 }
