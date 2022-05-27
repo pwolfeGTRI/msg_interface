@@ -25,8 +25,15 @@ class SkaiMsg(ABC):
     CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
 
     # add to list check max length
+    @classmethod
+    def add_to_list_w_maxlength(cls, protobuflist, max_length=100):
+        msg = protobuflist.add()
+        cls.limit_list_length(protobuflist, max_length)
+        return msg
+
+    # limit list to a max length
     @staticmethod
-    def limit_list_length(protobuflist, max_length):
+    def limit_list_length(protobuflist, max_length=100):
         if len(protobuflist) > max_length:
             del protobuflist[0]
 

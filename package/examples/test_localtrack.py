@@ -58,40 +58,34 @@ if __name__=='__main__':
        
     # add a new box to list and
     # populate local track bbox from skaimot person's box
-    bbox = msg.bbox_list.add()
+    bbox = SkaiMsg.add_to_list_w_maxlength(msg.bbox_list)
     bbox.timestamp = skaimotframe.timestamp
     LocalTrackMsg.copy_bbox(bbox, skaimotperson)
-    SkaiMsg.limit_list_length(msg.bbox_list, example_max_list_length)
 
     # populate face & bbox embeddings from skaimot person
     # (goes from 351 bytes to 10623 bytes per msg with these)
-    faceembed = msg.face_embed_list.add()
+    faceembed = SkaiMsg.add_to_list_w_maxlength(msg.face_embed_list)
     faceembed.timestamp = skaimotframe.timestamp
     LocalTrackMsg.copy_faceembed(faceembed, skaimotperson)
-    SkaiMsg.limit_list_length(msg.face_embed_list, example_max_list_length)
 
-    bboxembed = msg.bbox_embed_list.add()
+    bboxembed = SkaiMsg.add_to_list_w_maxlength(msg.bbox_embed_list)
     bboxembed.timestamp = skaimotframe.timestamp
     LocalTrackMsg.copy_bboxembed(bboxembed, skaimotperson)
-    SkaiMsg.limit_list_length(msg.bbox_embed_list, example_max_list_length)
 
     # add new pose and populate from pose person's keypoints
-    pose = msg.pose_list.add()
+    pose = SkaiMsg.add_to_list_w_maxlength(msg.pose_list)
     pose.timestamp = poseframe.timestamp
     LocalTrackMsg.copy_pose(pose, poseperson)
-    SkaiMsg.limit_list_length(msg.pose_list, example_max_list_length)
 
     # add feet position
-    feet = msg.feet_position_list.add()
+    feet = SkaiMsg.add_to_list_w_maxlength(msg.feet_position_list)
     feet.timestamp = feetframe.timestamp
     LocalTrackMsg.copy_feet(feet, feetperson)
-    SkaiMsg.limit_list_length(msg.feet_position_list, example_max_list_length)
 
-    # add action
-    # action = msg.action_list.add()
+    # TODO add action example
+    # action = SkaiMsg.add_to_list_w_maxlength(msg.action_list)
     # action.timestamp = actionframe.timestamp
     # action.action = example_action
-    # SkaiMsg.limit_list_length(msg.action_list, example_max_list_length)
 
     # print message
     # print(msg)
