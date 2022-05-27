@@ -35,12 +35,11 @@ COPY skai-ai-message-interface/package /root/skaimsginterface_package
 RUN cd /root/skaimsginterface_package && ./install_skaimsginterface.sh
 ```
 
-For how to import and use see the main of `skai-ai-message-interface/package/skaimsginterface/tcp/TcpSender.py`
-
 ## Examples
-```python
+See `package/examples` folder
 
-```
+First run ./listener.py to listen for the example tcp messages
+Then run which ever example you want. Feel free to copy example to use in your code.
 
 
 ## Message Definitions
