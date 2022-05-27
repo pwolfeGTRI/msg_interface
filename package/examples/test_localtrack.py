@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 from skaimsginterface.skaimessages import *
+from skaimsginterface.tcp import TcpSender
 from test_skaimot import create_example_skaimotmsg
 from test_pose import create_example_posemsg
 from test_feetpos import create_example_feetposmsg
+from test_action import create_example_actionmsg
 
 # import code 
 # variables = globals().copy()
@@ -11,32 +13,33 @@ from test_feetpos import create_example_feetposmsg
 # shell.interact()
 
 
-
 if __name__=='__main__':
 
     # create example base messages
     example_skaimotmsg = create_example_skaimotmsg()
     example_posemsg = create_example_posemsg()
     example_feetposmsg = create_example_feetposmsg()
+    example_actionmsg = create_example_actionmsg()
 
     # grab an example frame and person from each example message for example
-    camera_frame_idx = 0
+    # This super simple exmaple assumes that
+    # all camera id numbers lists are same across message types
+    # more advanced logic needed in real one
+    camera_idx = 0 
     person_idx = 0
+    action_idx = 0
 
-    skaimotframe = example_skaimotmsg.camera_frames[camera_frame_idx]
+    skaimotframe = example_skaimotmsg.camera_frames[camera_idx]
     skaimotperson = skaimotframe.people_in_frame[person_idx]
 
-    poseframe = example_posemsg.camera_frames[camera_frame_idx]
+    poseframe = example_posemsg.camera_frames[camera_idx]
     poseperson = poseframe.people_in_frame[person_idx]
     
-    feetframe = example_feetposmsg.camera_frames[camera_frame_idx]
+    feetframe = example_feetposmsg.camera_frames[camera_idx]
     feetperson = feetframe.people_in_frame[person_idx]
 
-
-    # TODO populate face embed, bbox embed, actions
-    # actionframe = None
-    # actionperson = None
-
+    actionframe = example_actionmsg.camera_frames[camera_idx]
+    example_action = actionframe.actions_in_frame[action_idx]
 
     # use to populate local track message
     msg = LocalTrackMsg.new_msg()
@@ -73,10 +76,15 @@ if __name__=='__main__':
     LocalTrackMsg.copy_feet(feet, feetperson)
 
     # add action
-    # action = msg.action_list.add()
-    # action.timestamp = actionframe.timestamp
-    # LocalTrackMsg.copy_action()
+    action = msg.action_list.add()
+    action.timestamp = actionframe.timestamp
+    action.action = example_action
 
     # print message
     print(msg)
+
+    msg_bytes = LocalTrackMsg.pack(msg)
+    cam_group_idx = 0
+    sender = TcpSender('127.0.0.1', LocalTrackMsg.ports[cam_group_idx], verbose=True)
+    sender.send(msg_bytes)
 

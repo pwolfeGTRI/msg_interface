@@ -75,7 +75,7 @@ message Pose {
 // actions detected at the local level
 message Action {
     uint64 timestamp = 1;
-    string action_string = 2;
+    string action = 2;
 }
 
 // info associated with single person from a single camera

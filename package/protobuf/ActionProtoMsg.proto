@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package skaimsg.action;
+
+message ActionProtoMsg {
+    message CameraFrame {
+        // camera mac address turned into serial num
+        uint64 camera_id = 1;
+
+        // 1e9 * epoch timestamp
+        uint64 timestamp = 2;
+
+        repeated string actions_in_frame = 3;
+
+    }
+    repeated CameraFrame camera_frames = 1;
+}
