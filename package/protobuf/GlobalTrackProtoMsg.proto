@@ -2,6 +2,14 @@ syntax = "proto3";
 
 package skaimsg.globaltrack;
 
+// employee vs customer vs uninitialized classification
+enum Classification {
+    INIT = 0;
+    EMPLOYEE = 1;
+    CUSTOMER = 2;
+}
+
+
 message GlobalTrackProtoMsg {
     // list of local track id numbers associated with this global track
     repeated uint64 local_track_id_list = 1;
@@ -12,8 +20,11 @@ message GlobalTrackProtoMsg {
     // earliest discovered timestampe (epoch * 1e9)    
     uint64 time_discovered = 3;
 
+    // classifications over time for this track from each camera
+    
+
     // TODO:
-    //  classification_list
+    //  classification_list across cameras across time
     //  interactions_list
     //  actions_list
     //  feet_pos_path

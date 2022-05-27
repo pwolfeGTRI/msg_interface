@@ -2,6 +2,45 @@ syntax = "proto3";
 
 package skaimsg.action;
 
+
+// single person actions detected locally
+// TODO populate enum of actions here
+enum ActionType {
+    DEFAULT = 0;
+    JUMPROPE = 1;
+    TRIPPING = 2;
+    SHROOMS = 3;
+    TRIPPING_ON_SHROOMS = 4;
+    ETC = 5;
+}
+
+message BoundingBox {
+    // float 0 to 1
+    message xy {
+        float x = 1;
+        float y = 2;
+    }
+    xy topleft = 1;
+    xy botright = 2;
+}
+
+message BoundingBoxWithId {
+    uint64 skaimot_id = 1;
+    BoundingBox box = 2;
+}
+
+message Action {
+    // action or interaction type
+    ActionType action = 1;
+
+    // box around the action 
+    BoundingBox location = 2;
+
+    // list of boxes of relevant people, cars, etc associated with action
+    // your process can receive from skaimot or whatever to get these
+    repeated BoundingBoxWithId associated_boxes = 3;
+}
+
 message ActionProtoMsg {
     message CameraFrame {
         // camera mac address turned into serial num
@@ -10,7 +49,7 @@ message ActionProtoMsg {
         // 1e9 * epoch timestamp
         uint64 timestamp = 2;
 
-        repeated string actions_in_frame = 3;
+        repeated Action actions_in_frame = 3;
 
     }
     repeated CameraFrame camera_frames = 1;

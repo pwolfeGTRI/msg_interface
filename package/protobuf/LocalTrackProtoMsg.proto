@@ -15,6 +15,11 @@ message BoundingBox {
     xy botright = 3;
 }
 
+message BoundingBoxWithId {
+    uint64 skaimot_id = 1;
+    BoundingBox box = 2;
+}
+
 // face embedding for improving recall/recognition
 message FaceEmbedding {
     uint64 timestamp = 1;
@@ -72,10 +77,28 @@ message Pose {
     Keypoints keypoints = 2;
 }
 
-// actions detected at the local level
+// single person actions detected locally
+// TODO populate enum of actions here
+enum ActionType {
+    DEFAULT = 0;
+    JUMPROPE = 1;
+    TRIPPING = 2;
+    SHROOMS = 3;
+    TRIPPING_ON_SHROOMS = 4;
+    ETC = 5;
+}
+
+// 
 message Action {
-    uint64 timestamp = 1;
-    string action = 2;
+    // single person action
+    ActionType action = 1;
+
+    // box around the action 
+    BoundingBox location = 2;
+
+    // list of boxes of relevant people, cars, etc associated with action
+    // your process can receive from skaimot or whatever to get these
+    repeated BoundingBoxWithId associated_boxes = 3;
 }
 
 // employee vs customer vs uninitialized classification
@@ -99,8 +122,8 @@ message LocalTrackProtoMsg {
     // active or not in local camera
     bool active = 4;
     
-    // classifications over time
-    repeated Classification classification_list = 5;
+    // local track handler tallies classification over time (low pass filter) to choose this
+    Classification classification = 5;
 
     // metadata lists
     repeated BoundingBox bbox_list = 6;
