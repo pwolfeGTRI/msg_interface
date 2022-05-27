@@ -32,7 +32,8 @@ class TcpSender:
         for i in range(self.retryLimit):
             try:
                 self.sock.connect(self.destination)
-                print(f'{self.destination} connected!')
+                if self.verbose:
+                    print(f'{self.destination} connected!')
                 self.connected = True
                 break
 

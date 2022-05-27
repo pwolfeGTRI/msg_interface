@@ -2,6 +2,29 @@ syntax = "proto3";
 
 package skaimsg.skaimot;
 
+// top left bottom right defined bounding box
+message BoundingBox {
+    // float 0 to 1
+    message xy {
+        float x = 1;
+        float y = 2;
+    }
+    xy topleft = 1;
+    xy botright = 2;
+}
+
+// face embedding for improving recall/recognition
+message FaceEmbedding {
+    // 512 list of floats
+    repeated float vals = 1;
+}
+
+// bbox embedding for improving recall/recognition
+message BBoxEmbedding {
+    // 2048 list of floats
+    repeated float vals = 1;
+}
+
 message SkaimotProtoMsg {
     
     message CameraFrame {
@@ -18,30 +41,10 @@ message SkaimotProtoMsg {
             // skaimot id num
             uint64 id = 1;
 
-            // top left bottom right defined bounding box
-            message BoundingBox {
-                // float 0 to 1
-                message xy {
-                    float x = 1;
-                    float y = 2;
-                }
-                xy topleft = 1;
-                xy botright = 2;
-            }
             BoundingBox box = 2;
 
-            // face embedding for improving recall/recognition
-            message FaceEmbedding {
-                // 512 list of floats
-                repeated float vals = 1;
-            }
             FaceEmbedding face_embedding = 3;
 
-            // face embedding for improving recall/recognition
-            message BBoxEmbedding {
-                // 2048 list of floats
-                repeated float vals = 1;
-            }
             BBoxEmbedding bbox_embedding = 4;
 
         }

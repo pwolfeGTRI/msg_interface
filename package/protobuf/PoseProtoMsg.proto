@@ -2,6 +2,32 @@ syntax = "proto3";
 
 package skaimsg.pose;
 
+message Person {
+    // x y coordinates that are floats 0 to 1 for each keypoint
+    message xy {
+        float x = 1;
+        float y = 2;
+    }
+    xy nose = 1;
+    xy left_eye = 2;
+    xy right_eye = 3;
+    xy left_ear = 4;
+    xy right_ear = 5;
+    xy left_shoulder = 6;
+    xy right_shoulder = 7;
+    xy left_elbow = 8;
+    xy right_elbow = 9;
+    xy left_wrist = 10;
+    xy right_wrist = 11;
+    xy left_hip = 12;
+    xy right_hip = 13;
+    xy left_knee = 14;
+    xy right_knee = 15;
+    xy left_ankle = 16;
+    xy right_ankle = 17;
+    xy neck = 18;
+}
+
 message PoseProtoMsg {
     
     message CameraFrame {
@@ -12,34 +38,7 @@ message PoseProtoMsg {
         // 1e9 * epoch timestamp
         uint64 timestamp = 2;
         
-        // people in frame
-        message Person {
-            
-            // x y coordinates that are floats 0 to 1 for each keypoint
-            message xy {
-                float x = 1;
-                float y = 2;
-            }
-            xy nose = 1;
-            xy left_eye = 2;
-            xy right_eye = 3;
-            xy left_ear = 4;
-            xy right_ear = 5;
-            xy left_shoulder = 6;
-            xy right_shoulder = 7;
-            xy left_elbow = 8;
-            xy right_elbow = 9;
-            xy left_wrist = 10;
-            xy right_wrist = 11;
-            xy left_hip = 12;
-            xy right_hip = 13;
-            xy left_knee = 14;
-            xy right_knee = 15;
-            xy left_ankle = 16;
-            xy right_ankle = 17;
-            xy neck = 18;
-
-        }
+        
         repeated Person people_in_frame = 3;
 
     }

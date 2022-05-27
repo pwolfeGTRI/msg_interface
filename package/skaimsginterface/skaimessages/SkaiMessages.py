@@ -9,8 +9,6 @@ from abc import ABC, abstractmethod
 
 from .generated_python import *
 
-import code
-
 class SkaiMsg(ABC):
     """Skai Abstract Base Class for standard messages"""
 
@@ -28,6 +26,8 @@ class SkaiMsg(ABC):
         SKAIMOT = 1
         POSE = 2
         FEETPOS = 3
+        LOCALTRACK = 4
+        GLOBALTRACK = 5
 
         @classmethod
         def get_class_from_id(cls, id):
@@ -37,18 +37,23 @@ class SkaiMsg(ABC):
                 return PoseMsg
             elif id == cls.FEETPOS.value:
                 return FeetPosMsg
+            elif id == cls.LOCALTRACK.value:
+                return LocalTrackMsg
+            elif id == cls.GLOBALTRACK.value:
+                return GlobalTrackMsg
             else:
                 return None
 
     @classmethod
-    def pack(cls, protobuf_msg):
-        print(f'packing {cls.__name__} protobuf message')
+    def pack(cls, protobuf_msg, verbose=False):
+        if verbose:
+            print(f'packing {cls.__name__} protobuf message')
         msg_bytes = struct.pack('! H', cls.msg_type.value)
         msg_bytes += protobuf_msg.SerializeToString() 
         return msg_bytes
 
     @classmethod
-    def unpack(cls, msg_bytes):
+    def unpack(cls, msg_bytes, verbose=False):
         """unpacks message after decoding message id and forwarding to appropriate function
 
         Args:
@@ -61,7 +66,8 @@ class SkaiMsg(ABC):
         msg_type_id = cls.unpack_msgid(msg_bytes)
         classRef = cls.MsgType.get_class_from_id(msg_type_id)
         if classRef is not None:
-            print(f'unpacking {classRef.__name__}')
+            if verbose:
+                print(f'unpacking {classRef.__name__}')
             msg = classRef.proto_msg_class()
             msg.ParseFromString(msg_bytes[2:]) # unpack after the 2 msg type bytes
             return classRef.msg_type, msg
@@ -187,6 +193,15 @@ class FeetPosMsg(SkaiMsg):
         feetpos = person.feet_position
         feetpos.x, feetpos.y, feetpos.z = xyz
     
+class LocalTrackMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.LOCALTRACK
+    proto_msg_class = LocalTrackProtoMsg
+    ports = [7000] # increase to handle more camera groups
+
+class GlobalTrackMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.GLOBALTRACK
+    # proto_msg_class = GlobalTrackProtoMsg
+    ports = [7020] # increase to handle more camera groups
 
 def unpack_and_print_cam_id_and_timestamp_per_frame(msg_bytes):
     # unpack message

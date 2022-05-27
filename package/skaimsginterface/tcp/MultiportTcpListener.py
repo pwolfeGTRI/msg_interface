@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import time
+import math
 
 import threading
 import socketserver
@@ -82,7 +83,11 @@ class MultiportTcpListener:
                     length = struct.unpack('!I', bytes_in)[0]
                     # print(f'decoded length of message to be {length} bytes')
 
-                    data = self.request.recv(length)
+                    # receive in chunks
+                    chunksize = 4096
+                    data = bytes()
+                    for chunk in range(math.ceil(length / chunksize)):
+                        data += self.request.recv(chunksize)
 
                     # variables = globals().copy()
                     # variables.update(locals())
@@ -125,7 +130,7 @@ class MultiportTcpListener:
 def example_multiport_callback_func(data, server_address):
     # store it, unpack, etc do as you wish
     msg_type, msg = SkaiMsg.unpack(data)
-    print(f'\ngot some data length {len(data)} from {server_address} msg type {msg_type}')
+    print(f'got some data length {len(data)} from {server_address} msg type {msg_type}\n')
 
 
 if __name__ == '__main__':

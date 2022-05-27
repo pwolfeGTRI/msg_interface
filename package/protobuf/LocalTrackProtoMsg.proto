@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package skaimsg.localtrack;
+
+// bboxes
+message BoundingBox {
+    uint64 timestamp = 1;
+
+    // float 0 to 1
+    message xy {
+        float x = 1;
+        float y = 2;
+    }
+    xy topleft = 2;
+    xy botright = 3;
+}
+
+// face embedding for improving recall/recognition
+message FaceEmbedding {
+    uint64 timestamp = 1;
+
+    // 512 list of floats
+    repeated float vals = 2;
+}
+
+// bbox embedding for improving recall/recognition
+message BBoxEmbedding {
+    uint64 timestamp = 1;
+
+    // 2048 list of floats
+    repeated float vals = 2;
+}
+
+// float meters xyz feet position
+message FeetPosition {
+    uint64 timestamp = 1;
+
+    float x = 2;
+    float y = 3;
+    float z = 4;
+}
+
+// people in frame
+message Pose {
+    uint64 timestamp = 1;
+
+    message Keypoints {
+        // x y coordinates that are floats 0 to 1 for each keypoint
+        message xy {
+            float x = 1;
+            float y = 2;
+        }
+        xy nose = 1;
+        xy left_eye = 2;
+        xy right_eye = 3;
+        xy left_ear = 4;
+        xy right_ear = 5;
+        xy left_shoulder = 6;
+        xy right_shoulder = 7;
+        xy left_elbow = 8;
+        xy right_elbow = 9;
+        xy left_wrist = 10;
+        xy right_wrist = 11;
+        xy left_hip = 12;
+        xy right_hip = 13;
+        xy left_knee = 14;
+        xy right_knee = 15;
+        xy left_ankle = 16;
+        xy right_ankle = 17;
+        xy neck = 18;
+    }
+    Keypoints keypoints = 2;
+}
+
+// actions detected at the local level
+message Action {
+    uint64 timestamp = 1;
+    string action_string = 2;
+}
+
+// info associated with single person from a single camera
+message LocalTrackProtoMsg {
+    // person's id from skaimot
+    uint64 id = 1;
+    
+    // camera's id number (mac address as a uint64)
+    uint64 camera_id = 2;
+
+    // timestamp (epoch * 1e9) when local track first discovered
+    uint64 time_discovered = 3;
+    
+    // metadata lists
+    repeated BoundingBox bbox_list = 4;
+    repeated FeetPosition feet_position_list = 5;
+    repeated Pose pose_list = 6;
+    repeated FaceEmbedding face_embedding_list = 7;
+    repeated BBoxEmbedding bbox_embedding_list = 8;
+    repeated Action action_list = 9;
+
+}
