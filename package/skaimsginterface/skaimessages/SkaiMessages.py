@@ -24,6 +24,12 @@ class SkaiMsg(ABC):
     # pointer to enum from protobuf
     CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
 
+    # add to list check max length
+    @staticmethod
+    def limit_list_length(protobuflist, max_length):
+        if len(protobuflist) > max_length:
+            del protobuflist[0]
+
     class MsgType(Enum):
         UNKNOWN = 0
         SKAIMOT = 1
