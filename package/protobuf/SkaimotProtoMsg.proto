@@ -25,6 +25,13 @@ message BBoxEmbedding {
     repeated float vals = 1;
 }
 
+// employee vs customer vs uninitialized classification
+enum Classification {
+    INIT = 0;
+    EMPLOYEE = 1;
+    CUSTOMER = 2;
+}
+
 message SkaimotProtoMsg {
     
     message CameraFrame {
@@ -41,12 +48,12 @@ message SkaimotProtoMsg {
             // skaimot id num
             uint64 id = 1;
 
-            BoundingBox box = 2;
+            // classification enum 
+            Classification classification = 2;
 
-            FaceEmbedding face_embedding = 3;
-
-            BBoxEmbedding bbox_embedding = 4;
-
+            BoundingBox box = 3;
+            FaceEmbedding face_embedding = 4;
+            BBoxEmbedding bbox_embedding = 5;
         }
         repeated Person people_in_frame = 3;
 

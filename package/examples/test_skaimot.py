@@ -29,6 +29,7 @@ def create_example_skaimotmsg(num_people=2, num_cams=5):
             person = camframe.people_in_frame.add()
             # set person's metadata
             person.id = trackid
+            person.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
             SkaimotMsg.set_bbox(person, bbox)
             SkaimotMsg.set_face_embed(person, face_embed)
             SkaimotMsg.set_bbox_embed(person, bbox_embed)
@@ -36,6 +37,7 @@ def create_example_skaimotmsg(num_people=2, num_cams=5):
 
 if __name__=='__main__':
     msg = create_example_skaimotmsg()
+    # print(msg)
     msg_bytes = SkaimotMsg.pack(msg, verbose=True)
     cam_group_idx = 0
     sender = TcpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)

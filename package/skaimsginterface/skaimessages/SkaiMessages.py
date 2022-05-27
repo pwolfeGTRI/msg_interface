@@ -21,6 +21,9 @@ class SkaiMsg(ABC):
         """
         return cls.proto_msg_class()
 
+    # pointer to enum from protobuf
+    CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
+
     class MsgType(Enum):
         UNKNOWN = 0
         SKAIMOT = 1
@@ -194,9 +197,6 @@ class LocalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.LOCALTRACK
     proto_msg_class = LocalTrackProtoMsg
     ports = [7000] # increase to handle more camera groups
-
-    # pointer to enum from protobuf
-    CLASSIFICATION = LocalTrackProtoMsg_pb2.Classification
 
     @staticmethod
     def copy_bbox(localbbox, skaimotPerson):

@@ -21,9 +21,9 @@ def create_example_actionmsg(num_actions=2, num_cams=5):
         camframe.camera_id = camera_id
         camframe.timestamp = timestamp
         
-        # add people to frame
-        example_actions_in_frame = [example_action for x in range(num_actions)]
-        camframe.actions_in_frame.extend(example_actions_in_frame)
+        # add people to frame TODO fill this out later
+        # example_actions_in_frame = [example_action for x in range(num_actions)]
+        # camframe.actions_in_frame.extend(example_actions_in_frame)
 
     return msg
 

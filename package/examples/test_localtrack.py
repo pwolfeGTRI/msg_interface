@@ -39,22 +39,21 @@ if __name__=='__main__':
     feetperson = feetframe.people_in_frame[person_idx]
 
     actionframe = example_actionmsg.camera_frames[camera_idx]
-    example_action = actionframe.actions_in_frame[action_idx]
+    # example_action = actionframe.actions_in_frame[action_idx]
 
     # use to populate local track message
     msg = LocalTrackMsg.new_msg()
     msg.id = skaimotperson.id
     msg.active = True
+    msg.classification = SkaiMsg.CLASSIFICATION.CUSTOMER # tally up a local circular buffer (deque) to choose
     msg.camera_id = skaimotframe.camera_id
 
     # copy over from skaimot msg if first time (default value is 0)
     if msg.time_discovered == 0:
         msg.time_discovered = skaimotframe.timestamp
     
-    # appends to list of classifiations over time (automatically creates if doesn't exist)
-    classification = msg.classification_list.append(LocalTrackMsg.CLASSIFICATION.EMPLOYEE)
-    # classification = msg.classification_list.append(LocalTrackMsg.CLASSIFICATION.CUSTOMER)
-    # print(msg.classification_list)
+    
+    
 
     # add a new box to list and
     # populate local track bbox from skaimot person's box
@@ -82,9 +81,9 @@ if __name__=='__main__':
     LocalTrackMsg.copy_feet(feet, feetperson)
 
     # add action
-    action = msg.action_list.add()
-    action.timestamp = actionframe.timestamp
-    action.action = example_action
+    # action = msg.action_list.add()
+    # action.timestamp = actionframe.timestamp
+    # action.action = example_action
 
     # print message
     print(msg)
