@@ -32,7 +32,7 @@ if __name__=='__main__':
     feetframe = example_feetposmsg.camera_frames[camera_frame_idx]
     feetperson = feetframe.people_in_frame[person_idx]
 
-    
+
     # TODO populate face embed, bbox embed, actions
     # actionframe = None
     # actionperson = None
@@ -52,7 +52,16 @@ if __name__=='__main__':
     bbox = msg.bbox_list.add()
     bbox.timestamp = skaimotframe.timestamp
     LocalTrackMsg.copy_bbox(bbox, skaimotperson)
+
+    # populate face & bbox embeddings from skaimot person
+    faceembed = msg.face_embed_list.add()
+    faceembed.timestamp = skaimotframe.timestamp
+    LocalTrackMsg.copy_faceembed(faceembed, skaimotperson)
     
+    bboxembed = msg.bbox_embed_list.add()
+    bboxembed.timestamp = skaimotframe.timestamp
+    LocalTrackMsg.copy_bboxembed(bboxembed, skaimotperson)
+
     # add new pose and populate from pose person's keypoints
     pose = msg.pose_list.add()
     pose.timestamp = poseframe.timestamp
@@ -63,14 +72,10 @@ if __name__=='__main__':
     feet.timestamp = feetframe.timestamp
     LocalTrackMsg.copy_feet(feet, feetperson)
 
-    # add face embed
-
-
-    # add bbox embed
-
-
     # add action
-
+    # action = msg.action_list.add()
+    # action.timestamp = actionframe.timestamp
+    # LocalTrackMsg.copy_action()
 
     # print message
     print(msg)

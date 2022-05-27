@@ -232,6 +232,18 @@ class LocalTrackMsg(SkaiMsg):
         feetpos = feetperson.feet_position
         feet.x, feet.y, feet.z = feetpos.x, feetpos.y, feetpos.z
 
+    @staticmethod
+    def copy_faceembed(faceembed, skaimotperson):
+        faceembed.vals.extend(skaimotperson.face_embedding.vals)
+    
+    @staticmethod
+    def copy_bboxembed(bboxembed, skaimotperson):
+        bboxembed.vals.extend(skaimotperson.bbox_embedding.vals)
+
+    @staticmethod
+    def copy_action(action, actionperson):
+        pass
+
 class GlobalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.GLOBALTRACK
     # proto_msg_class = GlobalTrackProtoMsg

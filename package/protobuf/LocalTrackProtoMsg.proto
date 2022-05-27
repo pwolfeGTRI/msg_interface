@@ -93,8 +93,8 @@ message LocalTrackProtoMsg {
     repeated BoundingBox bbox_list = 4;
     repeated FeetPosition feet_position_list = 5;
     repeated Pose pose_list = 6;
-    repeated FaceEmbedding face_embedding_list = 7;
-    repeated BBoxEmbedding bbox_embedding_list = 8;
+    repeated FaceEmbedding face_embed_list = 7;
+    repeated BBoxEmbedding bbox_embed_list = 8;
     repeated Action action_list = 9;
 
 }
