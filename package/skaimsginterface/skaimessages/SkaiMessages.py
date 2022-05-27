@@ -89,14 +89,9 @@ class SkaiMsg(ABC):
             print('msg id not found')
             return None
 
-
-    @staticmethod
-    def unpack_timestamp(msg_bytes):
-        return struct.unpack('! d', msg_bytes[2:10])[0]
-
     @staticmethod
     def printTimestamp(timestamp):
-        print(datetime.fromtimestamp(timestamp))
+        print(datetime.fromtimestamp(timestamp / 1e9))
 
     @staticmethod    
     def convert_mac_addr_to_camera_identifier_number(string_or_list):
@@ -153,27 +148,27 @@ class PoseMsg(SkaiMsg):
 
     """ person metadata setting helper functions """
 
-    @staticmethod
-    def set_keypoints(person, keypoint_list):
+    @classmethod
+    def set_keypoints(cls, person, keypoint_list):
         # set each keypoint xy value
-        PoseMsg.set_xy(person.nose, keypoint_list[0])
-        PoseMsg.set_xy(person.left_eye, keypoint_list[1])
-        PoseMsg.set_xy(person.right_eye, keypoint_list[2])
-        PoseMsg.set_xy(person.left_ear, keypoint_list[3])
-        PoseMsg.set_xy(person.right_ear, keypoint_list[4])
-        PoseMsg.set_xy(person.left_shoulder, keypoint_list[5])
-        PoseMsg.set_xy(person.right_shoulder, keypoint_list[6])
-        PoseMsg.set_xy(person.left_elbow, keypoint_list[7])
-        PoseMsg.set_xy(person.right_elbow, keypoint_list[8])
-        PoseMsg.set_xy(person.left_wrist, keypoint_list[9])
-        PoseMsg.set_xy(person.right_wrist, keypoint_list[10])
-        PoseMsg.set_xy(person.left_hip, keypoint_list[11])
-        PoseMsg.set_xy(person.right_hip, keypoint_list[12])
-        PoseMsg.set_xy(person.left_knee, keypoint_list[13])
-        PoseMsg.set_xy(person.right_knee, keypoint_list[14])
-        PoseMsg.set_xy(person.left_ankle, keypoint_list[15])
-        PoseMsg.set_xy(person.right_ankle, keypoint_list[16])
-        PoseMsg.set_xy(person.neck, keypoint_list[17])        
+        cls.set_xy(person.nose, keypoint_list[0])
+        cls.set_xy(person.left_eye, keypoint_list[1])
+        cls.set_xy(person.right_eye, keypoint_list[2])
+        cls.set_xy(person.left_ear, keypoint_list[3])
+        cls.set_xy(person.right_ear, keypoint_list[4])
+        cls.set_xy(person.left_shoulder, keypoint_list[5])
+        cls.set_xy(person.right_shoulder, keypoint_list[6])
+        cls.set_xy(person.left_elbow, keypoint_list[7])
+        cls.set_xy(person.right_elbow, keypoint_list[8])
+        cls.set_xy(person.left_wrist, keypoint_list[9])
+        cls.set_xy(person.right_wrist, keypoint_list[10])
+        cls.set_xy(person.left_hip, keypoint_list[11])
+        cls.set_xy(person.right_hip, keypoint_list[12])
+        cls.set_xy(person.left_knee, keypoint_list[13])
+        cls.set_xy(person.right_knee, keypoint_list[14])
+        cls.set_xy(person.left_ankle, keypoint_list[15])
+        cls.set_xy(person.right_ankle, keypoint_list[16])
+        cls.set_xy(person.neck, keypoint_list[17])        
 
     @staticmethod
     def set_xy(keypoint, xy):
@@ -197,6 +192,45 @@ class LocalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.LOCALTRACK
     proto_msg_class = LocalTrackProtoMsg
     ports = [7000] # increase to handle more camera groups
+
+    @staticmethod
+    def copy_bbox(localbbox, skaimotPerson):
+        box = skaimotPerson.box
+        localbbox.topleft.x = box.topleft.x
+        localbbox.topleft.y = box.topleft.y
+        localbbox.botright.x = box.botright.x
+        localbbox.botright.y = box.botright.y
+
+    @classmethod
+    def copy_pose(cls, localpose, posePerson):
+        pnts = localpose.keypoints
+        cls.copy_xy(pnts.nose, posePerson.nose)
+        cls.copy_xy(pnts.left_eye, posePerson.left_eye)
+        cls.copy_xy(pnts.right_eye, posePerson.right_eye)
+        cls.copy_xy(pnts.left_ear, posePerson.left_ear)
+        cls.copy_xy(pnts.right_ear, posePerson.right_ear)
+        cls.copy_xy(pnts.left_shoulder, posePerson.left_shoulder)
+        cls.copy_xy(pnts.right_shoulder, posePerson.right_shoulder)
+        cls.copy_xy(pnts.left_elbow, posePerson.left_elbow)
+        cls.copy_xy(pnts.right_elbow, posePerson.right_elbow)
+        cls.copy_xy(pnts.left_wrist, posePerson.left_wrist)
+        cls.copy_xy(pnts.right_wrist, posePerson.right_wrist)
+        cls.copy_xy(pnts.left_hip, posePerson.left_hip)
+        cls.copy_xy(pnts.right_hip, posePerson.right_hip)
+        cls.copy_xy(pnts.left_knee, posePerson.left_knee)
+        cls.copy_xy(pnts.right_knee, posePerson.right_knee)
+        cls.copy_xy(pnts.left_ankle, posePerson.left_ankle)
+        cls.copy_xy(pnts.right_ankle, posePerson.right_ankle)
+        cls.copy_xy(pnts.neck, posePerson.neck)
+
+    @staticmethod
+    def copy_xy(localxy, xy):
+        localxy.x, localxy.y = xy.x, xy.y
+
+    @staticmethod
+    def copy_feet(feet, feetperson):
+        feetpos = feetperson.feet_position
+        feet.x, feet.y, feet.z = feetpos.x, feetpos.y, feetpos.z
 
 class GlobalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.GLOBALTRACK
