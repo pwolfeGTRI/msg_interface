@@ -62,3 +62,5 @@ See SkaiDatabaseInterface.py
 - [ ] action enum populate
 
 - [ ] work on global track later
+
+- [ ] sync to eosl bitbucket?
