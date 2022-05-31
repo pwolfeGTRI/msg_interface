@@ -21,8 +21,9 @@ class SkaiMsg(ABC):
         """
         return cls.proto_msg_class()
 
-    # pointer to enum from protobuf
+    # pointer to enums from protobuf
     CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
+    ACTION = ActionProtoMsg_pb2.ActionType
 
     # add to list check max length
     @classmethod

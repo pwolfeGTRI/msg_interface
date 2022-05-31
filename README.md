@@ -57,3 +57,8 @@ See TcpMessageSync.py
 ## Database Interfacing
 See SkaiDatabaseInterface.py
 
+- [ ] action example update
+- [ ] local track example update with action
+- [ ] action enum populate
+
+- [ ] work on global track later
