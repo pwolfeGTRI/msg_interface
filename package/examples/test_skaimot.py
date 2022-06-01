@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import time
 import numpy as np
+import os
 
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
@@ -37,7 +38,13 @@ def create_example_skaimotmsg(num_people=2, num_cams=5):
 
 if __name__=='__main__':
     msg = create_example_skaimotmsg()
-    # print(msg)
+    
+    # write example message to file for viewing
+    filename = 'example_msg_prints/skaimot.txt'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w') as f:
+        f.write(f'{msg}')
+
     msg_bytes = SkaimotMsg.pack(msg, verbose=True)
     cam_group_idx = 0
     sender = TcpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)

@@ -1,6 +1,18 @@
 syntax = "proto3";
 
-package skaimsg.feetpos;
+package skaiproto.feetpos;
+
+// extra metadata for other messages to use 
+message FeetPosition {
+    // xyz float value in meters
+    float x = 1;
+    float y = 2;
+    float z = 3;
+    
+    // metadata only used by other messages
+    uint64 timestamp = 4;
+    uint64 skaimot_id = 5;
+}
 
 message FeetPosProtoMsg {
 
@@ -18,11 +30,7 @@ message FeetPosProtoMsg {
             // skaimot id num
             uint64 id = 1;
 
-            message FeetPosition {
-                float x = 1;
-                float y = 2;
-                float z = 3;
-            }
+            // feet position xyz float meters
             FeetPosition feet_position = 2;
         }
         repeated Person people_in_frame = 3;

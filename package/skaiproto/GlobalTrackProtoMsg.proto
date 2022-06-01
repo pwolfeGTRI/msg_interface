@@ -1,13 +1,7 @@
 syntax = "proto3";
 
-package skaimsg.globaltrack;
+package skaiproto.globaltrack;
 
-// employee vs customer vs uninitialized classification
-enum Classification {
-    INIT = 0;
-    EMPLOYEE = 1;
-    CUSTOMER = 2;
-}
 
 
 message GlobalTrackProtoMsg {

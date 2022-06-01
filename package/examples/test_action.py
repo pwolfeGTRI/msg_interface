@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import time
-import numpy as np
+import os
 
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
@@ -36,7 +36,6 @@ def create_example_actionmsg(num_people=2, num_cams=5, num_actions=1):
 
             # associatedBox = action.associated_boxes.add()
 
-
             
         # example_actions_in_frame = [example_action for x in range(num_actions)]
         # camframe.actions_in_frame.extend(example_actions_in_frame)
@@ -44,9 +43,17 @@ def create_example_actionmsg(num_people=2, num_cams=5, num_actions=1):
     return msg
 
 
+
 if __name__=='__main__':
     msg = create_example_actionmsg()
     # print(msg)
+       
+    # write example message to file for viewing
+    filename = 'example_msg_prints/action.txt'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w') as f:
+        f.write(f'{msg}')
+
     msg_bytes = ActionMsg.pack(msg, verbose=True)
     cam_group_idx = 0
     sender = TcpSender('127.0.0.1', ActionMsg.ports[cam_group_idx], verbose=True)

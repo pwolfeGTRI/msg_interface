@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import os
+
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
 from test_skaimot import create_example_skaimotmsg
@@ -89,6 +91,12 @@ if __name__=='__main__':
 
     # print message
     # print(msg)
+       
+    # write example message to file for viewing
+    filename = 'example_msg_prints/localtrack.txt'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w') as f:
+        f.write(f'{msg}')
 
     msg_bytes = LocalTrackMsg.pack(msg)
     cam_group_idx = 0

@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package skaimsg.skaimot;
+package skaiproto.skaimot;
 
-// top left bottom right defined bounding box
+// bounding box defined with 
+// top left, bottom right corners that are floats from 0 to 1
 message BoundingBox {
     // float 0 to 1
     message xy {
@@ -11,18 +12,31 @@ message BoundingBox {
     }
     xy topleft = 1;
     xy botright = 2;
+
+    // metadata only used by other messages
+    uint64 timestamp = 3;   
+    uint64 skaimot_id = 4;  
 }
 
 // face embedding for improving recall/recognition
 message FaceEmbedding {
     // 512 list of floats
     repeated float vals = 1;
+
+    // metadata only used by other messages
+    uint64 timestamp = 2;   
+    uint64 skaimot_id = 3;
+
 }
 
 // bbox embedding for improving recall/recognition
 message BBoxEmbedding {
     // 2048 list of floats
     repeated float vals = 1;
+
+    // metadata only used by other messages
+    uint64 timestamp = 2;   
+    uint64 skaimot_id = 3;
 }
 
 // employee vs customer vs uninitialized classification
@@ -32,6 +46,7 @@ enum Classification {
     CUSTOMER = 2;
 }
 
+// the main message
 message SkaimotProtoMsg {
     
     message CameraFrame {
@@ -51,7 +66,10 @@ message SkaimotProtoMsg {
             // classification enum 
             Classification classification = 2;
 
+            // top left bottom right defined bounding box
             BoundingBox box = 3;
+
+            // embeddings (list of floats) to help recognition
             FaceEmbedding face_embedding = 4;
             BBoxEmbedding bbox_embedding = 5;
         }

@@ -1,7 +1,1 @@
-from .generated_python.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
-from .generated_python.PoseProtoMsg_pb2 import PoseProtoMsg
-from .generated_python.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
-from .generated_python.LocalTrackProtoMsg_pb2 import LocalTrackProtoMsg
-from .generated_python.GlobalTrackProtoMsg_pb2 import GlobalTrackProtoMsg
-from .generated_python.ActionProtoMsg_pb2 import ActionProtoMsg
 from .SkaiMessages import *

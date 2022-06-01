@@ -7,7 +7,13 @@ import numpy as np
 from enum import Enum
 from abc import ABC, abstractmethod
 
-from .generated_python import *
+from skaiproto.ActionProtoMsg_pb2 import ActionProtoMsg
+from skaiproto.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
+from skaiproto.GlobalTrackProtoMsg_pb2 import GlobalTrackProtoMsg
+from skaiproto.LocalTrackProtoMsg_pb2 import LocalTrackProtoMsg
+from skaiproto.PoseProtoMsg_pb2 import PoseProtoMsg
+from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
+from skaiproto import *
 
 class SkaiMsg(ABC):
     """Skai Abstract Base Class for standard messages"""
@@ -222,7 +228,7 @@ class LocalTrackMsg(SkaiMsg):
 
     @classmethod
     def copy_pose(cls, localpose, posePerson):
-        pnts = localpose.keypoints
+        pnts = localpose
         cls.copy_xy(pnts.nose, posePerson.nose)
         cls.copy_xy(pnts.left_eye, posePerson.left_eye)
         cls.copy_xy(pnts.right_eye, posePerson.right_eye)

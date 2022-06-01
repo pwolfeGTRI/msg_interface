@@ -1,12 +1,17 @@
 # vscode folder
 .vscode
 
+
+# example output prints
+example_msg_prints
+
 # protobuf example folder
 protobuf-3.19.4
 
 # generated protobuf messages folder
 generated_python
 generated_cpp
+*_pb2.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

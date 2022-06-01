@@ -1,10 +1,9 @@
 syntax = "proto3";
 
-package skaimsg.action;
+package skaiproto.action;
 
+import "skaiproto/SkaimotProtoMsg.proto";
 
-// single person actions detected locally
-// TODO populate enum of actions here
 enum ActionType {
     DEFAULT = 0;
     JUMPROPE = 1;
@@ -14,31 +13,16 @@ enum ActionType {
     ETC = 5;
 }
 
-message BoundingBox {
-    // float 0 to 1
-    message xy {
-        float x = 1;
-        float y = 2;
-    }
-    xy topleft = 1;
-    xy botright = 2;
-}
-
-message BoundingBoxWithId {
-    uint64 skaimot_id = 1;
-    BoundingBox box = 2;
-}
-
 message Action {
     // action or interaction type
     ActionType action = 1;
 
     // box around the action 
-    BoundingBox location = 2;
+    skaiproto.skaimot.BoundingBox location = 2;
 
     // list of boxes of relevant people, cars, etc associated with action
     // your process can receive from skaimot or whatever to get these
-    repeated BoundingBoxWithId associated_boxes = 3;
+    repeated skaiproto.skaimot.BoundingBox associated_boxes = 3;
 }
 
 message ActionProtoMsg {

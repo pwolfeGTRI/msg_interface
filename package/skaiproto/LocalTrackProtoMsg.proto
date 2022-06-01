@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package skaimsg.localtrack;
+
+import "skaiproto/SkaimotProtoMsg.proto";
+import "skaiproto/PoseProtoMsg.proto";
+import "skaiproto/FeetPosProtoMsg.proto";
+import "skaiproto/ActionProtoMsg.proto";
+
+// info associated with single person from a single camera
+message LocalTrackProtoMsg {
+    // person's id from skaimot
+    uint64 id = 1;
+    
+    // camera's id number (mac address as a uint64)
+    uint64 camera_id = 2;
+
+    // timestamp (epoch * 1e9) when local track first discovered
+    uint64 time_discovered = 3;
+
+    // active or not in local camera
+    bool active = 4;
+    
+    // local track handler tallies classification over time (low pass filter) to choose this
+    skaiproto.skaimot.Classification classification = 5;
+
+    // metadata lists
+    repeated skaiproto.skaimot.BoundingBox bbox_list = 6;
+    repeated skaiproto.feetpos.FeetPosition feet_position_list = 7;
+    repeated skaiproto.pose.Keypoints pose_list = 8;
+    repeated skaiproto.skaimot.FaceEmbedding face_embed_list = 9;
+    repeated skaiproto.skaimot.BBoxEmbedding bbox_embed_list = 10;
+    repeated skaiproto.action.Action action_list = 11;
+
+}

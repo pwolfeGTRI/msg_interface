@@ -7,11 +7,7 @@ import threading
 import socketserver
 import struct
 
-# from ..skaimessages import *
 from skaimsginterface.skaimessages import *
-
-import code
-
 
 class MultiportTcpListener:
 

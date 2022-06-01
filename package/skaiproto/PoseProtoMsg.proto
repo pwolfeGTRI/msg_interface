@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package skaimsg.pose;
+package skaiproto.pose;
 
-message Person {
+
+message Keypoints {
     // x y coordinates that are floats 0 to 1 for each keypoint
     message xy {
         float x = 1;
@@ -26,6 +27,9 @@ message Person {
     xy left_ankle = 16;
     xy right_ankle = 17;
     xy neck = 18;
+    
+    // metadata only used by other messages
+    uint64 timestamp = 19;
 }
 
 message PoseProtoMsg {
@@ -38,8 +42,8 @@ message PoseProtoMsg {
         // 1e9 * epoch timestamp
         uint64 timestamp = 2;
         
-        
-        repeated Person people_in_frame = 3;
+        // list of Keypoints for each person in frame
+        repeated Keypoints people_in_frame = 3;
 
     }
     repeated CameraFrame camera_frames = 1;

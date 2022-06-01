@@ -5,7 +5,6 @@ import struct
 
 import time
 
-# from ..skaimessages import *
 from skaimsginterface.skaimessages import *
 
 class TcpSender:
