@@ -137,12 +137,10 @@ class SkaiMsg(ABC):
     @staticmethod
     def convert_camera_id_to_mac_addr_string(int_or_list):
         if isinstance(int_or_list, list):
-            return [SkaiMsg.convert_mac_addr_to_camera_identifier_number(num) for num in int_or_list]
+            return [SkaiMsg.convert_camera_id_to_mac_addr_string(num) for num in int_or_list]
         elif isinstance(int_or_list, int):
-            print('integer!')
-            int_or_list = f'{int_or_list:0>12X}'
-            # return ':'.join([int_or_list[i:i+2] for i in range(0, len(int_or_list),2)])
-            return int_or_list
+            hexstr = f'{int_or_list:0>12X}'
+            return ':'.join([hexstr[i:i+2] for i in range(0, len(hexstr),2)])
         else:
             print('not integer!')
             print(f'unsupported type for conversion: {type(int_or_list)}')
