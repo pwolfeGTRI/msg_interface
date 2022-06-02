@@ -42,7 +42,7 @@ class MultiportTcpListener:
         self.start_listeners()
 
     def start_server(self, port):
-        self.SinglePortListener(('127.0.0.1', port), self)
+        self.SinglePortListener(('0.0.0.0', port), self)
 
     def start_listeners(self):
         # create threads sto listen on each port
