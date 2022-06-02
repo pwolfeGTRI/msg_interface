@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package skaiproto.skaievent;
+
+import "google/protobuf/any.proto";
+
+enum SkaiEvent {
+    DEFAULT = 0;
+    ADVISOR_TIRE_INSPECTION = 1;
+    CUSTOMER_GREETED = 2;
+    CUSTOMER_NOT_GREETED = 3;
+    CUSTOMER_WALKOUT = 4;
+    GUN_DETECTED = 5;
+    POTENTIAL_BAD_ACTOR = 6;
+    PRESENTED_SALES_FIGURES = 7;
+    SALES_COMPLETED = 8;
+    SERVICE_COMPLETED = 9;
+    SERVICE_MENU_PRESENTED = 10;
+    TECH_PARTS_DELAY = 11;
+    TEST_DRIVE_COMPLETED = 12;
+    TEST_DRIVE_STARTED = 13;
+    TIRE_DEPTH_CHECKED = 14;
+    VEHICLE_EXIT_NO_PLATE = 15;
+    VIP_GREETED = 16;
+    VIP_NOT_GREETED = 17;
+}
+
+message SkaiEventProtoMsg {
+    SkaiEvent event = 1;
+    uint64 timestamp = 2;
+    google.protobuf.Any metadata = 3; // relevant metadata of any type 
+}

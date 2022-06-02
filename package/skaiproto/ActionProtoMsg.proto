@@ -4,6 +4,7 @@ package skaiproto.action;
 
 import "skaiproto/SkaimotProtoMsg.proto";
 
+// actions detected at local level
 enum ActionType {
     DEFAULT = 0;
     JUMPROPE = 1;
@@ -11,6 +12,7 @@ enum ActionType {
     SHROOMS = 3;
     TRIPPING_ON_SHROOMS = 4;
     ETC = 5;
+
 }
 
 message Action {
