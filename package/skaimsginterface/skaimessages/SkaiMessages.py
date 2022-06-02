@@ -31,7 +31,7 @@ class SkaiMsg(ABC):
     # pointer to enums from protobuf
     CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
     ACTION = ActionProtoMsg_pb2.ActionType
-    # SKAIEVENT = SkaiEventProtoMsg.SkaiEvent
+    SKAIEVENT = SkaiEventProtoMsg_pb2.SkaiEvent
 
     # add to list check max length
     @classmethod
@@ -142,7 +142,6 @@ class SkaiMsg(ABC):
             hexstr = f'{int_or_list:0>12X}'
             return ':'.join([hexstr[i:i+2] for i in range(0, len(hexstr),2)])
         else:
-            print('not integer!')
             print(f'unsupported type for conversion: {type(int_or_list)}')
 
     """ required class variables in subclasses """
