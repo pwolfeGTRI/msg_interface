@@ -13,6 +13,7 @@ from skaiproto.GlobalTrackProtoMsg_pb2 import GlobalTrackProtoMsg
 from skaiproto.LocalTrackProtoMsg_pb2 import LocalTrackProtoMsg
 from skaiproto.PoseProtoMsg_pb2 import PoseProtoMsg
 from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
+from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -30,6 +31,7 @@ class SkaiMsg(ABC):
     # pointer to enums from protobuf
     CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
     ACTION = ActionProtoMsg_pb2.ActionType
+    # SKAIEVENT = SkaiEventProtoMsg.SkaiEvent
 
     # add to list check max length
     @classmethod
@@ -132,6 +134,19 @@ class SkaiMsg(ABC):
             print(f'unsupported type for conversion: {type(string_or_list)}')
 
     
+    @staticmethod
+    def convert_camera_id_to_mac_addr_string(int_or_list):
+        if isinstance(int_or_list, list):
+            return [SkaiMsg.convert_mac_addr_to_camera_identifier_number(num) for num in int_or_list]
+        elif isinstance(int_or_list, int):
+            print('integer!')
+            int_or_list = f'{int_or_list:0>12X}'
+            # return ':'.join([int_or_list[i:i+2] for i in range(0, len(int_or_list),2)])
+            return int_or_list
+        else:
+            print('not integer!')
+            print(f'unsupported type for conversion: {type(int_or_list)}')
+
     """ required class variables in subclasses """
     
     @property
@@ -279,3 +294,12 @@ class ActionMsg(SkaiMsg):
     proto_msg_class = ActionProtoMsg
     ports = [7040]
 
+
+if __name__=='__main__':
+    
+    camera_macs = ['00:10:FA:66:42:11', '00:10:FA:66:42:12', '00:10:FA:66:42:13']
+    print(camera_macs)
+    camera_ids = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_macs)
+    print(camera_ids)
+    camera_macs_ret = SkaiMsg.convert_camera_id_to_mac_addr_string(camera_ids)
+    print(camera_macs_ret)
