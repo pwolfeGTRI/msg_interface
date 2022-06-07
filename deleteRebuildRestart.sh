@@ -1,17 +1,23 @@
 #!/bin/bash
 
-# write docker variables to .env file
-WORKDIR=/root/
-CONTAINER_NAME=skai_msg_interface
-echo CONTAINER_NAME=$CONTAINER_NAME > .env
-echo WORKDIR=$WORKDIR >> .env
+# set variables for docker compose
+BASENAME=skaimsginterface
+PARENTDIR=`pwd | awk -F'/' '{print $(NF-1)}'`
+PROJECTNAME=${BASENAME}_${PARENTDIR}
+IMAGENAME=${BASENAME}_img_${PARENTDIR}
+CONTAINERNAME=${BASENAME}_instance_${PARENTDIR}
+
+echo BASENAME=$BASENAME > .env
+echo PARENTDIR=$PARENTDIR >> .env
+echo PROJECTNAME=$PROJECTNAME >> .env
+echo IMAGENAME=$IMAGENAME >> .env
+echo CONTAINERNAME=$CONTAINERNAME >> .env
 
 # remove
-docker-compose down -t 0
+docker-compose -p $PROJECTNAME down -t 0
 
 # build
 docker-compose build
 
 # launch
-docker-compose up --detach
-
+docker-compose -p $PROJECTNAME up --detach
