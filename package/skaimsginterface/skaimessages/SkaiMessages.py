@@ -7,7 +7,6 @@ import numpy as np
 from enum import Enum
 from abc import ABC, abstractmethod
 import warnings
-warnings.filterwarnings('error', category=RuntimeWarning)
 
 from skaiproto.ActionProtoMsg_pb2 import ActionProtoMsg
 from skaiproto.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
@@ -99,12 +98,8 @@ class SkaiMsg(ABC):
             if verbose:
                 print(f'unpacking {classRef.__name__}')
             msg = classRef.proto_msg_class()
-            try:
-                msg.ParseFromString(msg_bytes[2:]) # unpack after the 2 msg type bytes
-                return classRef.msg_type, msg
-            except RuntimeWarning as w:
-                print(w)
-                return None, None
+            msg.ParseFromString(msg_bytes[2:]) # unpack after the 2 msg type bytes
+            return classRef.msg_type, msg
         else:
             print('msg id not found')
             return None, None
