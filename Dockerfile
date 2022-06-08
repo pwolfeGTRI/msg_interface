@@ -7,8 +7,6 @@ RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/
 RUN apt install -y sudo && \
   useradd -m nvidia && echo "nvidia:nvidia" | chpasswd && adduser nvidia sudo
 
-
-
 # google protobufs installation for use with C++ and python 3.5 - 3.7
 ARG PROTOBUFVER=3.19.4
 # install protobuf compiler and C++
@@ -19,7 +17,6 @@ RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unz
     cd protobuf-${PROTOBUFVER} && \
     ./configure && \
     make && \
-    make check && \
     make install && \
     ldconfig
 # install python with C++ backend for speed / data efficiency

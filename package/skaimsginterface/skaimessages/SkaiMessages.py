@@ -167,7 +167,7 @@ class SkaimotMsg(SkaiMsg):
     """SkaiMOT message packing/unpacking/port definitions"""
     msg_type = SkaiMsg.MsgType.SKAIMOT
     proto_msg_class = SkaimotProtoMsg
-    ports = [6940] # increase to handle more camera groups
+    ports = list(range(6000, 6100))
 
     """ person metadata setting helper functions """
     
@@ -188,7 +188,7 @@ class PoseMsg(SkaiMsg):
     """Pose message packing/unpacking/port definitions"""
     msg_type = SkaiMsg.MsgType.POSE
     proto_msg_class = PoseProtoMsg
-    ports = [6941] # increase to handle more camera groups
+    ports = list(range(6100, 6200))
 
     """ person metadata setting helper functions """
 
@@ -222,7 +222,7 @@ class FeetPosMsg(SkaiMsg):
 
     msg_type = SkaiMsg.MsgType.FEETPOS
     proto_msg_class = FeetPosProtoMsg
-    ports = [6969] # increase to handle more camera groups
+    ports = list(range(6200, 6300))
     
     """ person metadata setting helper functions """
 
@@ -234,7 +234,7 @@ class FeetPosMsg(SkaiMsg):
 class LocalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.LOCALTRACK
     proto_msg_class = LocalTrackProtoMsg
-    ports = [7000] # increase to handle more camera groups
+    ports = list(range(6300, 6400))
 
     @staticmethod
     def copy_bbox(localbbox, skaimotPerson):
@@ -290,12 +290,12 @@ class LocalTrackMsg(SkaiMsg):
 class GlobalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.GLOBALTRACK
     proto_msg_class = GlobalTrackProtoMsg
-    ports = [7020] # increase to handle more camera groups
+    ports = list(range(6400, 6500))
 
 class ActionMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.ACTION
     proto_msg_class = ActionProtoMsg
-    ports = [7040]
+    ports = list(range(6500, 6600))
 
 
 if __name__=='__main__':

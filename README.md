@@ -17,7 +17,6 @@ RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unz
     cd protobuf-${PROTOBUFVER} && \
     ./configure && \
     make && \
-    make check && \
     make install && \
     ldconfig
 # install python with C++ backend for speed / data efficiency
