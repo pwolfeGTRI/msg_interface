@@ -237,6 +237,7 @@ class LocalTrackMsg(SkaiMsg):
         localbbox.topleft.y = box.topleft.y
         localbbox.botright.x = box.botright.x
         localbbox.botright.y = box.botright.y
+        localbbox.timestamp = box.timestamp
 
     @classmethod
     def copy_pose(cls, localpose, posePerson):
@@ -259,6 +260,8 @@ class LocalTrackMsg(SkaiMsg):
         cls.copy_xy(pnts.left_ankle, posePerson.left_ankle)
         cls.copy_xy(pnts.right_ankle, posePerson.right_ankle)
         cls.copy_xy(pnts.neck, posePerson.neck)
+        pnts.timestamp = posePerson.timestamp
+
 
     @staticmethod
     def copy_xy(localxy, xy):
@@ -268,14 +271,17 @@ class LocalTrackMsg(SkaiMsg):
     def copy_feet(feet, feetperson):
         feetpos = feetperson.feet_position
         feet.x, feet.y, feet.z = feetpos.x, feetpos.y, feetpos.z
+        feet.timestamp = feetpos.timestamp
 
     @staticmethod
     def copy_faceembed(faceembed, skaimotperson):
         faceembed.vals.extend(skaimotperson.face_embedding.vals)
+        faceembed.timestamp = skaimotperson.face_embedding.timestamp
     
     @staticmethod
     def copy_bboxembed(bboxembed, skaimotperson):
         bboxembed.vals.extend(skaimotperson.bbox_embedding.vals)
+        bboxembed.timestamp = skaimotperson.bbox_embedding.timestamp
 
     @staticmethod
     def copy_action(action, actionperson):
