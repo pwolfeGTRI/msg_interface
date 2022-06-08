@@ -6,7 +6,6 @@ from datetime import datetime
 import numpy as np
 from enum import Enum
 from abc import ABC, abstractmethod
-import warnings
 
 from skaiproto.ActionProtoMsg_pb2 import ActionProtoMsg
 from skaiproto.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
