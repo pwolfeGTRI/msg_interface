@@ -7,7 +7,7 @@ import numpy as np
 from enum import Enum
 from abc import ABC, abstractmethod
 import warnings
-warnings.filterwarnings('error')
+warnings.filterwarnings('error', category=RuntimeWarning)
 
 from skaiproto.ActionProtoMsg_pb2 import ActionProtoMsg
 from skaiproto.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
