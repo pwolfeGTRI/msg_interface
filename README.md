@@ -8,6 +8,7 @@ git submodule add https://github.com/skAIVision/skai-ai-message-interface.git
 
 To install in your docker container copy these lines in to install protobufs first:
 ```bash
+# google protobufs installation for use with C++ and python 3.5 - 3.7
 ARG PROTOBUFVER=3.19.4
 # install protobuf compiler and C++
 RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unzip && \
@@ -18,13 +19,11 @@ RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unz
     ./configure && \
     make && \
     make install && \
-    ldconfig
-# install python with C++ backend for speed / data efficiency
-RUN cd /root/protobuf-${PROTOBUFVER}/python && \
-  python3 setup.py build --cpp_implementation && \
-  python3 setup.py install --cpp_implementation 
-# cleanup
-RUN cd /root/ && rm protobuf-all-${PROTOBUFVER}.tar.gz && rm -rf protobuf-${PROTOBUFVER}
+    ldconfig && \
+    cd python && \
+    python3 setup.py build --cpp_implementation && \
+    python3 setup.py install --cpp_implementation && \
+    cd /root/ && rm protobuf-all-${PROTOBUFVER}.tar.gz && rm -rf protobuf-${PROTOBUFVER}
 ```
 
 Then paste in these lines to install the skaimsginterface python package (assumes submodule folder at your top level and name unchanged)

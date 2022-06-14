@@ -4,6 +4,7 @@ import types
 import threading
 import socketserver
 import struct
+import math
 from skaimsginterface.skaimessages import *
 
 
@@ -50,22 +51,20 @@ class MyMultiportUdpListener:
     class MySinglePortListener(socketserver.ThreadingUDPServer):
 
         class MyUDPHandler(socketserver.BaseRequestHandler):
-
+                 
             def handle(self):
-                data = self.request[0].strip()
-                socket = self.request[1]
-
-                # print(
-                #     f'client {self.client_address}\n\twrote {data}\n\tto {self.server.server_address}'
-                # )
-
-                # send back message in uppercase as confirmation (comment out if not needed)
-                # socket.sendto(data.upper(), self.client_address)
-
+                data = self.request[0]
                 # call server callback function with data
                 self.server.single_port_callback(data)
 
         def __init__(self, server_address, multiport_listener):
+            
+            # state var init
+            self.new_msg_flag = True
+            self.databuff = bytes()
+            self.packet_idx = 0
+            self.total_num_packets = 0
+
             # store reference to parent class
             self.multiport_listener = multiport_listener
 
@@ -81,11 +80,27 @@ class MyMultiportUdpListener:
             self.serve_forever()
 
         def single_port_callback(self, data):
-            # do something single port wise if you want here...
-            # otherwise pass data to higher server
-            self.multiport_listener.multiport_callback(data,
-                                                       self.server_address)
 
+            if self.new_msg_flag:
+                try:
+                    packet_count = struct.unpack('!I', data)[0]
+                    # prep for reading chunks
+                    self.new_msg_flag = False
+                    self.databuff = bytes()
+                    self.packet_idx = 0
+                    self.total_num_packets = packet_count
+                except Exception as e:
+                    print(f'msg len parse exception: {e}')
+                    return
+            else:
+                # read chunks to assemble message
+                self.databuff += data
+                self.packet_idx += 1
+                if self.packet_idx >= self.total_num_packets:
+                    # clear flag
+                    self.new_msg_flag = True
+                    # pass data to multiport class
+                    self.multiport_listener.multiport_callback(self.databuff, self.server_address)
 
 def example_multiport_callback_func(data, server_address):
     # store it, unpack, etc do as you wish

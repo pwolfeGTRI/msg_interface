@@ -2,7 +2,7 @@
 
 import socket
 import struct
-
+import math
 import time
 
 from skaimsginterface.skaimessages import *
@@ -15,14 +15,27 @@ class UdpSender:
                  verbose=False) -> None:
         self.verbose = verbose
 
+        # 1 us delay between packets to ensure same order on local host network
+        self.inter_packet_delay_s = 0.000001
+
         # create udp socket allowing reuse ports
         self.destination = (host_ip, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def send(self, msg_bytes):
-        ret = self.sock.sendto(msg_bytes[:1024], self.destination)
-        print(ret)
+        # send msg length & chunksize first
+        packet_size = 4096
+        packet_count = math.ceil(len(msg_bytes)/ packet_size)
+        msglen_bytes = struct.pack('!I', packet_count)
+        self.sock.sendto(msglen_bytes, self.destination)
+        time.sleep(self.inter_packet_delay_s)
+        idx = 0
+        for chunkcount in range(packet_count):
+            self.sock.sendto(msg_bytes[idx:idx+packet_size], self.destination)
+            time.sleep(self.inter_packet_delay_s)
+            idx += packet_size
+        
 
 def create_example_skaimotmsg(num_people=2, num_cams=5):    
     trackid = 69
@@ -60,5 +73,6 @@ if __name__=='__main__':
     skaimot_sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=verbose)
     msg = create_example_skaimotmsg()
     msg_bytes = SkaimotMsg.pack(msg, verbose=verbose)
-    skaimot_sender.send(msg_bytes)
+    for i in range(10):
+        skaimot_sender.send(msg_bytes)
 
