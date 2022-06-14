@@ -9,19 +9,16 @@ import struct
 
 from skaimsginterface.skaimessages import *
 
+
 class MultiportTcpListener:
 
     def __init__(self, portlist, multiport_callback_func, verbose=False):
-        """_summary_
+        """skai multiport udp listener
 
         Args:
-            portlist (_type_): ports to listen to 
+            portlist (list): ports to listen to 
             multiport_callback_func (_type_):  your function, which should have params (data, server_address)
             verbose (bool, optional): _description_. Defaults to False.
-
-        Raises:
-            TypeError: _description_
-            TypeError: _description_
         """
         # type checking
         if isinstance(portlist, int):
@@ -106,7 +103,7 @@ class MultiportTcpListener:
             self.multiport_listener = multiport_listener
 
             # turn on allow reuse ports
-            socketserver.ThreadingTCPServer.allow_reuse_address = 1
+            socketserver.ThreadingTCPServer.allow_reuse_address = True
 
             # instantiate server
             socketserver.ThreadingTCPServer.__init__(self, server_address,
@@ -126,16 +123,24 @@ class MultiportTcpListener:
 def example_multiport_callback_func(data, server_address):
     # store it, unpack, etc do as you wish
     msg_type, msg = SkaiMsg.unpack(data)
-    print(f'got some data length {len(data)} from {server_address} msg type {msg_type}\n')
+    print(
+        f'got some data length {len(data)} from {server_address} msg type {msg_type}\n'
+    )
 
 
 if __name__ == '__main__':
     # ports to listen to
     camgroup_idx = 0
-    ports = [SkaimotMsg.ports[camgroup_idx], PoseMsg.ports[camgroup_idx], FeetPosMsg.ports[camgroup_idx]]
+    ports = [
+        SkaimotMsg.ports[camgroup_idx], PoseMsg.ports[camgroup_idx],
+        FeetPosMsg.ports[camgroup_idx], LocalTrackMsg.ports[camgroup_idx],
+        GlobalTrackMsg.ports[camgroup_idx], ActionMsg.ports[camgroup_idx]
+    ]
 
     # listen
-    MultiportTcpListener(portlist=ports, multiport_callback_func=example_multiport_callback_func)
+    MultiportTcpListener(
+        portlist=ports,
+        multiport_callback_func=example_multiport_callback_func)
 
     # stay active until ctrl+c input
     try:

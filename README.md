@@ -40,18 +40,19 @@ See `package/examples` folder
 First run ./listener.py to listen for the example tcp messages
 Then run which ever example you want. Feel free to copy example to use in your code.
 
-
 ## Message Definitions
-See SkaiMessages.py and .proto files in protobuf folder
 
-## TCP Interface Classes
+See `package/skaiproto` folder and `skaimsginterface/skaimessages/SkaiMessages.py` and examples on how to use them in `packages/examples`
+
+
+## UDP/TCP Interface Classes
 See: 
 - MultiportTcpListener.py
 - TcpSender.py
-- TcpSender.hpp
+- MultiportUdpListener.py
+- UdpSender.py
 
-## TCP Message Sync
-See TcpMessageSync.py
+For message time synchronization example see local track handler repo, metadata_sync.py MetadataTimeSynchronizer class
 
 ## Database Interfacing
 See SkaiDatabaseInterface.py
@@ -59,7 +60,4 @@ See SkaiDatabaseInterface.py
 - [ ] action example update
 - [ ] local track example update with action
 - [ ] action enum populate
-
 - [ ] work on global track later
-
-- [ ] sync to eosl bitbucket?

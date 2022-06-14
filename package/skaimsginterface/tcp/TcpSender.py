@@ -19,9 +19,10 @@ class TcpSender:
         self.retryLimit = retryLimit
         self.retryTimeoutSec = retryTimeoutSec
 
-        # create socket
+        # create tcp socket allowing reuse ports
         self.destination = (host_ip, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # try to connect with limits
         self.connect_to_destination()
