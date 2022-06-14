@@ -53,6 +53,21 @@ See:
 
 For message time synchronization example see local track handler repo, metadata_sync.py MetadataTimeSynchronizer class
 
+## Creating a New Message
+
+1. add a .proto file for your message first
+  - validate with `build_protobuf_msgs.sh`
+2. then go into package/skaimsginterface/skaimessages/SkaiMessages.py and do the following:
+  - create a new class using SkaiMsg as a base
+  - in `SkaiMsg` -> `MsgType` make a new type
+  - in `SkaiMsg` -> `MsgType` -> `get_class_from_id` point to your new message class
+  - update `msg_type`, `proto_msg_class`, and `ports` accordingly 
+  - create any helper functions to pack your message
+  - install with `install_skaimsginterface.sh --upgrade`
+3. add an example
+  - in `examples/listener.py` add your msg to be listened to
+  - make an `examples/test_yourmsgname.py` file to show how to pack your message & send to listener. (see other examples and .proto files for reference)
+
 ## Database Interfacing
 See SkaiDatabaseInterface.py
 
