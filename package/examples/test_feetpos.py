@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 import time
 import os
+from argparse import ArgumentParser
 
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
+from skaimsginterface.udp import UdpSender
+
 
 def create_example_feetposmsg(num_people=2, num_cams=5):
     trackid = 69
@@ -32,6 +35,10 @@ def create_example_feetposmsg(num_people=2, num_cams=5):
 
 
 if __name__=='__main__':
+    parser = ArgumentParser()
+    parser.add_argument('udp_or_tcp', type=str, help='', choices=('tcp', 'udp'))
+    args = parser.parse_args()
+
     msg = create_example_feetposmsg()
 
     # write example message to file for viewing
@@ -42,6 +49,9 @@ if __name__=='__main__':
 
     msg_bytes = FeetPosMsg.pack(msg, verbose=True)
     cam_group_idx = 0
-    sender = TcpSender('127.0.0.1', FeetPosMsg.ports[cam_group_idx], verbose=True)
+    if args.udp_or_tcp == 'udp':
+        sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
+    else:    
+        sender = TcpSender('127.0.0.1', FeetPosMsg.ports[cam_group_idx], verbose=True)
     sender.send(msg_bytes)
 

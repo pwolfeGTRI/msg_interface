@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 import time
 import os
+from argparse import ArgumentParser
 
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
+from skaimsginterface.udp import UdpSender
+
 from test_skaimot import create_example_skaimotmsg
 
 def create_example_actionmsg(num_people=2, num_cams=5, num_actions=1):
@@ -45,6 +48,10 @@ def create_example_actionmsg(num_people=2, num_cams=5, num_actions=1):
 
 
 if __name__=='__main__':
+    parser = ArgumentParser()
+    parser.add_argument('udp_or_tcp', type=str, help='', choices=('tcp', 'udp'))
+    args = parser.parse_args()
+
     msg = create_example_actionmsg()
     # print(msg)
        
@@ -56,5 +63,8 @@ if __name__=='__main__':
 
     msg_bytes = ActionMsg.pack(msg, verbose=True)
     cam_group_idx = 0
-    sender = TcpSender('127.0.0.1', ActionMsg.ports[cam_group_idx], verbose=True)
+    if args.udp_or_tcp == 'udp':
+        sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
+    else:    
+        sender = TcpSender('127.0.0.1', ActionMsg.ports[cam_group_idx], verbose=True)
     sender.send(msg_bytes)

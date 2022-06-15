@@ -34,10 +34,36 @@ RUN cd /root/skaimsginterface_package && ./install_skaimsginterface.sh
 ```
 
 ## Examples
-See `package/examples` folder
+See `package/examples` folder.
 
-First run ./listener.py to listen for the example tcp messages
-Then run which ever example you want. Feel free to copy example to use in your code.
+- `test_*` examples show how to create, pack, and send messages.
+- `example_*_listener.py` examples show how to listen, get message & message type, and get protobuf params from the data
+
+### Testing UDP
+```bash
+# in first terminal
+./attach.sh
+cd examples
+./example_udp_listener.py
+
+# in second terminal
+./attach.sh
+cd examples
+./test_all.sh udp
+```
+
+### Testing TCP
+```bash
+# in first terminal
+./attach.sh
+cd examples
+./example_tcp_listener.py
+
+# in second terminal
+./attach.sh
+cd examples
+./test_all.sh tcp
+```
 
 ## Message Definitions
 

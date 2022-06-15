@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 import os
+from argparse import ArgumentParser
 
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
+from skaimsginterface.udp import UdpSender
+
+
 from test_skaimot import create_example_skaimotmsg
 from test_pose import create_example_posemsg
 from test_feetpos import create_example_feetposmsg
@@ -16,6 +20,9 @@ from test_action import create_example_actionmsg
 
 
 if __name__=='__main__':
+    parser = ArgumentParser()
+    parser.add_argument('udp_or_tcp', type=str, help='', choices=('tcp', 'udp'))
+    args = parser.parse_args()
 
     # create example base messages
     example_skaimotmsg = create_example_skaimotmsg()
@@ -100,6 +107,9 @@ if __name__=='__main__':
 
     msg_bytes = LocalTrackMsg.pack(msg)
     cam_group_idx = 0
-    sender = TcpSender('127.0.0.1', LocalTrackMsg.ports[cam_group_idx], verbose=True)
+    if args.udp_or_tcp == 'udp':
+        sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
+    else:    
+        sender = TcpSender('127.0.0.1', LocalTrackMsg.ports[cam_group_idx], verbose=True)
     sender.send(msg_bytes)
 

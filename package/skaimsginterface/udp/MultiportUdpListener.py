@@ -8,7 +8,7 @@ import math
 from skaimsginterface.skaimessages import *
 
 
-class MyMultiportUdpListener:
+class MultiportUdpListener:
 
     def __init__(self, portlist, multiport_callback_func, verbose=False):
         """skai multiport udp listener
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     ]
 
     # listen
-    MyMultiportUdpListener(
+    MultiportUdpListener(
         portlist=ports,
         multiport_callback_func=example_multiport_callback_func)
 

@@ -8,7 +8,7 @@ CPP_DST_DIR=$SRC_DIR/generated_cpp
 echo ""
 echo "cleaning..."
 rm -rf $CPP_DST_DIR
-rm skaiproto/*_pb2.py
+rm ./skaiproto/*_pb2.py
 
 echo ""
 echo "building protobuf messages..."
