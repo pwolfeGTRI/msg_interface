@@ -1,10 +1,17 @@
 # Skai AI Standard Message Definitions & Interface Classes
 
-Feel free to include this as a submodule in your repo: 
+# NOTE: 
+run `./init_repo.sh` after you clone 
+
+## Adding this as a submodule
+
+To include this as a submodule in your repo: 
 ```
 git submodule add https://github.com/skAIVision/skai-ai-message-interface.git
 ```
 
+
+## adding this into your docker container 
 
 To install in your docker container copy these lines in to install protobufs first:
 ```bash
@@ -68,7 +75,6 @@ cd examples
 ## Message Definitions
 
 See `package/skaiproto` folder and `skaimsginterface/skaimessages/SkaiMessages.py` and examples on how to use them in `packages/examples`
-
 
 ## UDP/TCP Interface Classes
 See: 
