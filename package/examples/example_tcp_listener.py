@@ -7,6 +7,9 @@ def example_multiport_callback_func(data, server_address):
     msg_type, msg = SkaiMsg.unpack(data)
     print(f'got some data length {len(data)} from {server_address} msg type {msg_type}\n')
     # unpack_and_print_cam_id_and_timestamp_per_frame(data)
+    print(msg)
+    # print(msg.camera_frames[0].people_in_frame)
+    # print(msg.camera_frames[0].people_in_frame[0].orientation)
 
 def unpack_and_print_cam_id_and_timestamp_per_frame(msg_bytes):
     # unpack message

@@ -10,26 +10,53 @@ message Keypoints {
         float y = 2;
     }
     xy nose = 1;
-    xy left_eye = 2;
-    xy right_eye = 3;
-    xy left_ear = 4;
-    xy right_ear = 5;
-    xy left_shoulder = 6;
-    xy right_shoulder = 7;
-    xy left_elbow = 8;
-    xy right_elbow = 9;
-    xy left_wrist = 10;
-    xy right_wrist = 11;
-    xy left_hip = 12;
-    xy right_hip = 13;
-    xy left_knee = 14;
-    xy right_knee = 15;
-    xy left_ankle = 16;
-    xy right_ankle = 17;
-    xy neck = 18;
+    xy left_eye_inner = 2;
+    xy left_eye = 3;
+    xy left_eye_outer = 4;
+    xy right_eye_inner = 5;
+    xy right_eye = 6;
+    xy right_eye_outer = 7; 
+    xy left_ear = 8;
+    xy right_ear = 9;
+    xy mouth_left = 10;
+    xy mouth_right = 11;
+    xy left_shoulder = 12;
+    xy right_shoulder = 13;
+    xy left_elbow = 14;
+    xy right_elbow = 15;
+    xy left_wrist = 16;
+    xy right_wrist = 17;
+    xy left_pinky = 18;
+    xy right_pinky = 19;
+    xy left_index = 20;
+    xy right_index = 21;
+    xy left_thumb = 22;
+    xy right_thumb = 23;
+    xy left_hip = 24;
+    xy right_hip = 25;
+    xy left_knee = 26;
+    xy right_knee = 27;
+    xy left_ankle = 28;
+    xy right_ankle = 29;
+    xy left_heel = 30;
+    xy right_heel = 31;
+    xy left_foot_index = 32;
+    xy right_foot_index = 33;
+    // xy neck = 18;
     
     // metadata only used by other messages
-    uint64 timestamp = 19;
+    uint64 timestamp = 34;
+}
+
+message Vector3D {
+
+    // x, y, z
+    float x = 1;
+    float y = 2;
+    float z = 3;
+
+    // metadata only used by other messages
+    uint64 timestamp = 4;
 }
 
 message PoseProtoMsg {
@@ -42,8 +69,17 @@ message PoseProtoMsg {
         // 1e9 * epoch timestamp
         uint64 timestamp = 2;
         
-        // list of Keypoints for each person in frame
-        repeated Keypoints people_in_frame = 3;
+        // list of people in frame
+        message Person {
+
+            // list of keypoints
+            Keypoints keypoints = 1;
+
+            // orientation of the person
+            Vector3D orientation = 2;
+
+        }
+        repeated Person people_in_frame = 3;
 
     }
     repeated CameraFrame camera_frames = 1;

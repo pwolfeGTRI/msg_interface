@@ -31,5 +31,6 @@ message LocalTrackProtoMsg {
     repeated skaiproto.skaimot.FaceEmbedding face_embed_list = 9;
     repeated skaiproto.skaimot.BBoxEmbedding bbox_embed_list = 10;
     repeated skaiproto.action.Action action_list = 11;
+    repeated skaiproto.pose.Vector3D orientation_list = 12;
 
 }

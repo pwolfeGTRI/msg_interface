@@ -166,17 +166,23 @@ class SkaimotMsg(SkaiMsg):
     """ person metadata setting helper functions """
     
     @staticmethod
-    def set_bbox(person, tlbr):
+    def set_bbox(person, tlbr, timestamp):
         box = person.box
         box.topleft.x, box.topleft.y, box.botright.x, box.botright.y = tlbr
+        if timestamp:
+            box.timestamp = timestamp
 
     @staticmethod
-    def set_face_embed(person, face_embed):
+    def set_face_embed(person, face_embed, timestamp):
         person.face_embedding.vals.extend(face_embed)
+        if timestamp:
+            person.face_embedding.timestamp = timestamp
 
     @staticmethod
-    def set_bbox_embed(person, bbox_embed):
+    def set_bbox_embed(person, bbox_embed, timestamp):
         person.bbox_embedding.vals.extend(bbox_embed)
+        if timestamp:
+            person.bbox_embedding.timestamp = timestamp
 
 class PoseMsg(SkaiMsg):
     """Pose message packing/unpacking/port definitions"""
@@ -187,26 +193,51 @@ class PoseMsg(SkaiMsg):
     """ person metadata setting helper functions """
 
     @classmethod
-    def set_keypoints(cls, person, keypoint_list):
+    def set_keypoints(cls, person, keypoint_list, timestamp):
         # set each keypoint xy value
-        cls.set_xy(person.nose, keypoint_list[0])
-        cls.set_xy(person.left_eye, keypoint_list[1])
-        cls.set_xy(person.right_eye, keypoint_list[2])
-        cls.set_xy(person.left_ear, keypoint_list[3])
-        cls.set_xy(person.right_ear, keypoint_list[4])
-        cls.set_xy(person.left_shoulder, keypoint_list[5])
-        cls.set_xy(person.right_shoulder, keypoint_list[6])
-        cls.set_xy(person.left_elbow, keypoint_list[7])
-        cls.set_xy(person.right_elbow, keypoint_list[8])
-        cls.set_xy(person.left_wrist, keypoint_list[9])
-        cls.set_xy(person.right_wrist, keypoint_list[10])
-        cls.set_xy(person.left_hip, keypoint_list[11])
-        cls.set_xy(person.right_hip, keypoint_list[12])
-        cls.set_xy(person.left_knee, keypoint_list[13])
-        cls.set_xy(person.right_knee, keypoint_list[14])
-        cls.set_xy(person.left_ankle, keypoint_list[15])
-        cls.set_xy(person.right_ankle, keypoint_list[16])
-        cls.set_xy(person.neck, keypoint_list[17])        
+        cls.set_xy(person.keypoints.nose,               keypoint_list[0])
+        cls.set_xy(person.keypoints.left_eye_inner,     keypoint_list[1])
+        cls.set_xy(person.keypoints.left_eye,           keypoint_list[2])
+        cls.set_xy(person.keypoints.left_eye_outer,     keypoint_list[3])
+        cls.set_xy(person.keypoints.right_eye_inner,    keypoint_list[4])
+        cls.set_xy(person.keypoints.right_eye,          keypoint_list[5])
+        cls.set_xy(person.keypoints.right_eye_outer,    keypoint_list[6])
+        cls.set_xy(person.keypoints.left_ear,           keypoint_list[7])
+        cls.set_xy(person.keypoints.right_ear,          keypoint_list[8])
+        cls.set_xy(person.keypoints.mouth_left,         keypoint_list[9])
+        cls.set_xy(person.keypoints.mouth_right,        keypoint_list[10])
+        cls.set_xy(person.keypoints.left_shoulder,      keypoint_list[11])
+        cls.set_xy(person.keypoints.right_shoulder,     keypoint_list[12])
+        cls.set_xy(person.keypoints.left_elbow,         keypoint_list[13])
+        cls.set_xy(person.keypoints.right_elbow,        keypoint_list[14])
+        cls.set_xy(person.keypoints.left_wrist,         keypoint_list[15])
+        cls.set_xy(person.keypoints.right_wrist,        keypoint_list[16])
+        cls.set_xy(person.keypoints.left_pinky,         keypoint_list[17])
+        cls.set_xy(person.keypoints.right_pinky,        keypoint_list[18])
+        cls.set_xy(person.keypoints.left_index,         keypoint_list[19])
+        cls.set_xy(person.keypoints.right_index,        keypoint_list[20])
+        cls.set_xy(person.keypoints.left_thumb,         keypoint_list[21])
+        cls.set_xy(person.keypoints.right_thumb,        keypoint_list[22])
+        cls.set_xy(person.keypoints.left_hip ,          keypoint_list[23])
+        cls.set_xy(person.keypoints.right_hip,          keypoint_list[24])
+        cls.set_xy(person.keypoints.left_knee,          keypoint_list[25])
+        cls.set_xy(person.keypoints.right_knee,         keypoint_list[26])
+        cls.set_xy(person.keypoints.left_ankle,         keypoint_list[27])
+        cls.set_xy(person.keypoints.right_ankle,        keypoint_list[28])
+        cls.set_xy(person.keypoints.left_heel,          keypoint_list[29])
+        cls.set_xy(person.keypoints.right_heel,         keypoint_list[30])
+        cls.set_xy(person.keypoints.left_foot_index,    keypoint_list[31])
+        cls.set_xy(person.keypoints.right_foot_index,   keypoint_list[32])
+        if timestamp:
+            person.keypoints.timestamp = timestamp
+
+    @staticmethod
+    def set_orientation(person, vector3d, timestamp):
+        person.orientation.x = vector3d[0]
+        person.orientation.y = vector3d[1]
+        person.orientation.z = vector3d[2]
+        if timestamp:
+            person.orientation.timestamp = timestamp
 
     @staticmethod
     def set_xy(keypoint, xy):
@@ -221,9 +252,11 @@ class FeetPosMsg(SkaiMsg):
     """ person metadata setting helper functions """
 
     @staticmethod
-    def set_feet_pos(person, xyz):
+    def set_feet_pos(person, xyz, timestamp):
         feetpos = person.feet_position
         feetpos.x, feetpos.y, feetpos.z = xyz
+        if timestamp:
+            feetpos.timestamp = timestamp
     
 class LocalTrackMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.LOCALTRACK
@@ -242,26 +275,47 @@ class LocalTrackMsg(SkaiMsg):
     @classmethod
     def copy_pose(cls, localpose, posePerson):
         pnts = localpose
-        cls.copy_xy(pnts.nose, posePerson.nose)
-        cls.copy_xy(pnts.left_eye, posePerson.left_eye)
-        cls.copy_xy(pnts.right_eye, posePerson.right_eye)
-        cls.copy_xy(pnts.left_ear, posePerson.left_ear)
-        cls.copy_xy(pnts.right_ear, posePerson.right_ear)
-        cls.copy_xy(pnts.left_shoulder, posePerson.left_shoulder)
-        cls.copy_xy(pnts.right_shoulder, posePerson.right_shoulder)
-        cls.copy_xy(pnts.left_elbow, posePerson.left_elbow)
-        cls.copy_xy(pnts.right_elbow, posePerson.right_elbow)
-        cls.copy_xy(pnts.left_wrist, posePerson.left_wrist)
-        cls.copy_xy(pnts.right_wrist, posePerson.right_wrist)
-        cls.copy_xy(pnts.left_hip, posePerson.left_hip)
-        cls.copy_xy(pnts.right_hip, posePerson.right_hip)
-        cls.copy_xy(pnts.left_knee, posePerson.left_knee)
-        cls.copy_xy(pnts.right_knee, posePerson.right_knee)
-        cls.copy_xy(pnts.left_ankle, posePerson.left_ankle)
-        cls.copy_xy(pnts.right_ankle, posePerson.right_ankle)
-        cls.copy_xy(pnts.neck, posePerson.neck)
-        pnts.timestamp = posePerson.timestamp
-
+        cls.copy_xy(pnts.nose,              posePerson.keypoints.nose            ) 
+        cls.copy_xy(pnts.left_eye_inner,    posePerson.keypoints.left_eye_inner  ) 
+        cls.copy_xy(pnts.left_eye,          posePerson.keypoints.left_eye        ) 
+        cls.copy_xy(pnts.left_eye_outer,    posePerson.keypoints.left_eye_outer  ) 
+        cls.copy_xy(pnts.right_eye_inner,   posePerson.keypoints.right_eye_inner ) 
+        cls.copy_xy(pnts.right_eye,         posePerson.keypoints.right_eye       ) 
+        cls.copy_xy(pnts.right_eye_outer,   posePerson.keypoints.right_eye_outer ) 
+        cls.copy_xy(pnts.left_ear,          posePerson.keypoints.left_ear        ) 
+        cls.copy_xy(pnts.right_ear,         posePerson.keypoints.right_ear       ) 
+        cls.copy_xy(pnts.mouth_left,        posePerson.keypoints.mouth_left      ) 
+        cls.copy_xy(pnts.mouth_right,       posePerson.keypoints.mouth_right     ) 
+        cls.copy_xy(pnts.left_shoulder,     posePerson.keypoints.left_shoulder   ) 
+        cls.copy_xy(pnts.right_shoulder,    posePerson.keypoints.right_shoulder  ) 
+        cls.copy_xy(pnts.left_elbow,        posePerson.keypoints.left_elbow      ) 
+        cls.copy_xy(pnts.right_elbow,       posePerson.keypoints.right_elbow     ) 
+        cls.copy_xy(pnts.left_wrist,        posePerson.keypoints.left_wrist      ) 
+        cls.copy_xy(pnts.right_wrist,       posePerson.keypoints.right_wrist     ) 
+        cls.copy_xy(pnts.left_pinky,        posePerson.keypoints.left_pinky      ) 
+        cls.copy_xy(pnts.right_pinky,       posePerson.keypoints.right_pinky     ) 
+        cls.copy_xy(pnts.left_index,        posePerson.keypoints.left_index      ) 
+        cls.copy_xy(pnts.right_index,       posePerson.keypoints.right_index     ) 
+        cls.copy_xy(pnts.left_thumb,        posePerson.keypoints.left_thumb      ) 
+        cls.copy_xy(pnts.right_thumb,       posePerson.keypoints.right_thumb     ) 
+        cls.copy_xy(pnts.left_hip ,         posePerson.keypoints.left_hip        ) 
+        cls.copy_xy(pnts.right_hip,         posePerson.keypoints.right_hip       ) 
+        cls.copy_xy(pnts.left_knee,         posePerson.keypoints.left_knee       ) 
+        cls.copy_xy(pnts.right_knee,        posePerson.keypoints.right_knee      ) 
+        cls.copy_xy(pnts.left_ankle,        posePerson.keypoints.left_ankle      ) 
+        cls.copy_xy(pnts.right_ankle,       posePerson.keypoints.right_ankle     ) 
+        cls.copy_xy(pnts.left_heel,         posePerson.keypoints.left_heel       ) 
+        cls.copy_xy(pnts.right_heel,        posePerson.keypoints.right_heel      ) 
+        cls.copy_xy(pnts.left_foot_index,   posePerson.keypoints.left_foot_index ) 
+        cls.copy_xy(pnts.right_foot_index,  posePerson.keypoints.right_foot_index)
+        pnts.timestamp = posePerson.keypoints.timestamp
+        
+    @staticmethod
+    def copy_orientation(orientation, posePerson):
+        orientation.x = posePerson.orientation.x
+        orientation.y = posePerson.orientation.y
+        orientation.z = posePerson.orientation.z
+        orientation.timestamp = posePerson.orientation.timestamp
 
     @staticmethod
     def copy_xy(localxy, xy):
