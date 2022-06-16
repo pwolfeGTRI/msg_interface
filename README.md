@@ -1,7 +1,17 @@
 # Skai AI Standard Message Definitions & Interface Classes
 
-# NOTE: 
-run `./init_repo.sh` after you clone 
+## **BIG DEVELOPER NOTE**:
+
+Run this after your first clone 
+```bash
+./init_repo.sh
+```
+
+To push changes to all remotes:
+```bash
+./push_all.sh
+```
+
 
 ## Adding this as a submodule
 
