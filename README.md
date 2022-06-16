@@ -4,7 +4,7 @@
 
 Run this after your first clone 
 ```bash
-./init_repo.sh
+./init_remotes.sh
 ```
 
 To push changes to all remotes:
@@ -12,6 +12,13 @@ To push changes to all remotes:
 ./push_all.sh
 ```
 
+### AUTHENTICATION NOTE: 
+- skai_remote relies on a personal auth token and access to skai enterprise github
+- gtri_remote relies on being on the gtri vpn and eosl bitbucket access + ssh key
+
+`skai-aurora` machines have the `skai_remote` auth setup already globally. 
+
+`gtri_remote` requires additional setup if machine not on network (openconnect to gtri eosl vpn)
 
 ## Adding this as a submodule
 

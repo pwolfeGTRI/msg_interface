@@ -4,7 +4,13 @@
 # NOTE: relies on
 # - ssh key auth for gtri_remote
 # - gh auth using personal token for skai_remote
+
+# remove if exists
 git remote rm origin
+git remote rm skai_remote
+git remote rm gtri_remote
+
+# add remotes
 git remote add skai_remote https://github.com/skAIVision/skai-ai-message-interface.git
 git remote add gtri_remote ssh://git@eoslbitbucket.eosl.gtri.org:7999/adat/skai-ai-message-interface.git
 
