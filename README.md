@@ -9,7 +9,7 @@ Run this after your first clone
 
 To push changes to all remotes:
 ```bash
-./push_all.sh
+./push_all_remotes.sh
 ```
 
 ### AUTHENTICATION NOTE: 
