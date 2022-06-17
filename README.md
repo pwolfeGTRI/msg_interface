@@ -1,11 +1,14 @@
 # Skai AI Standard Message Definitions & Interface Classes
 
-## **BIG DEVELOPER NOTE**:
+## Cloning
 
-Run this after your first clone 
 ```bash
+git clone https://github.com/skAIVision/skai-ai-message-interface.git
+cd skai-ai-message-interface
 ./init_remotes.sh
 ```
+
+## Pushing
 
 To push changes to all remotes:
 ```bash
