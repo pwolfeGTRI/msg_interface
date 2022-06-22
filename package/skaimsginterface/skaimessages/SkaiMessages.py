@@ -14,7 +14,7 @@ from skaiproto.LocalTrackProtoMsg_pb2 import LocalTrackProtoMsg
 from skaiproto.PoseProtoMsg_pb2 import PoseProtoMsg
 from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
 from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
-from skaiproto.SkaiboxCmdProtoMsg_pb2 import DealershipManagerCmdProtoMsg, CameraCalibrationCmdProtoMsg, CameraGroupProtoMsg, DatabaseCloudProtoMsg
+from skaiproto.SkaiboxCmdProtoMsg_pb2 import DealershipManagerCmdProtoMsg, CameraCalibrationCmdProtoMsg, CameraGroupCmdProtoMsg, DatabaseCloudCmdProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -381,13 +381,13 @@ class CameraCalibrationCmdMsg(SkaiMsg):
 
 class CameraGroupCmdMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.CMD_CAMERAGROUP
-    proto_msg_class = CameraGroupProtoMsg
+    proto_msg_class = CameraGroupCmdProtoMsg
     mlengine_send_ports = list(range(7400, 7500))
     skaibox_send_ports = list(range(7500, 7600))
 
-class DatabaseCloudMsg(SkaiMsg):
+class DatabaseCloudCmdMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.CMD_DATABASECLOUD
-    proto_msg_class = DatabaseCloudProtoMsg
+    proto_msg_class = DatabaseCloudCmdProtoMsg
     mlengine_send_ports = list(range(7600, 7700))
     skaibox_send_ports = list(range(7700, 7800))
 
