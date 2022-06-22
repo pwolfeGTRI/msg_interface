@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package skaimsg.skaiboxcmd;
+
+enum SkaiboxCmdIn {
+    // dealership handler commands
+    EMPTY_IN = 0;
+    PING = 1;
+    QUERY_HEARTBEAT = 2;
+
+    // camera calibration commands
+    START_CAMERA_CALIBRATION = 3;
+    START_FIDUCIAL_FINDER = 4;
+    START_CAMERA_POSE_CALC = 5;
+
+    // camera group commands
+    RUN_ALL_CAMERAGROUPS = 6;
+    STOP_ALL_CAMERAGROUPS = 7;
+    RESTART_ALL_CAMERAGROUPS = 8;
+    RUN_CAMERAGROPUS = 9;
+    STOP_CAMERAGROUPS = 10;
+    RESTART_CAMERAGROUPS = 11;
+    REFRESH_CAMERA_INFO = 12;
+    QUERY_CAMERA_GROUP_STATUS = 13;
+
+    // database/cloud commands
+    QUERY_DATABASE_STATUS = 14;
+    QUERY_CLOUD_STATUS = 15;
+}
+
+enum SkaiboxCmdOut {
+    // dealership handler responses
+    EMPTY_OUT = 0;
+    PONG = 1;
+    HEARTBEAT = 2;
+
+    // camera calibration responses
+    CAMERA_NEEDS_CALIBRATION = 3;
+    CAMERA_CALIBRATION_SUCCESS = 4;
+    CAMERA_CALIBRATION_FAIL = 5;
+    FIDUCIAL_FINDER_SUCCESS = 6;
+    FIDUCIAL_FINDER_FAIL = 7;
+    CAMERA_POSE_CALC_SUCCESS = 8;
+    CAMERA_POSE_CALC_FAIL = 9;
+
+    // camera group responses
+    RUN_CAMERAGROUP_SUCCESS = 10;
+    RUN_CAMERAGROUP_FAIL = 11;
+    STOP_CAMERAGROUP_SUCCESS = 12;
+    STOP_CAMERAGROUP_FAIL = 13;
+    RESTART_CAMERAGROUP_SUCCESS = 14;
+    RESTART_CAMERAGROUP_FAIL = 15;
+    CAMERA_GROUP_RUNNING = 16;
+    CAMERA_GROUP_STOPPED = 17;
+    CAMERA_GROUP_RESTARTING = 18;
+    CAMERA_INFO_REFRESH_SUCCESS = 19;
+    CAMERA_INFO_REFRESH_FAIL = 20;
+
+    // database/cloud responses
+    DATABASE_READY = 21;
+    DATABASE_NOT_READY = 22;
+    CLOUD_CONNECTION_SUCCESS = 23;
+    CLOUD_CONNECTION_FAIL = 24;
+}
+
+message DealershipManagerCmdProtoMsg {
+    SkaiboxCmdIn cmd_in = 1;
+    SkaiboxCmdOut cmd_out = 2;
+    string data = 3;
+}
+
+message CameraCalibrationCmdProtoMsg{
+    SkaiboxCmdIn cmd_in = 1;
+    SkaiboxCmdOut cmd_out = 2;
+    string data = 3;
+}
+
+message CameraGroupCmdProtoMsg {
+    SkaiboxCmdIn cmd_in = 1;
+    SkaiboxCmdOut cmd_out = 2;
+    
+    // camera group range is [camera_group_start, camera_group_end]
+    uint64 camera_group_start = 3;
+    uint64 camera_group_end = 4;
+}
+
+message DatabaseCloudCmdProtoMsg {
+    SkaiboxCmdIn cmd_in = 1;
+    SkaiboxCmdOut cmd_out = 2;
+}

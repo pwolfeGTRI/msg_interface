@@ -14,6 +14,7 @@ from skaiproto.LocalTrackProtoMsg_pb2 import LocalTrackProtoMsg
 from skaiproto.PoseProtoMsg_pb2 import PoseProtoMsg
 from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
 from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
+from skaiproto.SkaiboxCmdProtoMsg_pb2 import DealershipManagerCmdProtoMsg, CameraCalibrationCmdProtoMsg, CameraGroupProtoMsg, DatabaseCloudProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -32,6 +33,8 @@ class SkaiMsg(ABC):
     CLASSIFICATION = SkaimotProtoMsg_pb2.Classification
     ACTION = ActionProtoMsg_pb2.ActionType
     SKAIEVENT = SkaiEventProtoMsg_pb2.SkaiEvent
+    SKAIBOXCMD_IN = SkaiboxCmdProtoMsg_pb2.SkaiboxCmdIn
+    SKAIBOXCMD_OUT = SkaiboxCmdProtoMsg_pb2.SkaiboxCmdOut
 
     # add to list check max length
     @classmethod
@@ -54,6 +57,11 @@ class SkaiMsg(ABC):
         LOCALTRACK = 4
         GLOBALTRACK = 5
         ACTION = 6
+        CMD_DEALERSHIPMANAGER = 7
+        CMD_CAMERACALIBRATION = 8
+        CMD_CAMERAGROUP = 9
+        CMD_DATABASECLOUD = 10
+
 
         @classmethod
         def get_class_from_id(cls, id):
@@ -69,6 +77,14 @@ class SkaiMsg(ABC):
                 return GlobalTrackMsg
             elif id == cls.ACTION.value:
                 return ActionMsg
+            elif id == cls.CMD_DEALERSHIPMANAGER.value:
+                return DealershipManagerCmdMsg
+            elif id == cls.CMD_CAMERACALIBRATION.value:
+                return CameraCalibrationCmdMsg
+            elif id == cls.CMD_CAMERAGROUP.value:
+                return CameraGroupCmdMsg
+            elif id == cls.CMD_DATABASECLOUD:
+                return DatabaseCloudCmdMsg
             else:
                 return None
 
@@ -351,6 +367,29 @@ class ActionMsg(SkaiMsg):
     proto_msg_class = ActionProtoMsg
     ports = list(range(6500, 6600))
 
+class DealershipManagerCmdMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.CMD_DEALERSHIPMANAGER
+    proto_msg_class = DealershipManagerCmdProtoMsg
+    mlengine_send_ports = list(range(7000, 7100)) # adat sending port, skaibox sending port
+    skaibox_send_ports = list(range(7100, 7200))
+
+class CameraCalibrationCmdMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.CMD_CAMERACALIBRATION
+    proto_msg_class = CameraCalibrationCmdProtoMsg
+    mlengine_send_ports = list(range(7200, 7300))
+    skaibox_send_ports = list(range(7300,7400))
+
+class CameraGroupCmdMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.CMD_CAMERAGROUP
+    proto_msg_class = CameraGroupProtoMsg
+    mlengine_send_ports = list(range(7400, 7500))
+    skaibox_send_ports = list(range(7500, 7600))
+
+class DatabaseCloudMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.CMD_DATABASECLOUD
+    proto_msg_class = DatabaseCloudProtoMsg
+    mlengine_send_ports = list(range(7600, 7700))
+    skaibox_send_ports = list(range(7700, 7800))
 
 if __name__=='__main__':
     
