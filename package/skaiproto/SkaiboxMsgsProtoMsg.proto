@@ -2,7 +2,11 @@ syntax = "proto3";
 
 package skaimsg.skaiboxcmd;
 
-enum SkaiboxCmdIn {
+enum SkaiboxCommand {
+    /*
+    Commands sent by skaibox to the dealership handler/mlengine
+    */
+
     // dealership handler commands
     EMPTY_IN = 0;
     PING = 1;
@@ -28,7 +32,11 @@ enum SkaiboxCmdIn {
     QUERY_CLOUD_STATUS = 15;
 }
 
-enum SkaiboxCmdOut {
+enum SkaiboxResponse {
+    /*
+    Responses sent to the skaibox agent from the dealershiphandler/mlengine
+    */
+
     // dealership handler responses
     EMPTY_OUT = 0;
     PONG = 1;
@@ -63,28 +71,35 @@ enum SkaiboxCmdOut {
     CLOUD_CONNECTION_FAIL = 24;
 }
 
-message DealershipManagerCmdProtoMsg {
-    SkaiboxCmdIn cmd_in = 1;
-    SkaiboxCmdOut cmd_out = 2;
+message SkaiboxDealershipMsgProtoMsg {
+    oneof msg {
+        SkaiboxCommand command = 1;
+        SkaiboxResponse response = 2;
+    }
     string data = 3;
 }
 
-message CameraCalibrationCmdProtoMsg{
-    SkaiboxCmdIn cmd_in = 1;
-    SkaiboxCmdOut cmd_out = 2;
+message SkaiboxCameraCalibrationMsgProtoMsg{
+    oneof msg {
+        SkaiboxCommand command = 1;
+        SkaiboxResponse response = 2;
+    }
     string data = 3;
 }
 
-message CameraGroupCmdProtoMsg {
-    SkaiboxCmdIn cmd_in = 1;
-    SkaiboxCmdOut cmd_out = 2;
-    
+message SkaiboxCameraGroupMsgProtoMsg {
+    oneof msg {
+        SkaiboxCommand command = 1;
+        SkaiboxResponse response = 2;
+    }
     // camera group range is [camera_group_start, camera_group_end]
     uint64 camera_group_start = 3;
     uint64 camera_group_end = 4;
 }
 
-message DatabaseCloudCmdProtoMsg {
-    SkaiboxCmdIn cmd_in = 1;
-    SkaiboxCmdOut cmd_out = 2;
+message SkaiboxDatabaseCloudMsgProtoMsg {
+    oneof msg {
+        SkaiboxCommand command = 1;
+        SkaiboxResponse response = 2;
+    }
 }
