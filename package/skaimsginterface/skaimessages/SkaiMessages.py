@@ -370,8 +370,8 @@ class ActionMsg(SkaiMsg):
 class SkaiboxDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAIBOX_DEALERSHIP
     proto_msg_class = SkaiboxDealershipMsgProtoMsg
-    ports_command = list(range(7000, 7100)) # adat sending port, skaibox sending port
-    ports_response = list(range(7100, 7200))
+    ports_command = list(range(7000, 7100))     # ports to send/recieve commands 
+    ports_response = list(range(7100, 7200))    # ports to send/recieve responses
 
 class SkaiboxCameraCalibrationMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAIBOX_CAMERACALIBRATION
