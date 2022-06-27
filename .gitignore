@@ -1,6 +1,8 @@
 # vscode folder
 .vscode
 
+# skai binary files
+*.skaibin
 
 # example output prints
 example_msg_prints

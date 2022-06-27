@@ -8,11 +8,13 @@ import socketserver
 import struct
 
 from skaimsginterface.skaimessages import *
+from skaimsginterface.replay import FileRecorder
 
+import code
 
 class MultiportTcpListener:
 
-    def __init__(self, portlist, multiport_callback_func, verbose=False):
+    def __init__(self, portlist, multiport_callback_func, verbose=False, recordfile=None):
         """skai multiport udp listener
 
         Args:
@@ -32,12 +34,29 @@ class MultiportTcpListener:
                     'portlist must be a list of integers or a single port integer'
                 )
 
+        # initialize file recorder if recordfile specified
+        if recordfile is not None:
+            self.enable_recording = True
+            print('opening recorder...')
+            self.recorder = FileRecorder(recordfile)
+            self.recorder.open()
+            
+        else:
+            self.enable_recording = False
+            self.recorder = None
+
         # initialize
         self.verbose = verbose
         self.portlist = portlist
         self.multiport_callback_func = multiport_callback_func
         self.start_listeners()
 
+    def __del__(self):
+        # initialize file recorder if recordfile specified
+        if self.enable_recording:
+            print('closing recorder...')
+            self.recorder.close()
+    
     def start_server(self, port):
         self.SinglePortListener(('0.0.0.0', port), self)
 
@@ -55,7 +74,13 @@ class MultiportTcpListener:
             t.daemon = True  # non blocking
             t.start()
 
-    def multiport_callback(self, data, server_address):
+    def multiport_callback(self, data, server_address, firstpacket_timestamp):
+        if self.enable_recording:    
+            port = server_address[1]
+            if self.verbose:
+                print(f'recording msg length {len(data)} on port: {port} firstpacket_ts {firstpacket_timestamp}')
+            self.recorder.record(data, firstpacket_timestamp, port)
+
         self.multiport_callback_func(data, server_address)
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
@@ -72,9 +97,11 @@ class MultiportTcpListener:
                     if not bytes_in:
                         continue  # continue if no new message
 
-                    # otherwise parse the length
+                    # otherwise log timestamp of first packet arrival
+                    firstpacket_timestamp = time.time()
+
+                    # and parse the length
                     length = struct.unpack('!I', bytes_in)[0]
-                    # print(f'decoded length of message to be {length} bytes')
 
                     # receive in chunks
                     chunksize = 4096
@@ -96,7 +123,7 @@ class MultiportTcpListener:
                     # socket.sendto(data.upper(), self.client_address)
 
                     # call server callback function with data
-                    self.server.single_port_callback(data)
+                    self.server.single_port_callback(data, firstpacket_timestamp)
 
         def __init__(self, server_address, multiport_listener):
             # store reference to parent class
@@ -113,11 +140,11 @@ class MultiportTcpListener:
             print(f'now listening on {self.server_address}')
             self.serve_forever()
 
-        def single_port_callback(self, data):
+        def single_port_callback(self, data, firstpacket_timestamp):
             # do something single port wise if you want here...
             # otherwise pass data to higher server
             self.multiport_listener.multiport_callback(data,
-                                                       self.server_address)
+                                                       self.server_address, firstpacket_timestamp)
 
 
 def example_multiport_callback_func(data, server_address):

@@ -182,20 +182,20 @@ class SkaimotMsg(SkaiMsg):
     """ person metadata setting helper functions """
     
     @staticmethod
-    def set_bbox(person, tlbr, timestamp):
+    def set_bbox(person, tlbr, timestamp=None):
         box = person.box
         box.topleft.x, box.topleft.y, box.botright.x, box.botright.y = tlbr
         if timestamp:
             box.timestamp = timestamp
 
     @staticmethod
-    def set_face_embed(person, face_embed, timestamp):
+    def set_face_embed(person, face_embed, timestamp=None):
         person.face_embedding.vals.extend(face_embed)
         if timestamp:
             person.face_embedding.timestamp = timestamp
 
     @staticmethod
-    def set_bbox_embed(person, bbox_embed, timestamp):
+    def set_bbox_embed(person, bbox_embed, timestamp=None):
         person.bbox_embedding.vals.extend(bbox_embed)
         if timestamp:
             person.bbox_embedding.timestamp = timestamp
@@ -268,7 +268,7 @@ class FeetPosMsg(SkaiMsg):
     """ person metadata setting helper functions """
 
     @staticmethod
-    def set_feet_pos(person, xyz, timestamp):
+    def set_feet_pos(person, xyz, timestamp=None):
         feetpos = person.feet_position
         feetpos.x, feetpos.y, feetpos.z = xyz
         if timestamp:

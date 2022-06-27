@@ -8,8 +8,11 @@ from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
 from skaimsginterface.udp import UdpSender
 
-def create_example_skaimotmsg(num_people=2, num_cams=5):    
-    trackid = 69
+def create_example_skaimotmsg(num_people=2, num_cams=5, id=None):    
+    if id is None:
+        trackid = 69
+    else:
+        trackid = id
     camera_mac = '00:10:FA:66:42:11'
     camera_id = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_mac)
     timestamp = int(time.time() * 1e9)  # integer version of double * 1e9
@@ -34,8 +37,8 @@ def create_example_skaimotmsg(num_people=2, num_cams=5):
             person.id = trackid
             person.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
             SkaimotMsg.set_bbox(person, bbox)
-            SkaimotMsg.set_face_embed(person, face_embed)
-            SkaimotMsg.set_bbox_embed(person, bbox_embed)
+            # SkaimotMsg.set_face_embed(person, face_embed)
+            # SkaimotMsg.set_bbox_embed(person, bbox_embed)
     return msg
 
 if __name__=='__main__':

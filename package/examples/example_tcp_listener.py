@@ -7,7 +7,7 @@ def example_multiport_callback_func(data, server_address):
     msg_type, msg = SkaiMsg.unpack(data)
     print(f'got some data length {len(data)} from {server_address} msg type {msg_type}\n')
     # unpack_and_print_cam_id_and_timestamp_per_frame(data)
-    print(msg)
+    # print(msg)
     # print(msg.camera_frames[0].people_in_frame)
     # print(msg.camera_frames[0].people_in_frame[0].orientation)
 
@@ -33,7 +33,12 @@ if __name__ == '__main__':
         ]
 
     # listen
-    MultiportTcpListener(portlist=ports, multiport_callback_func=example_multiport_callback_func)
+    mpl = MultiportTcpListener(
+        portlist=ports,
+        multiport_callback_func=example_multiport_callback_func,
+        # recordfile='localtest_feet_and_skaimot.skaibin',
+        verbose=True)
+        
 
     # stay active until ctrl+c input
     try:
