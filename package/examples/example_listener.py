@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+
+from argparse import ArgumentParser
+
 from skaimsginterface.skaimessages import *
+from skaimsginterface.tcp import MultiportTcpListener
 from skaimsginterface.udp import MultiportUdpListener
 
 def example_multiport_callback_func(data, server_address):
@@ -7,6 +11,9 @@ def example_multiport_callback_func(data, server_address):
     msg_type, msg = SkaiMsg.unpack(data)
     print(f'got some data length {len(data)} from {server_address} msg type {msg_type}\n')
     # unpack_and_print_cam_id_and_timestamp_per_frame(data)
+    # print(msg)
+    # print(msg.camera_frames[0].people_in_frame)
+    # print(msg.camera_frames[0].people_in_frame[0].orientation)
 
 def unpack_and_print_cam_id_and_timestamp_per_frame(msg_bytes):
     # unpack message
@@ -15,11 +22,17 @@ def unpack_and_print_cam_id_and_timestamp_per_frame(msg_bytes):
     for frame_data in msg.camera_frames:
         # print camera id and timestamp
         print(f'cam id: {frame_data.camera_id}, timestamp: {frame_data.timestamp}')
-    
+
 
 if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'))
+    parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
+    parser.add_argument('--recordfile', help='skaibin file to record to', nargs='?', type=str, default=None)
+    args = parser.parse_args()
+
     # ports to listen to
-    camgroup_idx = 0
+    camgroup_idx = args.camgroup
     ports = [
         SkaimotMsg.ports[camgroup_idx],
         PoseMsg.ports[camgroup_idx],
@@ -30,11 +43,18 @@ if __name__ == '__main__':
         ]
 
     # listen
-    MultiportUdpListener(
-        portlist=ports,
-        multiport_callback_func=example_multiport_callback_func,
-        # recordfile='udptest.skaibin',
-        verbose=True)
+    if args.udp_or_tcp == 'udp':
+        listener = MultiportUdpListener(
+            portlist=ports,
+            multiport_callback_func=example_multiport_callback_func,
+            recordfile=args.recordfile,
+            verbose=True)
+    else: 
+        listener = MultiportTcpListener(
+            portlist=ports,
+            multiport_callback_func=example_multiport_callback_func,
+            recordfile=args.recordfile,
+            verbose=True)        
 
     # stay active until ctrl+c input
     try:
@@ -42,3 +62,6 @@ if __name__ == '__main__':
             time.sleep(1)
     except KeyboardInterrupt:
         print('exiting now...')
+        listener.__del__()
+        exit(1)
+        

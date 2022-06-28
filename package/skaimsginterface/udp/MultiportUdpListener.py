@@ -26,20 +26,17 @@ class MultiportUdpListener:
         self.multiport_callback_func = multiport_callback_func
 
         # initialize file recorder if recordfile specified
+        self.recorder = None
         if recordfile is not None:
-            self.enable_recording = True
             print('opening recorder...')
             self.recorder = FileRecorder(recordfile)
             self.recorder.open()
-        else:
-            self.enable_recording = False
-            self.recorder = None
 
         self.start_listeners()
 
     def __del__(self):
         # initialize file recorder if recordfile specified
-        if self.enable_recording:
+        if self.recorder is not None:
             print('closing recorder...')
             self.recorder.close()
 
@@ -61,7 +58,7 @@ class MultiportUdpListener:
             t.start()
 
     def multiport_callback(self, data, server_address, firstpacket_timestamp):
-        if self.enable_recording:    
+        if self.recorder is not None:
             port = server_address[1]
             if self.verbose:
                 print(f'recording msg length {len(data)} on port: {port} firstpacket_ts {firstpacket_timestamp}')

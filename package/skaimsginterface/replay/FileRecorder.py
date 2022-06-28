@@ -2,17 +2,34 @@
 
 from skaimsginterface.skaimessages import *
 import struct
+from pathlib import Path
+from queue import Queue, Empty
+from threading import Thread
 
 class FileRecorder:
-    def __init__(self, filepath, append=False) -> None:
+    def __init__(self, filepath, append=False) -> None:       
+        # check filepath ends in skaibin
+        if not isinstance(filepath, str):
+            raise TypeError('FileRecorder file must by type str')
+        if filepath.split('.')[-1] != 'skaibin':
+            raise ValueError('FileRecorder file must end in ".skaibin"')
+        
         self.filepath = filepath
         self.modifier = 'ab' if append else 'wb'
         self.fd = None
 
     def open(self):
+        # create directory if needed
+        self.create_directory_if_needed(self.filepath)
         # open with either append or write binary
         print(f'opening file {self.filepath} in mode {self.modifier}')
-        self.fd = open(self.filepath, self.modifier)
+        self.fd = SafeWriter(self.filepath, self.modifier)
+        # self.fd = open(self.filepath, self.modifier)
+
+    @staticmethod
+    def create_directory_if_needed(filepath):
+        p = Path(filepath)
+        p.parent.mkdir(exist_ok=True, parents=True)
 
     def close(self):
         if self.fd is not None:
@@ -84,10 +101,31 @@ class FileRecorder:
 
     @staticmethod
     def _readRecordedBytes(filepath):
-        with open(filepath, 'rb') as f:
-            ret = f.read()
-        return ret
+        return Path(filepath).read_bytes()
 
+class SafeWriter:
+    def __init__(self, *args):
+        self.filewriter = open(*args)
+        self.queue = Queue()
+        self.finished = False
+        Thread(name = "SafeWriter", target=self.internal_writer).start()  
+    
+    def write(self, data):
+        self.queue.put(data)
+    
+    def internal_writer(self):
+        while not self.finished:
+            try:
+                data = self.queue.get(True, 1)
+            except Empty:
+                continue    
+            self.filewriter.write(data)
+            self.queue.task_done()
+    
+    def close(self):
+        self.queue.join()
+        self.finished = True
+        self.filewriter.close()
 
 if __name__=='__main__':
     from examples.test_skaimot import create_example_skaimotmsg

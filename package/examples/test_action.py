@@ -50,6 +50,7 @@ def create_example_actionmsg(num_people=2, num_cams=5, num_actions=1):
 if __name__=='__main__':
     parser = ArgumentParser()
     parser.add_argument('udp_or_tcp', type=str, help='', choices=('tcp', 'udp'))
+    parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
     args = parser.parse_args()
 
     msg = create_example_actionmsg()
@@ -62,7 +63,7 @@ if __name__=='__main__':
         f.write(f'{msg}')
 
     msg_bytes = ActionMsg.pack(msg, verbose=True)
-    cam_group_idx = 0
+    cam_group_idx = args.camgroup
     if args.udp_or_tcp == 'udp':
         sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
     else:    

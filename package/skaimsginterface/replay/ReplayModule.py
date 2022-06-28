@@ -9,14 +9,20 @@ from skaimsginterface.tcp import TcpSender
 from skaimsginterface.udp import UdpSender
 
 class ReplayModule:
-    def __init__(self, filepath, udp_or_tcp) -> None:
+    def __init__(self, filepath, udp_or_tcp, analyze_only=False) -> None:
+        self.analyze_only = analyze_only
+
         # parses file to get list of tuples: (timestamp, port, bytes2replay)
         retlist = FileRecorder.parseRecordedFileForReplay(filepath)
+
+        print(f'ReplayModule parsed {filepath} for total of {len(retlist)} messages')
 
         self.udp_or_tcp = udp_or_tcp
         
         # separate into dictionary format: d[port] = (timestamp, bytes2replay)
         d = self.separateIntoPorts(retlist)
+        for port in d.keys():
+            print(f"port {port} has {len(d[port])} messages")
         
         # order by timestamp & calc wait duration between messages
         # new format: d[port] = (duration, bytes2replay)
@@ -29,25 +35,18 @@ class ReplayModule:
         # store reference ready for replay
         self.replay_dictionary = d
 
-        # process list
-        self.plist = []
 
     def replay(self):
+        if self.analyze_only:
+            print('analyze only enabled. not replaying...')
+            return
+
         print('starting replay processes...')
         portlist = self.replay_dictionary.keys()
         max_processes = len(portlist)
         with multiprocessing.Pool(processes=max_processes) as p:
             argslist = [(self.udp_or_tcp, p, self.replay_dictionary[p]) for p in portlist]
             p.map(self.singlePortReplay, argslist)
-
-        # spawn processes to replay each message in parallel
-        # for port in self.replaydata.keys():
-        #     self.plist.append(multiprocessing.Process(target=self.singlePortReplay, args=(port, self.replaydata[port],)))
-
-        
-        # for p in self.plist:
-        #     p.start()
-    
 
     @staticmethod
     def singlePortReplay(argsTuple):
