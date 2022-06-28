@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import time
-import numpy as np
-import os
+from pathlib import Path
 from argparse import ArgumentParser
 
 from skaimsginterface.skaimessages import *
@@ -46,19 +45,23 @@ def create_example_posemsg(num_people=2, num_cams=5):
 
 if __name__=='__main__':
     parser = ArgumentParser()
-    parser.add_argument('udp_or_tcp', type=str, help='', choices=('tcp', 'udp'))
+    parser.add_argument('udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'))
+    parser.add_argument('--exampleout', help='dump an example message text file under a folder example_msg_prints', nargs='?', type=bool, const=True, default=False)
+    parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
     args = parser.parse_args()
     
     msg = create_example_posemsg()
        
     # write example message to file for viewing
-    filename = 'example_msg_prints/pose.txt'
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, 'w') as f:
-        f.write(f'{msg}')
+    if args.exampleout:
+        filename = 'example_msg_prints/pose.txt'
+        print(f'wrote example message to {filename}')
+        p = Path(filename)
+        p.parent.mkdir(exist_ok=True, parents=True)
+        p.write_text(f'{msg}')
 
     msg_bytes = PoseMsg.pack(msg, verbose=True)
-    cam_group_idx = 0
+    cam_group_idx = args.camgroup
     if args.udp_or_tcp == 'udp':
         sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
     else:    

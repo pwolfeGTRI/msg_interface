@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# if it breaks contact: Philip Wolfe <pwolfe854@gmail.com>
+
 from skaimsginterface.skaimessages import *
 import struct
 from pathlib import Path

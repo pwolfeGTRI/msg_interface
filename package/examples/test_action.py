@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import time
-import os
+from pathlib import Path
 from argparse import ArgumentParser
 
 from skaimsginterface.skaimessages import *
@@ -50,18 +50,20 @@ def create_example_actionmsg(num_people=2, num_cams=5, num_actions=1):
 if __name__=='__main__':
     parser = ArgumentParser()
     parser.add_argument('udp_or_tcp', type=str, help='', choices=('tcp', 'udp'))
+    parser.add_argument('--exampleout', help='dump an example message text file under a folder example_msg_prints', nargs='?', type=bool, const=True, default=False)
     parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
     args = parser.parse_args()
 
     msg = create_example_actionmsg()
-    # print(msg)
-       
+    
     # write example message to file for viewing
-    filename = 'example_msg_prints/action.txt'
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, 'w') as f:
-        f.write(f'{msg}')
-
+    if args.exampleout:
+        filename = 'example_msg_prints/action.txt'
+        print(f'wrote example message to {filename}')
+        p = Path(filename)
+        p.parent.mkdir(exist_ok=True, parents=True)
+        p.write_text(f'{msg}') 
+    
     msg_bytes = ActionMsg.pack(msg, verbose=True)
     cam_group_idx = args.camgroup
     if args.udp_or_tcp == 'udp':

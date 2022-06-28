@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 
+# if it breaks contact: Philip Wolfe <pwolfe854@gmail.com>
+
 from skaimsginterface.replay.FileRecorder import FileRecorder
 import multiprocessing
-import code
 
 from skaimsginterface.skaimessages import *
 from skaimsginterface.tcp import TcpSender
 from skaimsginterface.udp import UdpSender
 
 class ReplayModule:
-    def __init__(self, filepath, udp_or_tcp, analyze_only=False) -> None:
+    def __init__(self, filepath, udp_or_tcp, analyze_only=False, camgroupchange=None) -> None:
         self.analyze_only = analyze_only
 
         # parses file to get list of tuples: (timestamp, port, bytes2replay)
@@ -21,9 +22,10 @@ class ReplayModule:
         
         # separate into dictionary format: d[port] = (timestamp, bytes2replay)
         d = self.separateIntoPorts(retlist)
+        print(f'camera group number: {self.getCameraGroupNum(d)}')
         for port in d.keys():
             print(f"port {port} has {len(d[port])} messages")
-        
+           
         # order by timestamp & calc wait duration between messages
         # new format: d[port] = (duration, bytes2replay)
         for port in d.keys():
@@ -32,9 +34,12 @@ class ReplayModule:
         # calc earliest time among the ports and duration based on that
         d = self.calcWaitTimeBeforeSend(d)
 
+        # remap camera group ports if desired
+        if camgroupchange is not None:
+            d = self.remapToNewCameraGroup(d, camgroupchange)
+
         # store reference ready for replay
         self.replay_dictionary = d
-
 
     def replay(self):
         if self.analyze_only:
@@ -108,10 +113,25 @@ class ReplayModule:
         # return new dictionary
         return d
 
+    @classmethod
+    def remapToNewCameraGroup(cls, port_dict, newcamgroup):
+        original_camgroup = cls.getCameraGroupNum(port_dict)
+        d = {}
+        for port in port_dict.keys():
+            portstr = str(port)
+            newport = int(portstr[:2] + str(newcamgroup))
+            d[newport] = port_dict[port]
+        return d
+
     @staticmethod
-    def remapToNewCameraGroup(retlist):
-        # TODO actually implement it here
-        return retlist
+    def getCameraGroupNum(port_dict):
+        port = list(port_dict.keys())[0]
+        portstr = str(port)
+        if len(portstr) != 4:
+            raise ValueError(f'{port} is invalid port type. must be 4 digits long')
+        camgroupnum = int(portstr[-2:])
+        return camgroupnum
+
 
 if __name__=='__main__':
     

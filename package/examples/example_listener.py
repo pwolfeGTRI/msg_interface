@@ -63,5 +63,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print('exiting now...')
         listener.__del__()
-        exit(1)
         
