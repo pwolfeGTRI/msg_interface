@@ -35,6 +35,11 @@ class UdpSender:
             self.sock.sendto(msg_bytes[idx:idx+packet_size], self.destination)
             time.sleep(self.inter_packet_delay_s)
             idx += packet_size
+        if self.verbose:
+            print(
+                # length added in front as an unsigned int
+                f'sent { SkaiMsg.getMessageTypeName(msg_bytes)} message with length {len(msg_bytes)}'
+            )
         
 
 def create_example_skaimotmsg(num_people=2, num_cams=5):    

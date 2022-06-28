@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 import time
-import types
 import threading
 import socketserver
 import struct
-import math
 from skaimsginterface.skaimessages import *
-
+from skaimsginterface.replay import FileRecorder
 
 class MultiportUdpListener:
 
-    def __init__(self, portlist, multiport_callback_func, verbose=False):
+    def __init__(self, portlist, multiport_callback_func, verbose=False, recordfile=None):
         """skai multiport udp listener
 
         def example_multiport_callback_func(data, server_address):
@@ -26,7 +24,24 @@ class MultiportUdpListener:
         self.verbose = verbose
         self.portlist = portlist
         self.multiport_callback_func = multiport_callback_func
+
+        # initialize file recorder if recordfile specified
+        if recordfile is not None:
+            self.enable_recording = True
+            print('opening recorder...')
+            self.recorder = FileRecorder(recordfile)
+            self.recorder.open()
+        else:
+            self.enable_recording = False
+            self.recorder = None
+
         self.start_listeners()
+
+    def __del__(self):
+        # initialize file recorder if recordfile specified
+        if self.enable_recording:
+            print('closing recorder...')
+            self.recorder.close()
 
     def start_udpserv(self, port):
         self.MySinglePortListener(('0.0.0.0', port), self)
@@ -45,7 +60,13 @@ class MultiportUdpListener:
             t.daemon = True  # non blocking
             t.start()
 
-    def multiport_callback(self, data, server_address):
+    def multiport_callback(self, data, server_address, firstpacket_timestamp):
+        if self.enable_recording:    
+            port = server_address[1]
+            if self.verbose:
+                print(f'recording msg length {len(data)} on port: {port} firstpacket_ts {firstpacket_timestamp}')
+            self.recorder.record(data, firstpacket_timestamp, port)
+
         self.multiport_callback_func(data, server_address)
 
     class MySinglePortListener(socketserver.ThreadingUDPServer):
@@ -86,6 +107,7 @@ class MultiportUdpListener:
                     packet_count = struct.unpack('!I', data)[0]
                     # prep for reading chunks
                     self.new_msg_flag = False
+                    self.firstpacket_timestamp = time.time()
                     self.databuff = bytes()
                     self.packet_idx = 0
                     self.total_num_packets = packet_count
@@ -100,7 +122,7 @@ class MultiportUdpListener:
                     # clear flag
                     self.new_msg_flag = True
                     # pass data to multiport class
-                    self.multiport_listener.multiport_callback(self.databuff, self.server_address)
+                    self.multiport_listener.multiport_callback(self.databuff, self.server_address, self.firstpacket_timestamp)
 
 def example_multiport_callback_func(data, server_address):
     # store it, unpack, etc do as you wish

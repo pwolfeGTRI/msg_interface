@@ -39,8 +39,7 @@ class MultiportTcpListener:
             self.enable_recording = True
             print('opening recorder...')
             self.recorder = FileRecorder(recordfile)
-            self.recorder.open()
-            
+            self.recorder.open()    
         else:
             self.enable_recording = False
             self.recorder = None

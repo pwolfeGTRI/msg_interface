@@ -30,7 +30,11 @@ if __name__ == '__main__':
         ]
 
     # listen
-    MultiportUdpListener(portlist=ports, multiport_callback_func=example_multiport_callback_func)
+    MultiportUdpListener(
+        portlist=ports,
+        multiport_callback_func=example_multiport_callback_func,
+        # recordfile='udptest.skaibin',
+        verbose=True)
 
     # stay active until ctrl+c input
     try:
