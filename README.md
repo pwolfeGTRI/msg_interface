@@ -61,10 +61,12 @@ RUN cd /root/skaimsginterface_package && ./install_skaimsginterface.sh
 ```
 
 ## Examples
-See `package/examples` folder.
+See [packages/examples/README.md](package/examples/README.md)
 
+Examples folder has many examples to get you setup:
 - `test_*` examples show how to create, pack, and send messages.
-- `example_*_listener.py` examples show how to listen, get message & message type, and get protobuf params from the data
+- `example_listener.py` examples show how to listen, get message & message type, and get protobuf params from the data
+- `replay_skaibin.py` shows how to replay skaibin files recorded by the listener
 
 ### Testing UDP
 ```bash
