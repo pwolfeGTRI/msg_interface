@@ -376,20 +376,20 @@ class SkaiboxDealershipMsg(SkaiMsg):
 class SkaiboxCameraCalibrationMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAIBOX_CAMERACALIBRATION
     proto_msg_class = SkaiboxCameraCalibrationMsgProtoMsg
-    ports_command = list(range(7200, 7300))
-    ports_response = list(range(7300,7400))
+    ports_command = list(range(7000, 7100))     # ports to send/recieve commands 
+    ports_response = list(range(7100, 7200))    # ports to send/recieve responses
 
 class SkaiboxCameraGroupMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAIBOX_CAMERAGROUP
     proto_msg_class = SkaiboxCameraGroupMsgProtoMsg
-    ports_command = list(range(7400, 7500))
-    ports_response = list(range(7500, 7600))
+    ports_command = list(range(7000, 7100))     # ports to send/recieve commands 
+    ports_response = list(range(7100, 7200))    # ports to send/recieve responses
 
 class SkaiboxDatabaseCloudMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAIBOX_DATABASECLOUD
     proto_msg_class = SkaiboxDatabaseCloudMsgProtoMsg
-    ports_command = list(range(7600, 7700))
-    ports_response = list(range(7700, 7800))
+    ports_command = list(range(7000, 7100))     # ports to send/recieve commands 
+    ports_response = list(range(7100, 7200))    # ports to send/recieve responses
 
 if __name__=='__main__':
     
