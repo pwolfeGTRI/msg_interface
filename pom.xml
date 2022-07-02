@@ -15,17 +15,15 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>skai-library-ai_message_interface-protobuf</name>
+    <name>skai-ai-message-interface</name>
     <description>SkAI Protobuf Message Interface for AI engine</description>
 
     <dependencies>
-    <dependency>
-    <groupId>com.google.protobuf</groupId>
-    <artifactId>protobuf-java</artifactId>
-    <version>3.21.2</version>
-
-    </dependency>
-
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.21.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -49,7 +47,7 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>                    
+                <configuration>
                     <protoSourceRoot>${project.basedir}/package</protoSourceRoot>
                     <protocArtifact>com.google.protobuf:protoc:3.4.0:exe:${os.detected.classifier}</protocArtifact>
                 </configuration>
