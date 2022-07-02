@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.skai</groupId>
+        <artifactId>skai-build-parent-maven</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>${root}/skai-build-parent-maven${suffix}</relativePath>
+    </parent>
+
+    <groupId>com.skai</groupId>
+    <artifactId>skai-ai-message-interface</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>skai-library-ai_message_interface-protobuf</name>
+    <description>SkAI Protobuf Message Interface for AI engine</description>
+
+    <dependencies>
+    <dependency>
+    <groupId>com.google.protobuf</groupId>
+    <artifactId>protobuf-java</artifactId>
+    <version>3.21.2</version>
+
+    </dependency>
+
+    </dependencies>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.6.0</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>                    
+                    <protoSourceRoot>${project.basedir}/package</protoSourceRoot>
+                    <protocArtifact>com.google.protobuf:protoc:3.4.0:exe:${os.detected.classifier}</protocArtifact>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>internal.repo</id>
+            <name>SkAI Internal Repository</name>
+            <url>https://nexus.skaivision.net/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>snapshot.repo</id>
+            <name>SkAI snapshot</name>
+            <url>https://nexus.skaivision.net/repository/maven-snapshots/</url>
+        </repository>
+    </repositories>
+
+</project>
