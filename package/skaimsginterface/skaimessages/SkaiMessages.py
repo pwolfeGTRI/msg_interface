@@ -184,7 +184,7 @@ class SkaimotMsg(SkaiMsg):
     @staticmethod
     def set_bbox(person, tlbr, timestamp=None):
         box = person.box
-        box.topleft.y, box.topleft.x, box.botright.y, box.botright.x = tlbr
+        box.topleft.x, box.topleft.y, box.botright.x, box.botright.y = tlbr
         if timestamp:
             box.timestamp = timestamp
 
