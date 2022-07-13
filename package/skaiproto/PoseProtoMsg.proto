@@ -72,11 +72,13 @@ message PoseProtoMsg {
         // list of people in frame
         message Person {
 
+            uint64 id = 1;
+
             // list of keypoints
-            Keypoints keypoints = 1;
+            Keypoints keypoints = 2;
 
             // orientation of the person
-            Vector3D orientation = 2;
+            Vector3D orientation = 3;
 
         }
         repeated Person people_in_frame = 3;
