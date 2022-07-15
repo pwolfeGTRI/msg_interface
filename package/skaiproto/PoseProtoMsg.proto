@@ -72,6 +72,7 @@ message PoseProtoMsg {
         // list of people in frame
         message Person {
 
+            // skaimot id
             uint64 id = 1;
 
             // list of keypoints
