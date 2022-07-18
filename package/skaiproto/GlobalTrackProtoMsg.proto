@@ -53,8 +53,9 @@ message GlobalTrackProtoMsg {
 
     // metadata (database has all the fields of every meta be optional & defaulted to null)
     oneof metadata {
-        PeopleMeta meta_people = 6;
-        VehicleMeta meta_car = 7;
+        EmployeeMeta meta_employee = 6;
+        CustomerMeta meta_people = 7;
+        VehicleMeta meta_car = 8;
     }
 
 }
