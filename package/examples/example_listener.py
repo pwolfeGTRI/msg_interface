@@ -29,8 +29,18 @@ if __name__ == '__main__':
     parser.add_argument('udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'))
     parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
     parser.add_argument('--recordfile', help='skaibin file to record to', nargs='?', type=str, default=None)
+    parser.add_argument('--ipv6', help='use ipv6 instead of ipv4 default', nargs='?', type=bool, const=True, default=False)
     args = parser.parse_args()
 
+    # check for ipv6 loopback
+    if args.ipv6:
+        print(f'please make sure you\'ve enabled ipv6 and ipv6 loopback')
+        print(f'\tsudo sysctl -w net.ipv6.conf.eth0.disable_ipv6=0')
+        print(f'\tsudo sysctl -w net.ipv6.conf.lo.disable_ipv6=0')
+        print(f'\nalso ensure that you enabled ipv6 docker support on your system')
+        print(f'(modify /etc/docker/daemon.json and restart and also setup appropriate ipvlan per container)')
+        input('press enter to acknowledge...')
+    # exit(1)
     # ports to listen to
     camgroup_idx = args.camgroup
     ports = [
@@ -54,6 +64,7 @@ if __name__ == '__main__':
             portlist=ports,
             multiport_callback_func=example_multiport_callback_func,
             recordfile=args.recordfile,
+            ipv6=args.ipv6,
             verbose=True)        
 
     # stay active until ctrl+c input

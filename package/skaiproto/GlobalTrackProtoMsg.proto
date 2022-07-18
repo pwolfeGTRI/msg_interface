@@ -2,25 +2,60 @@ syntax = "proto3";
 
 package skaiproto.globaltrack;
 
+import "skaiproto/SkaimotProtoMsg.proto";
 
+
+message LocationHistory {
+
+    message Location {
+        uint64 timestamp = 1;
+        repeated uint64 camera_ids = 2;
+        repeated string location_tags = 3;
+        // location in meters
+        float x = 4;
+        float y = 5;
+        float z = 6;
+    }
+    repeated Location locations = 1;
+}
+
+// metadata per class (database just stores the set(all_these_fields) )
+message EmployeeMeta {
+    string title = 1;
+    repeated uint64 associated_vehicle_ids = 2; // global track ids
+}
+message CustomerMeta {
+    bool greeted = 1; // only used for customer class
+    repeated uint64 associated_vehicle_ids = 2; // global track ids
+}
+message VehicleMeta {
+    string color = 1;
+    string type = 2; // car vs suv vs lifted RGB gamer edition Ford 150 etc...
+    string model = 3;
+}
 
 message GlobalTrackProtoMsg {
-    // list of local track id numbers associated with this global track
-    repeated uint64 local_track_id_list = 1;
-      
-    // active or not across all cameras
-    bool active = 2;
 
-    // earliest discovered timestampe (epoch * 1e9)    
-    uint64 time_discovered = 3;
+    // global_track_id (database provided, query database first to get id)
+    uint64 global_track_id = 1;
 
-    // classifications over time for this track from each camera
-    
+    // classification
+    skaiproto.skaimot.Classification class = 2;
 
-    // TODO:
-    //  classification_list across cameras across time
-    //  interactions_list
-    //  actions_list
-    //  feet_pos_path
+    // top face embeds (used for employee and customer class only, empty for cars)
+    repeated skaiproto.skaimot.FaceEmbedding top_faces = 3;
+
+    // top bbox embeds
+    repeated skaiproto.skaimot.BBoxEmbedding top_bboxes = 4;
+
+    // location history
+    LocationHistory history = 5;
+
+    // metadata (database has all the fields of every meta be optional & defaulted to null)
+    oneof metadata {
+        EmployeeMeta meta_employee = 6;
+        CustomerMeta meta_people = 7;
+        VehicleMeta meta_car = 8;
+    }
 
 }

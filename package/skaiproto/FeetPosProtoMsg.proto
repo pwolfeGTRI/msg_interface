@@ -32,6 +32,9 @@ message FeetPosProtoMsg {
 
             // feet position xyz float meters
             FeetPosition feet_position = 2;
+
+            // confidence based on within edge of frame or not
+            float confidence = 3;
         }
         repeated Person people_in_frame = 3;
 

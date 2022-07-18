@@ -46,6 +46,7 @@ if __name__=='__main__':
     parser.add_argument('udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'))
     parser.add_argument('--exampleout', help='dump an example message text file under a folder example_msg_prints', nargs='?', type=bool, const=True, default=False)
     parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
+    parser.add_argument('--ipv6', help='use ipv6 instead of ipv4 default', nargs='?', type=bool, const=True, default=False)
     args = parser.parse_args()
 
     msg = create_example_skaimotmsg()
@@ -60,8 +61,12 @@ if __name__=='__main__':
 
     msg_bytes = SkaimotMsg.pack(msg, verbose=True)
     cam_group_idx = args.camgroup
+    if args.ipv6:
+        destination_ip = '::1' # TcpSender.ipv6_localhost
+    else:
+        destination_ip = TcpSender.ipv4_localhost
     if args.udp_or_tcp == 'udp':
-        sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
+        sender = UdpSender(destination_ip, SkaimotMsg.ports[cam_group_idx], verbose=True)
     else:    
-        sender = TcpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
+        sender = TcpSender(destination_ip, SkaimotMsg.ports[cam_group_idx], ipv6=args.ipv6, verbose=True)
     sender.send(msg_bytes)

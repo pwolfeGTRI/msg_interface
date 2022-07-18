@@ -24,9 +24,15 @@ message FaceEmbedding {
     repeated float vals = 1;
 
     // metadata only used by other messages
-    uint64 timestamp = 2;   
+    uint64 timestamp = 2;
     uint64 skaimot_id = 3;
 
+    // skaimot future work (will append a confidence later, for now set to 1.0)
+    float confidence = 4;
+
+    // appended by global track handler
+    uint64 camera_id = 5; // camera mac address turned into serial num
+    BoundingBox box = 6; // tlbr 0 to 1 scaled
 }
 
 // bbox embedding for improving recall/recognition
@@ -37,6 +43,13 @@ message BBoxEmbedding {
     // metadata only used by other messages
     uint64 timestamp = 2;   
     uint64 skaimot_id = 3;
+
+    // skaimot future work (will append a confidence later, for now set to 1.0)
+    float confidence = 4;
+
+    // appended by global track handler
+    uint64 camera_id = 5; // camera mac address turned into serial num
+    BoundingBox box = 6; // tlbr 0 to 1 scaled
 }
 
 // employee vs customer vs uninitialized classification
@@ -44,6 +57,7 @@ enum Classification {
     INIT = 0;
     EMPLOYEE = 1;
     CUSTOMER = 2;
+    VEHICLE = 3;
 }
 
 // the main message
@@ -72,6 +86,9 @@ message SkaimotProtoMsg {
             // embeddings (list of floats) to help recognition
             FaceEmbedding face_embedding = 4;
             BBoxEmbedding bbox_embedding = 5;
+
+            // optional tags like for title, etc...
+            repeated string tags = 6;
         }
         repeated Person people_in_frame = 3;
 

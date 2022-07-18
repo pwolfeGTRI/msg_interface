@@ -5,6 +5,7 @@ import math
 
 import threading
 import socketserver
+import socket
 import struct
 
 from skaimsginterface.skaimessages import *
@@ -14,12 +15,13 @@ import code
 
 class MultiportTcpListener:
 
-    def __init__(self, portlist, multiport_callback_func, verbose=False, recordfile=None):
+    def __init__(self, portlist, multiport_callback_func, ipv6=False, verbose=False, recordfile=None):
         """skai multiport udp listener
 
         Args:
             portlist (list): ports to listen to 
             multiport_callback_func (_type_):  your function, which should have params (data, server_address)
+            ipv6 (bool): default val=False, defaults to using ipv4
             verbose (bool, optional): _description_. Defaults to False.
         """
         # type checking
@@ -45,6 +47,11 @@ class MultiportTcpListener:
         self.verbose = verbose
         self.portlist = portlist
         self.multiport_callback_func = multiport_callback_func
+        self.ipv6 = ipv6
+        if self.ipv6:
+            self.listen_addr = '::'
+        else:
+            self.listen_addr = '0.0.0.0'
         self.start_listeners()
 
     def __del__(self):
@@ -54,7 +61,7 @@ class MultiportTcpListener:
             self.recorder.close()
     
     def start_server(self, port):
-        self.SinglePortListener(('0.0.0.0', port), self)
+        self.SinglePortListener((self.listen_addr, port), self)
 
     def start_listeners(self):
         # create threads sto listen on each port
@@ -127,6 +134,10 @@ class MultiportTcpListener:
 
             # turn on allow reuse ports
             socketserver.ThreadingTCPServer.allow_reuse_address = True
+
+            # switch to ipv6 family if set in multiport listener class
+            if multiport_listener.ipv6:
+                self.address_family = socket.AF_INET6
 
             # instantiate server
             socketserver.ThreadingTCPServer.__init__(self, server_address,

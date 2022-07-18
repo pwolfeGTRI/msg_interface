@@ -9,19 +9,29 @@ from skaimsginterface.skaimessages import *
 
 class TcpSender:
 
+    ipv4_localhost = '127.0.0.1'
+    ipv6_localhost = '::1' # expands to 0:0:0:0:0:0:0:1, listen on '::' for receiving
+    
     def __init__(self,
                  host_ip,
                  port,
                  retryLimit=15,
                  retryTimeoutSec=2,
+                 ipv6=False, # default to ipv4
                  verbose=False) -> None:
+        self.ipv6 = ipv6
         self.verbose = verbose
         self.retryLimit = retryLimit
         self.retryTimeoutSec = retryTimeoutSec
-
+        
         # create tcp socket allowing reuse ports
         self.destination = (host_ip, port)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if self.ipv6:
+            self.sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+            self.localhost = self.ipv6_localhost
+        else:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.localhost = self.ipv4_localhost
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # try to connect with limits
