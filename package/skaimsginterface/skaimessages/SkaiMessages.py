@@ -178,6 +178,7 @@ class SkaimotMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAIMOT
     proto_msg_class = SkaimotProtoMsg
     ports = list(range(6000, 6100))
+    pose_ports = list(range(6600, 6700))
 
     """ person metadata setting helper functions """
     
