@@ -10,38 +10,37 @@ import "skaiproto/ActionProtoMsg.proto";
 // info associated with single person from a single camera
 message LocalTrackProtoMsg {
 
+    // 1e9 * epoch timestamp (from skaimot) 
+    // use same for all frames
+    uint64 timestamp = 1;
+
     message CameraFrame {
         // camera mac address turned into serial num
         uint64 camera_id = 1;
-
-        // person's id from skaimot
-        uint64 skaimot_id = 2;
-        
-        // 1e9 * epoch timestamp (from skaimot)
-        uint64 timestamp = 3;
 
         // objects in frame (people / cars)
         // may have some of these fields emtpy
         message Person {
             // skaimot stuff
-            skaiproto.skaimot.Classification classification = 1;
-            skaiproto.skaimot.BoundingBox bbox = 2;
-            skaiproto.skaimot.FaceEmbedding face_embed = 3;
-            skaiproto.skaimot.BBoxEmbedding bbox_embed = 4;
-            repeated string skaimot_person_tags = 5;
+            uint64 skaimot_id = 1;
+            skaiproto.skaimot.Classification classification = 2;
+            skaiproto.skaimot.BoundingBox box = 3;
+            skaiproto.skaimot.FaceEmbedding face_embed = 4;
+            skaiproto.skaimot.BBoxEmbedding bbox_embed = 5;
+            repeated string skaimot_person_tags = 6;
 
             // feet pos stuff
-            skaiproto.feetpos.FeetPosition feet_position = 6;
-            float feet_position_confidence = 7;
+            skaiproto.feetpos.FeetPosition feet_position = 7;
+            float feet_position_confidence = 8;
             
             // pose stuff
-            skaiproto.pose.Keypoints pose_keypoints = 8;
-            skaiproto.pose.Vector3D pose_orientation = 9;
+            skaiproto.pose.Keypoints pose_keypoints = 9;
+            skaiproto.pose.Vector3D pose_orientation = 10;
 
             // others... 
-            skaiproto.action.Action action_list = 10;
+            skaiproto.action.Action action_list = 11;
         }
-        repeated Person people_in_frame = 4;
+        repeated Person people_in_frame = 2;
     }
-    repeated CameraFrame camera_frames = 1;
+    repeated CameraFrame camera_frames = 2;
 }
