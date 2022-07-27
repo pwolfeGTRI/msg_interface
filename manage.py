@@ -77,7 +77,7 @@ class CommandManager:
         parentdir = Path.cwd().parent.name
         envlist = cls.getStartingDockerComposeEnv()
         
-        basename = 'dockertemplate' # change this
+        basename = 'skaimsginterface' # change this
 
         envlist.append(f'BASENAME={basename}')
         composefile = 'docker-compose.yaml'
