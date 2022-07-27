@@ -103,7 +103,7 @@ For message time synchronization example see local track handler repo, metadata_
   - in `SkaiMsg` -> `MsgType` -> `get_class_from_id` point to your new message class
   - update `msg_type`, `proto_msg_class`, and `ports` accordingly 
   - create any helper functions to pack your message
-  - install with `install_skaimsginterface.sh --upgrade`
+  - install using `install_skaimsginterface.sh` (auto upgrades if already installed)
 3. add an example
   - in `examples/example_listener.py` add your msg to be listened to
   - make an `examples/test_yourmsgname.py` file to show how to pack your message & send to listener. (see other examples and .proto files for reference)
