@@ -31,29 +31,28 @@ git submodule add https://github.com/skAIVision/skai-ai-message-interface.git
 ```
 
 
-## adding this into your docker container 
+## Adding this to a Docker container 
 
-To install in your docker container copy these lines in to install protobufs first:
+Put these lines in your Dockerfile to install protobuf prereqs:
 ```bash
-# google protobufs installation for use with C++ and python 3.5 - 3.7
+# protobuf apt prereqs
+RUN apt update -y && apt install -y autoconf automake libtool curl make g++ unzip python3 python3-pip
+
+# install protobufs 3.19.4 from binaries / include files x86_64 arch
 ARG PROTOBUFVER=3.19.4
-# install protobuf compiler and C++
-RUN apt update && apt-get install -y autoconf automake libtool curl make g++ unzip && \
-    cd /root/ &&\
-    wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protobuf-all-${PROTOBUFVER}.tar.gz && \
-    tar -xzf protobuf-all-${PROTOBUFVER}.tar.gz && \
-    cd protobuf-${PROTOBUFVER} && \
-    ./configure && \
-    make && \
-    make install && \
-    ldconfig && \
-    cd python && \
-    python3 setup.py build --cpp_implementation && \
-    python3 setup.py install --cpp_implementation && \
-    cd /root/ && rm protobuf-all-${PROTOBUFVER}.tar.gz && rm -rf protobuf-${PROTOBUFVER}
+ARG ARCH=x86_64
+ARG PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+ARG BASENAME="protoc-${PROTOBUFVER}-linux-${ARCH}"
+RUN cd /root/ && \
+    curl -LO $PB_REL/download/v${PROTOBUFVER}/${BASENAME}.zip && \
+    unzip ${BASENAME}.zip -d ./${BASENAME} && \
+    cp -R ${BASENAME}/bin/protoc /usr/local/bin/protoc && \
+    cp -R ${BASENAME}/include/google /usr/local/include/ && \
+    pip3 install numpy protobuf==${PROTOBUFVER} && \
+    rm -rf $BASENAME ${BASENAME}.zip
 ```
 
-Then paste in these lines to install the skaimsginterface python package (assumes submodule folder at your top level and name unchanged)
+Then paste in these lines to install the `skaimsginterface` python package (assumes submodule folder at your top level and name unchanged).
 ```bash
 # install skaimsginterface as a python package
 COPY skai-ai-message-interface/package /root/skaimsginterface_package
@@ -68,31 +67,18 @@ Examples folder has many examples to get you setup:
 - `example_listener.py` examples show how to listen, get message & message type, and get protobuf params from the data
 - `replay_skaibin.py` shows how to replay skaibin files recorded by the listener
 
-### Testing UDP
+### Testing the Examples
 ```bash
-# in first terminal
-./attach.sh
-cd examples
-./example_udp_listener.py
+# in first terminal bring up container and attach 
+./manage.py up
+./manage.py attach
+./example_listener.py tcp
 
 # in second terminal
-./attach.sh
-cd examples
-./test_all.sh udp
-```
-
-### Testing TCP
-```bash
-# in first terminal
-./attach.sh
-cd examples
-./example_tcp_listener.py
-
-# in second terminal
-./attach.sh
-cd examples
+./manage.py attach
 ./test_all.sh tcp
 ```
+
 
 ## Message Definitions
 
@@ -119,8 +105,22 @@ For message time synchronization example see local track handler repo, metadata_
   - create any helper functions to pack your message
   - install with `install_skaimsginterface.sh --upgrade`
 3. add an example
-  - in `examples/listener.py` add your msg to be listened to
+  - in `examples/example_listener.py` add your msg to be listened to
   - make an `examples/test_yourmsgname.py` file to show how to pack your message & send to listener. (see other examples and .proto files for reference)
+4. test it out
+    ```bash
+    # in first terminal bring up container and attach 
+    ./manage.py up
+    ./manage.py attach
+    ./example_listener.py tcp
+
+    # in second terminal
+    ./manage.py attach
+    ./test_yourmsgname.py tcp
+
+    # if that works then add your test to the test_all.sh script and run that
+    ./test_all.sh tcp
+    ```
 
 ## Database Interfacing
 See SkaiDatabaseInterface.py
