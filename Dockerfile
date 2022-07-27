@@ -14,7 +14,7 @@ RUN cd /root/ && \
     unzip ${BASENAME}.zip -d ./${BASENAME} && \
     cp -R ${BASENAME}/bin/protoc /usr/local/bin/protoc && \
     cp -R ${BASENAME}/include/google /usr/local/include/ && \
-    pip3 install numpy protobuf==${PROTOBUFVER} && \
+    pip3 install numpy requests protobuf==${PROTOBUFVER} && \
     rm -rf $BASENAME ${BASENAME}.zip
 
 # install skaimsginterface as a python package
