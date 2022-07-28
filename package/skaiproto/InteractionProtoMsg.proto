@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package skaiproto.interaction;
+
+import "skaiproto/SkaimotProtoMsg.proto";
+import "skaiproto/FeetPosProtoMsg.proto";
+import "skaiproto/PoseProtoMsg.proto";
+
+
+message TracksInDealershipProtoMsg {
+    // type definitions
+    message Person {
+        uint64 id = 1;
+        skaiproto.skaimot.Classification classification = 2;
+        skaiproto.feetpos.FeetPosition feet_position = 3;
+        skaiproto.pose.Vector3D orientation = 4;
+        repeated string skaimot_person_tags = 5;
+    }
+    message Vehicle {
+        uint64 id = 1;
+    }
+    
+    // actual message field definitions
+    uint64 timestamp = 1;
+    repeated Person people = 2;
+    repeated Vehicle vehicles = 3;
+}
+
+message InteractionInDealershipProtoMsg {
+    // type definitions
+    message Track {
+        uint64 id = 1;
+        skaiproto.skaimot.Classification classification = 2;
+    }
+    // actual message field definitions
+    uint64 timestamp = 1;
+    float confidence = 2;
+    string interaction_type = 3;
+    Track primary_track = 4;
+    repeated Track associated_tracks = 5;
+}

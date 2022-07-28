@@ -15,6 +15,7 @@ from skaiproto.PoseProtoMsg_pb2 import PoseProtoMsg
 from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
 from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
 from skaiproto.SkaiboxMsgsProtoMsg_pb2 import SkaiboxDealershipMsgProtoMsg, SkaiboxCameraCalibrationMsgProtoMsg, SkaiboxCameraGroupMsgProtoMsg, SkaiboxDatabaseCloudMsgProtoMsg
+from skaiproto.InteractionProtoMsg_pb2 import TracksInDealershipProtoMsg, InteractionInDealershipProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -61,6 +62,8 @@ class SkaiMsg(ABC):
         SKAIBOX_CAMERACALIBRATION = 8
         SKAIBOX_CAMERAGROUP = 9
         SKAIBOX_DATABASECLOUD = 10
+        TRACKS_IN_DEALERSHIP = 11
+        INTERACTION_IN_DEALERSHIP = 12
 
 
         @classmethod
@@ -83,8 +86,12 @@ class SkaiMsg(ABC):
                 return SkaiboxCameraCalibrationMsg
             elif id == cls.SKAIBOX_CAMERAGROUP.value:
                 return SkaiboxCameraGroupMsg
-            elif id == cls.SKAIBOX_DATABASECLOUD:
+            elif id == cls.SKAIBOX_DATABASECLOUD.value:
                 return SkaiboxDatabaseCloudMsg
+            elif id == cls.TRACKS_IN_DEALERSHIP.value:
+                return TracksInDealershipMsg
+            elif id == cls.INTERACTION_IN_DEALERSHIP.value:
+                return InteractionInDealershipMsg
             else:
                 return None
 
@@ -249,7 +256,7 @@ class PoseMsg(SkaiMsg):
             person.keypoints.timestamp = timestamp
 
     @staticmethod
-    def set_orientation(person, vector3d, timestamp):
+    def set_orientation(person, vector3d, timestamp=None):
         person.orientation.x = vector3d[0]
         person.orientation.y = vector3d[1]
         person.orientation.z = vector3d[2]
@@ -392,11 +399,25 @@ class SkaiboxDatabaseCloudMsg(SkaiMsg):
     ports_command = list(range(7000, 7100))     # ports to send/recieve commands 
     ports_response = list(range(7100, 7200))    # ports to send/recieve responses
 
+class TracksInDealershipMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.TRACKS_IN_DEALERSHIP
+    proto_msg_class = TracksInDealershipProtoMsg
+    ports = list(range(6600, 6700))
+
+class InteractionInDealershipMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.INTERACTION_IN_DEALERSHIP
+    proto_msg_class = InteractionInDealershipProtoMsg
+    ports = list(range(6700, 6800))
+
 if __name__=='__main__':
-    
-    camera_macs = ['00:10:FA:66:42:11', '00:10:FA:66:42:12', '00:10:FA:66:42:13']
-    print(camera_macs)
-    camera_ids = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_macs)
-    print(camera_ids)
-    camera_macs_ret = SkaiMsg.convert_camera_id_to_mac_addr_string(camera_ids)
-    print(camera_macs_ret)
+    pass
+
+    msg = TracksInDealershipMsg.new_msg()
+    TracksInDealershipMsg.pack(msg, verbose=True)
+
+    # camera_macs = ['00:10:FA:66:42:11', '00:10:FA:66:42:12', '00:10:FA:66:42:13']
+    # print(camera_macs)
+    # camera_ids = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_macs)
+    # print(camera_ids)
+    # camera_macs_ret = SkaiMsg.convert_camera_id_to_mac_addr_string(camera_ids)
+    # print(camera_macs_ret)

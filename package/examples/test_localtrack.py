@@ -21,80 +21,50 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     # create example base messages
-    example_skaimotmsg = create_example_skaimotmsg()
-    example_posemsg = create_example_posemsg()
-    example_feetposmsg = create_example_feetposmsg()
-    example_actionmsg = create_example_actionmsg()
+    # assume same num people and frames, perfect aligment and everything
+    camnum = 2
+    peoplenum = 3
+    example_skaimotmsg = create_example_skaimotmsg(peoplenum, camnum)
+    example_posemsg = create_example_posemsg(peoplenum, camnum)
+    example_feetposmsg = create_example_feetposmsg(peoplenum, camnum)
 
-    # grab an example frame and person from each example message for example
-    # This super simple exmaple assumes that
-    # all camera id numbers lists are same across message types
-    # more advanced logic needed in real one
-    camera_idx = 0 
-    person_idx = 0
-    action_idx = 0
-    example_max_list_length = 3
-
-    skaimotframe = example_skaimotmsg.camera_frames[camera_idx]
-    skaimotperson = skaimotframe.people_in_frame[person_idx]
-
-    poseframe = example_posemsg.camera_frames[camera_idx]
-    poseperson = poseframe.people_in_frame[person_idx]
-    
-    feetframe = example_feetposmsg.camera_frames[camera_idx]
-    feetperson = feetframe.people_in_frame[person_idx]
-
-    actionframe = example_actionmsg.camera_frames[camera_idx]
-    # example_action = actionframe.actions_in_frame[action_idx]
-
-    # use to populate local track message
+    # populate local track message
     msg = LocalTrackMsg.new_msg()
-    msg.id = skaimotperson.id
-    msg.active = True
-    # tally up a local circular buffer (collections.deque) to choose
-    # SkaiMsg.CLASSIFICATION.EMPLOYEE vs SkaiMsg.CLASSIFICATION.CUSTOMER
-    # in this example we'll just copy directly
-    msg.classification = skaimotperson.classification
-    msg.camera_id = skaimotframe.camera_id
+    skaimot_ts = example_skaimotmsg.camera_frames[0].timestamp
+    msg.timestamp = skaimot_ts
+    
+    for skaimotframe, poseframe, feetframe in zip(example_skaimotmsg.camera_frames, example_posemsg.camera_frames, example_feetposmsg.camera_frames):
+        # create new local track camera frame
+        frame = msg.camera_frames.add()
+        frame.camera_id = skaimotframe.camera_id
 
-    # copy over from skaimot msg if first time (default value is 0)
-    if msg.time_discovered == 0:
-        msg.time_discovered = skaimotframe.timestamp
-       
-    # add a new box to list and
-    # populate local track bbox from skaimot person's box
-    bbox = SkaiMsg.add_to_list_w_maxlength(msg.bbox_list)
-    bbox.timestamp = skaimotframe.timestamp
-    LocalTrackMsg.copy_bbox(bbox, skaimotperson)
+        # populate frame with people
+        for skaimotperson, poseperson, feetperson in zip(skaimotframe.people_in_frame, poseframe.people_in_frame, feetframe.people_in_frame):
+            person = frame.people_in_frame.add()
+            
+            # populate skaimot data
+            person.skaimot_id = skaimotperson.id
+            person.classification = skaimotperson.classification
+            person.box.CopyFrom(skaimotperson.box)
+            person.skaimot_person_tags.extend(skaimotperson.tags)
 
-    # populate face & bbox embeddings from skaimot person
-    # (goes from 351 bytes to 10623 bytes per msg with these)
-    faceembed = SkaiMsg.add_to_list_w_maxlength(msg.face_embed_list)
-    faceembed.timestamp = skaimotframe.timestamp
-    LocalTrackMsg.copy_faceembed(faceembed, skaimotperson)
+            # copy basic embed data & append global track handler info
+            person.face_embed.CopyFrom(skaimotperson.face_embedding)
+            person.face_embed.box.CopyFrom(skaimotperson.box) # copies fullbody box for now TODO update to just face in skaimot?
+            person.face_embed.camera_id = frame.camera_id
+            
+            person.bbox_embed.CopyFrom(skaimotperson.bbox_embedding)
+            person.bbox_embed.box.CopyFrom(skaimotperson.box)
+            person.bbox_embed.camera_id = frame.camera_id
+    
+            # populate pose data
+            person.pose_keypoints.CopyFrom(poseperson.keypoints)
+            person.pose_orientation.CopyFrom(poseperson.orientation)
 
-    bboxembed = SkaiMsg.add_to_list_w_maxlength(msg.bbox_embed_list)
-    bboxembed.timestamp = skaimotframe.timestamp
-    LocalTrackMsg.copy_bboxembed(bboxembed, skaimotperson)
-
-    # add new pose and populate from pose person's keypoints
-    pose = SkaiMsg.add_to_list_w_maxlength(msg.pose_list)
-    pose.timestamp = poseframe.timestamp
-    LocalTrackMsg.copy_pose(pose, poseperson)
-
-    # add feet position
-    feet = SkaiMsg.add_to_list_w_maxlength(msg.feet_position_list)
-    feet.timestamp = feetframe.timestamp
-    LocalTrackMsg.copy_feet(feet, feetperson)
-
-    # TODO add action example
-    # action = SkaiMsg.add_to_list_w_maxlength(msg.action_list)
-    # action.timestamp = actionframe.timestamp
-    # action.action = example_action
-
-    # print message
-    # print(msg)
-       
+            # populate feet position data
+            person.feet_position.CopyFrom(feetperson.feet_position)
+            person.feet_position_confidence = feetperson.confidence
+           
     # write example message to file for viewing
     if args.exampleout:
         filename = 'example_msg_prints/localtrack.txt'

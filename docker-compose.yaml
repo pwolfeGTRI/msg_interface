@@ -3,31 +3,27 @@ services:
 
   ###### name service ######
   skaimsginterface_service:
-    
-    #### name image and container ####
-    image: ${IMAGENAME}
-    container_name: ${CONTAINERNAME}    
+    #### name image  & container ####
+    image: ${BASENAME}_img_${PARENTDIR}
+    container_name: ${BASENAME}_instance_${PARENTDIR}
 
-    #### starting command that keeps container alive ####
+    #### command to keep container alive ####
     command: tail -F /dev/null
 
     #### build Dockerfile and pass build args ####
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        ARCH: ${ARCH}
 
     #### volumes and mappings ####
     volumes:
-      ## mappings ##
-      - /tmp/.X11-unix/:/tmp/.X11-unix # x11
-      - ~/.ssh:/root/.ssh:ro # ssh folder from linux host
-      - /etc/localtime:/etc/localtime:ro # share timezone variable TZ from host
-      
-      ## development folder mappings here ##
+      - ${MAP_DISPLAY}
+      - ${MAP_SSH}
+      - ${MAP_TIMEZONE}
       - ./package:/root/package
-
-    #### configure docker network mode ####
-    # network_mode: "host" # uses host network stack
-
-    #### container directory to start in ####
-    working_dir: /root/package
+      
+    network_mode: "host" # uses host network stack 
+    working_dir: /root/package/examples
+    

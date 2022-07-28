@@ -19,8 +19,15 @@ def create_example_skaimotmsg(num_people=2, num_cams=5, id=None):
 
     # example bounding boxes & face embeddings & bbox embedding per person
     bbox = [0.2, 0.21, 0.4, 0.42]
-    face_embed = np.arange(512).tolist()
-    bbox_embed = np.arange(2048).tolist()
+    # full version
+    # face_embed = np.arange(512).tolist()  
+    # bbox_embed = np.arange(2048).tolist() 
+    # short version for testing 
+    face_embed = np.arange(5).tolist()  
+    bbox_embed = np.arange(2).tolist() 
+
+    # example tags
+    tags = ['Manager IV', 'Manager 4', 'Manager the 4th', 'Manager the fourth', 'Person who manages stuff 4 times']
 
     # create new protobuf message and load with values
     msg = SkaimotMsg.new_msg()
@@ -37,8 +44,9 @@ def create_example_skaimotmsg(num_people=2, num_cams=5, id=None):
             person.id = trackid
             person.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
             SkaimotMsg.set_bbox(person, bbox)
-            # SkaimotMsg.set_face_embed(person, face_embed)
-            # SkaimotMsg.set_bbox_embed(person, bbox_embed)
+            SkaimotMsg.set_face_embed(person, face_embed)
+            SkaimotMsg.set_bbox_embed(person, bbox_embed)
+            person.tags.extend(tags)
     return msg
 
 if __name__=='__main__':
