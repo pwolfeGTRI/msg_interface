@@ -15,7 +15,7 @@ from skaiproto.PoseProtoMsg_pb2 import PoseProtoMsg
 from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
 from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
 from skaiproto.SkaiboxMsgsProtoMsg_pb2 import SkaiboxDealershipMsgProtoMsg, SkaiboxCameraCalibrationMsgProtoMsg, SkaiboxCameraGroupMsgProtoMsg, SkaiboxDatabaseCloudMsgProtoMsg
-from skaiproto.InteractionProtoMsg_pb2 import TracksInDealershipProtoMsg
+from skaiproto.InteractionProtoMsg_pb2 import TracksInDealershipProtoMsg, InteractionInDealershipProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -63,6 +63,7 @@ class SkaiMsg(ABC):
         SKAIBOX_CAMERAGROUP = 9
         SKAIBOX_DATABASECLOUD = 10
         TRACKS_IN_DEALERSHIP = 11
+        INTERACTION_IN_DEALERSHIP = 12
 
 
         @classmethod
@@ -89,6 +90,8 @@ class SkaiMsg(ABC):
                 return SkaiboxDatabaseCloudMsg
             elif id == cls.TRACKS_IN_DEALERSHIP.value:
                 return TracksInDealershipMsg
+            elif id == cls.INTERACTION_IN_DEALERSHIP.value:
+                return InteractionInDealershipMsg
             else:
                 return None
 
@@ -400,6 +403,11 @@ class TracksInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.TRACKS_IN_DEALERSHIP
     proto_msg_class = TracksInDealershipProtoMsg
     ports = list(range(6600, 6700))
+
+class InteractionInDealershipMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.INTERACTION_IN_DEALERSHIP
+    proto_msg_class = InteractionInDealershipProtoMsg
+    ports = list(range(6700, 6800))
 
 if __name__=='__main__':
     pass

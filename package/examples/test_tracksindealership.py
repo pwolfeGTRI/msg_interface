@@ -19,7 +19,7 @@ def create_example_tracksindealership(num_people=5):
 
     for person_count in range(num_people):
         person = msg.people.add()
-        person.id = person_count
+        person.id = person_count+1
         person.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
         FeetPosMsg.set_feet_pos(person, example_feetpos)
         PoseMsg.set_orientation(person, example_orientation)
@@ -39,8 +39,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     msg = create_example_tracksindealership()
-    # print(msg)
-    # exit(1)
 
     # write example message to file for viewing
     if args.exampleout:
