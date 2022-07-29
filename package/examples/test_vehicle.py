@@ -8,6 +8,8 @@ from skaimsginterface.tcp import TcpSender
 from skaimsginterface.udp import UdpSender
 
 
+SKAIMSGCLASS = VehicleMsg
+
 def create_example_vehiclemsg(num_vehicles=2, num_cams=5):
     camera_mac = '00:10:FA:66:42:11'
     camera_id = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_mac)
@@ -15,7 +17,7 @@ def create_example_vehiclemsg(num_vehicles=2, num_cams=5):
     example_box = [0.2, 0.21, 0.4, 0.42] # t l b r float 0 to 1
 
     # create new protobuf message and load with values
-    msg = VehicleMsg.new_msg()
+    msg = SKAIMSGCLASS.new_msg()
     for cam_count in range(num_cams):
         
         # add new camera frame to the message & set frame vals
@@ -46,11 +48,11 @@ if __name__=='__main__':
         p.parent.mkdir(exist_ok=True, parents=True)
         p.write_text(f'{msg}')
     
-    msg_bytes = VehicleMsg.pack(msg, verbose=True)
+    msg_bytes = SKAIMSGCLASS.pack(msg, verbose=True)
     cam_group_idx = args.camgroup
     if args.udp_or_tcp == 'udp':
-        sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
+        sender = UdpSender('127.0.0.1', SKAIMSGCLASS.ports[cam_group_idx], verbose=True)
     else:    
-        sender = TcpSender('127.0.0.1', FeetPosMsg.ports[cam_group_idx], verbose=True)
+        sender = TcpSender('127.0.0.1', SKAIMSGCLASS.ports[cam_group_idx], verbose=True)
     sender.send(msg_bytes)
 

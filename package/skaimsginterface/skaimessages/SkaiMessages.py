@@ -423,7 +423,6 @@ class VehicleMsg(SkaiMsg):
     @staticmethod
     def set_box_from_list(box, tlbr_list):
         box.topleft.y, box.topleft.x, box.botright.y, box.botright.x = tlbr_list
-        
 
 class VehicleSpotMonitorMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.VEHICLE_SPOT_MONITOR
