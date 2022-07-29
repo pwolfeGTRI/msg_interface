@@ -9,19 +9,22 @@ from skaimsginterface.udp import UdpSender
 
 
 def create_example_vehiclemsg(num_vehicles=2, num_cams=5):
-    trackid = 69
     camera_mac = '00:10:FA:66:42:11'
     camera_id = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_mac)
     timestamp = int(time.time() * 1e9)  # integer version of double * 1e9
+    example_box = [0.2, 0.21, 0.4, 0.42] # t l b r float 0 to 1
 
-    example_feetpos = [420, 69.2, 0] # xyz float meters to be reused per person
     # create new protobuf message and load with values
     msg = VehicleMsg.new_msg()
-    for cam_idx in range(num_cams):
+    for cam_count in range(num_cams):
         
-        # add new camera frame to the message & set id + timestamp
-        camframe = msg.camera_frames.add() 
-       
+        # add new camera frame to the message & set frame vals
+        frame = msg.camera_frames.add() 
+        frame.timestamp = timestamp
+        frame.camera_id = camera_id
+        for box_count in range(num_vehicles):
+            box = frame.boxes.add()
+            VehicleMsg.set_box_from_list(box, example_box)
 
     return msg
 
@@ -37,13 +40,13 @@ if __name__=='__main__':
 
     # write example message to file for viewing
     if args.exampleout:
-        filename = 'example_msg_prints/feetpos.txt'
+        filename = 'example_msg_prints/vehicle.txt'
         print(f'wrote example message to {filename}')
         p = Path(filename)
         p.parent.mkdir(exist_ok=True, parents=True)
         p.write_text(f'{msg}')
     
-    msg_bytes = FeetPosMsg.pack(msg, verbose=True)
+    msg_bytes = VehicleMsg.pack(msg, verbose=True)
     cam_group_idx = args.camgroup
     if args.udp_or_tcp == 'udp':
         sender = UdpSender('127.0.0.1', SkaimotMsg.ports[cam_group_idx], verbose=True)
