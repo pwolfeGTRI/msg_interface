@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package skaiproto.vehicle;
+
+import "skaiproto/SkaimotProtoMsg.proto";
+
+
+message VehicleProtoMsg {
+    // define frame type for vehicle
+    message CameraFrame {
+        uint64 timestamp = 1; // epoch time double * 1e9 turned to uint64
+        uint64 camera_id = 2; // mac address
+        repeated skaiproto.skaimot.BoundingBox boxes = 3; // top left bottom right floats from 0 to 1
+    }
+
+    // fields here
+    repeated CameraFrame camera_frames = 1;
+}
+
+message VehicleSpotMonitorProtoMsg {
+    uint64 timestamp = 1;
+}

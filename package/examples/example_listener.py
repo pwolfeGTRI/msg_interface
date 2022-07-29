@@ -51,7 +51,9 @@ if __name__ == '__main__':
         GlobalTrackMsg.ports[camgroup_idx],
         ActionMsg.ports[camgroup_idx],
         TracksInDealershipMsg.ports[camgroup_idx],
-        InteractionInDealershipMsg.ports[camgroup_idx]
+        InteractionInDealershipMsg.ports[camgroup_idx],
+        VehicleMsg.ports[camgroup_idx],
+        VehicleSpotMonitorMsg.ports[camgroup_idx]
         ]
 
     # listen

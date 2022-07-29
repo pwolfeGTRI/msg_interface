@@ -16,6 +16,7 @@ from skaiproto.SkaimotProtoMsg_pb2 import SkaimotProtoMsg
 from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
 from skaiproto.SkaiboxMsgsProtoMsg_pb2 import SkaiboxDealershipMsgProtoMsg, SkaiboxCameraCalibrationMsgProtoMsg, SkaiboxCameraGroupMsgProtoMsg, SkaiboxDatabaseCloudMsgProtoMsg
 from skaiproto.InteractionProtoMsg_pb2 import TracksInDealershipProtoMsg, InteractionInDealershipProtoMsg
+from skaiproto.VehicleProtoMsg_pb2 import VehicleProtoMsg, VehicleSpotMonitorProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -64,7 +65,8 @@ class SkaiMsg(ABC):
         SKAIBOX_DATABASECLOUD = 10
         TRACKS_IN_DEALERSHIP = 11
         INTERACTION_IN_DEALERSHIP = 12
-
+        VEHICLE = 13
+        VEHICLE_SPOT_MONITOR = 14
 
         @classmethod
         def get_class_from_id(cls, id):
@@ -92,6 +94,10 @@ class SkaiMsg(ABC):
                 return TracksInDealershipMsg
             elif id == cls.INTERACTION_IN_DEALERSHIP.value:
                 return InteractionInDealershipMsg
+            elif id == cls.VEHICLE.value:
+                return VehicleMsg
+            elif id == cls.VEHICLE_SPOT_MONITOR.value:
+                return VehicleSpotMonitorMsg
             else:
                 return None
 
@@ -408,6 +414,20 @@ class InteractionInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.INTERACTION_IN_DEALERSHIP
     proto_msg_class = InteractionInDealershipProtoMsg
     ports = list(range(6700, 6800))
+
+class VehicleMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.VEHICLE
+    proto_msg_class = VehicleProtoMsg
+    ports = list(range(6800, 6900))
+
+    @staticmethod
+    def set_box_from_list(box, tlbr_list):
+        box.topleft.y, box.topleft.x, box.botright.y, box.botright.x = tlbr_list
+
+class VehicleSpotMonitorMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.VEHICLE_SPOT_MONITOR
+    proto_msg_class = VehicleSpotMonitorProtoMsg
+    ports = list(range(6900,7000))
 
 if __name__=='__main__':
     pass

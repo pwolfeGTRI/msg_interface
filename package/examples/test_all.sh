@@ -1,7 +1,7 @@
 #!/bin/bash
 UDP_OR_TCP=$1
-EXAMPLEOUT=$2
-CAMGROUPCHANGE=$3
+CAMGROUP=$2
+EXAMPLEOUT=$3
 
 if [ -z "$UDP_OR_TCP" ] ; then
     echo ""
@@ -11,9 +11,25 @@ if [ -z "$UDP_OR_TCP" ] ; then
     echo ""
     exit
 fi
+if [ ! -z "$CAMGROUP" ] ; then
+    CAMGROUPCHANGE="--camgroup $CAMGROUP"
+else
+    CAMGROUPCHANGE=""
+fi 
+if [ ! -z "$EXAMPLEOUT" ] ; then 
+    EXAMPLEOUTCHANGE="--exampleout"
+else
+    EXAMPLEOUTCHANGE=""
+fi
 
-./test_action.py $UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE
-./test_feetpos.py $UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE
-./test_localtrack.py $UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE
-./test_pose.py $UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE
-./test_skaimot.py $UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE
+ARGS="$UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE"
+
+./test_action.py $ARGS
+./test_feetpos.py $ARGS
+./test_localtrack.py $ARGS
+./test_pose.py $ARGS
+./test_skaimot.py $ARGS
+./test_tracksindealership.py $ARGS
+./test_interactionindealership.py $ARGS
+./test_vehicle.py $ARGS
+./test_vehicle_spotmonitor.py $ARGS
