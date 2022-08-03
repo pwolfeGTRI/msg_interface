@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package skaiproto.skaievent;
 
-import "google/protobuf/any.proto";
-
 enum SkaiEvent {
     DEFAULT = 0;
     ADVISOR_TIRE_INSPECTION = 1;
@@ -26,7 +24,14 @@ enum SkaiEvent {
 }
 
 message SkaiEventProtoMsg {
+    message CameraTimeRanges {
+        uint64 camera_id = 1;
+        uint64 start_timestamp = 2;
+        uint64 end_timestamp = 3;
+    }
+
     SkaiEvent event = 1;
     uint64 timestamp = 2;
-    google.protobuf.Any metadata = 3; // relevant metadata of any type 
+    repeated CameraTimeRanges camera_time_ranges = 3;
+    
 }
