@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package skaiproto.skaievent;
 
-import "google/protobuf/any.proto";
+import "skaiproto/SkaimotProtoMsg.proto";
 
 enum SkaiEvent {
     DEFAULT = 0;
@@ -26,7 +26,26 @@ enum SkaiEvent {
 }
 
 message SkaiEventProtoMsg {
+    // type defs
+    message CameraTimeRanges {
+        uint64 camera_id = 1;
+        uint64 start_timestamp = 2;
+        uint64 end_timestamp = 3;
+    }
+
+    message Object {
+        uint64 global_id = 1;
+        skaiproto.skaimot.Classification classification = 2;
+        float confidence = 3;
+    }    
+
+    // message fields
     SkaiEvent event = 1;
-    uint64 timestamp = 2;
-    google.protobuf.Any metadata = 3; // relevant metadata of any type 
+    float confidence = 2;
+    uint64 event_starttime = 3;
+    uint64 event_endtime = 4;
+    repeated CameraTimeRanges camera_time_ranges = 5;
+    Object primary_obj = 6;
+    repeated Object associated_objs = 7;
+    repeated string location_tags = 8;
 }
