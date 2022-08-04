@@ -15,6 +15,7 @@ message TracksInDealershipProtoMsg {
         skaiproto.feetpos.FeetPosition feet_position = 3;
         skaiproto.pose.Vector3D orientation = 4;
         repeated string skaimot_person_tags = 5;
+        repeated uint64 camera_ids = 6;
     }
     message Vehicle {
         uint64 id = 1;
@@ -31,6 +32,7 @@ message InteractionInDealershipProtoMsg {
     message Track {
         uint64 id = 1;
         skaiproto.skaimot.Classification classification = 2;
+        repeated uint64 camera_ids = 3;
     }
     // actual message field definitions
     uint64 timestamp = 1;
