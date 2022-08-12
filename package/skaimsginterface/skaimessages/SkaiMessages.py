@@ -67,6 +67,7 @@ class SkaiMsg(ABC):
         INTERACTION_IN_DEALERSHIP = 12
         VEHICLE = 13
         VEHICLE_SPOT_MONITOR = 14
+        SKAI_EVENT = 15
 
         @classmethod
         def get_class_from_id(cls, id):
@@ -98,6 +99,8 @@ class SkaiMsg(ABC):
                 return VehicleMsg
             elif id == cls.VEHICLE_SPOT_MONITOR.value:
                 return VehicleSpotMonitorMsg
+            elif id == cls.SKAI_EVENT.value:
+                return SkaiEventMsg
             else:
                 return None
 
@@ -428,6 +431,11 @@ class VehicleSpotMonitorMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.VEHICLE_SPOT_MONITOR
     proto_msg_class = VehicleSpotMonitorProtoMsg
     ports = list(range(6900,7000))
+
+class SkaiEventMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.SKAI_EVENT
+    proto_msg_class = SkaiEventProtoMsg
+    ports = list(range(7200,7300))
 
 if __name__=='__main__':
     pass

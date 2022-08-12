@@ -10,12 +10,16 @@ from skaimsginterface.udp import UdpSender
 
 def create_example_tracksindealership(num_people=5):
     msg = TracksInDealershipMsg.new_msg()
-    timestamp = int(time.time() * 1e9)  # integer version of double * 1e9
-    msg.timestamp = timestamp
 
+    camera_mac = '00:10:FA:66:42:11'
+    camera_id = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_mac)
+    fake_camera_ids = [camera_id] * 3 # example 3 cameras for test
+    timestamp = int(time.time() * 1e9)  # integer version of double * 1e9
     example_feetpos = [420, 69.2, 0]
     example_orientation = [1.3, 4.5, 7.8]
     example_tags = ['elite_janitor_vp', 'associate_to_the_regional_manager']
+    
+    msg.timestamp = timestamp   
 
     for person_count in range(num_people):
         person = msg.people.add()
@@ -23,6 +27,7 @@ def create_example_tracksindealership(num_people=5):
         person.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
         FeetPosMsg.set_feet_pos(person, example_feetpos)
         PoseMsg.set_orientation(person, example_orientation)
+        person.camera_ids.extend(fake_camera_ids)
         person.skaimot_person_tags.extend(example_tags)
 
     return msg

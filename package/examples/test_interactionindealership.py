@@ -10,17 +10,27 @@ from skaimsginterface.udp import UdpSender
 
 def create_example_interactionindealership(num_associated_tracks=2):
     msg = InteractionInDealershipMsg.new_msg()
+
+    camera_mac = '00:10:FA:66:42:11'
+    camera_id = SkaiMsg.convert_mac_addr_to_camera_identifier_number(camera_mac)
+    fake_camera_ids = [camera_id] * 3 # example 3 cameras for test
     timestamp = int(time.time() * 1e9)  # integer version of double * 1e9
+    example_tags = ['elite_janitor_vp', 'associate_to_the_regional_manager']
+
     msg.timestamp = timestamp
     msg.confidence = 0.80
     msg.primary_track.id = 69
     msg.primary_track.classification = SkaiMsg.CLASSIFICATION.CUSTOMER
+    msg.primary_track.skaimot_person_tags.extend(example_tags)
+    msg.primary_track.camera_ids.extend(fake_camera_ids)
     msg.interaction_type = 'greeting'
 
     for person_count in range(num_associated_tracks):
         associated_track = msg.associated_tracks.add()
         associated_track.id = person_count+1
         associated_track.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
+        associated_track.skaimot_person_tags.extend(example_tags)
+        associated_track.camera_ids.extend(fake_camera_ids)
 
     return msg
 
