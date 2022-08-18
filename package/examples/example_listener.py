@@ -54,7 +54,8 @@ if __name__ == '__main__':
         InteractionInDealershipMsg.ports[camgroup_idx],
         VehicleMsg.ports[camgroup_idx],
         VehicleSpotMonitorMsg.ports[camgroup_idx],
-        SkaiEventMsg.ports[camgroup_idx]
+        SkaiEventMsg.ports[camgroup_idx],
+        SkaiGooeyMsg.ports[4] # only 1 per dealership (range 0 to 9 available. using num 4 for testing)
         ]
 
     # listen

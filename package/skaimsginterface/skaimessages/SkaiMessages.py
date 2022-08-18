@@ -17,6 +17,7 @@ from skaiproto.SkaiEventProtoMsg_pb2 import SkaiEventProtoMsg
 from skaiproto.SkaiboxMsgsProtoMsg_pb2 import SkaiboxDealershipMsgProtoMsg, SkaiboxCameraCalibrationMsgProtoMsg, SkaiboxCameraGroupMsgProtoMsg, SkaiboxDatabaseCloudMsgProtoMsg
 from skaiproto.InteractionProtoMsg_pb2 import TracksInDealershipProtoMsg, InteractionInDealershipProtoMsg
 from skaiproto.VehicleProtoMsg_pb2 import VehicleProtoMsg, VehicleSpotMonitorProtoMsg
+from skaiproto.SkaiGooeyProtoMsg_pb2 import SkaiGooeyProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -68,6 +69,7 @@ class SkaiMsg(ABC):
         VEHICLE = 13
         VEHICLE_SPOT_MONITOR = 14
         SKAI_EVENT = 15
+        SKAI_GOOEY = 16
 
         @classmethod
         def get_class_from_id(cls, id):
@@ -101,6 +103,8 @@ class SkaiMsg(ABC):
                 return VehicleSpotMonitorMsg
             elif id == cls.SKAI_EVENT.value:
                 return SkaiEventMsg
+            elif id == cls.SKAI_GOOEY.value:
+                return SkaiGooeyMsg
             else:
                 return None
 
@@ -436,6 +440,11 @@ class SkaiEventMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAI_EVENT
     proto_msg_class = SkaiEventProtoMsg
     ports = list(range(7200,7300))
+
+class SkaiGooeyMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.SKAI_GOOEY
+    proto_msg_class = SkaiGooeyProtoMsg
+    ports = list(range(7300,7310)) # only few per dealership needed
 
 if __name__=='__main__':
     pass

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package skaiproto.skaigooey;
+
+import "skaiproto/InteractionProtoMsg.proto";
+import "skaiproto/LocalTrackProtoMsg.proto";
+
+message SkaiGooeyProtoMsg { 
+    skaiproto.localtrack.LocalTrackProtoMsg unassociated_tracks = 1;
+    skaiproto.interaction.TracksInDealershipProtoMsg associated_tracks = 2;
+}

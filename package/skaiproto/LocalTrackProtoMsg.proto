@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package skaimsg.localtrack;
+package skaiproto.localtrack;
 
 import "skaiproto/SkaimotProtoMsg.proto";
 import "skaiproto/PoseProtoMsg.proto";

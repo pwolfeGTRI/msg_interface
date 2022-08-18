@@ -5,14 +5,13 @@
 ```bash
 git clone https://github.com/skAIVision/skai-ai-message-interface.git
 cd skai-ai-message-interface
-./init_remotes.sh
 ```
 
 ## Pushing
 
 To push changes to all remotes:
 ```bash
-./push_all_remotes.sh
+./manage.py push
 ```
 
 ### AUTHENTICATION NOTE: 

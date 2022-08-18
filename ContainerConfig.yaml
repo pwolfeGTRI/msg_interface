@@ -1,0 +1,3 @@
+name: skaimsginterface
+skai_remote: https://github.com/skAIVision/skai-ai-message-interface.git
+gtri_remote: ssh://git@eoslbitbucket.eosl.gtri.org:7999/adat/skai-ai-message-interface.git
