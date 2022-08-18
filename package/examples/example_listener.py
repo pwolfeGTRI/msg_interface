@@ -11,7 +11,7 @@ def example_multiport_callback_func(data, server_address):
     msg_type, msg = SkaiMsg.unpack(data)
     print(f'got some data length {len(data)} from {server_address} msg type {msg_type}\n')
     # unpack_and_print_cam_id_and_timestamp_per_frame(data)
-    print(msg)
+    # print(msg)
     # print(msg.camera_frames[0].people_in_frame)
     # print(msg.camera_frames[0].people_in_frame[0].orientation)
 
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     # exit(1)
     # ports to listen to
     camgroup_idx = args.camgroup
+    dealership_test_idx = 4
     ports = [
         SkaimotMsg.ports[camgroup_idx],
         PoseMsg.ports[camgroup_idx],
@@ -50,8 +51,8 @@ if __name__ == '__main__':
         LocalTrackMsg.ports[camgroup_idx],
         GlobalTrackMsg.ports[camgroup_idx],
         ActionMsg.ports[camgroup_idx],
-        TracksInDealershipMsg.ports[camgroup_idx],
-        InteractionInDealershipMsg.ports[camgroup_idx],
+        TracksInDealershipMsg.ports[dealership_test_idx],
+        InteractionInDealershipMsg.ports[dealership_test_idx],
         VehicleMsg.ports[camgroup_idx],
         VehicleSpotMonitorMsg.ports[camgroup_idx],
         SkaiEventMsg.ports[camgroup_idx],

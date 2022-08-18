@@ -19,8 +19,10 @@ if __name__ == '__main__':
                         help='protocol to listen on', choices=('tcp', 'udp'))
     parser.add_argument('--exampleout', help='dump an example message text file under a folder example_msg_prints',
                         nargs='?', type=bool, const=True, default=False)
-    # parser.add_argument(
-    #     '--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
+    parser.add_argument(
+        '--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
+        # arg ignored...
+
     args = parser.parse_args()
 
     # create example  message

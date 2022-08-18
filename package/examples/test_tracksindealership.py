@@ -55,10 +55,11 @@ if __name__ == '__main__':
 
     msg_bytes = TracksInDealershipMsg.pack(msg, verbose=True)
     cam_group_idx = args.camgroup
+    dealership_test_idx = 4
     if args.udp_or_tcp == 'udp':
         sender = UdpSender(
-            '127.0.0.1', TracksInDealershipMsg.ports[cam_group_idx], verbose=True)
+            '127.0.0.1', TracksInDealershipMsg.ports[dealership_test_idx], verbose=True)
     else:
         sender = TcpSender(
-            '127.0.0.1', TracksInDealershipMsg.ports[cam_group_idx], verbose=True)
+            '127.0.0.1', TracksInDealershipMsg.ports[dealership_test_idx], verbose=True)
     sender.send(msg_bytes)
