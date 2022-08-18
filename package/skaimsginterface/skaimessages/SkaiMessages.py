@@ -426,6 +426,7 @@ class VehicleMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.VEHICLE
     proto_msg_class = VehicleProtoMsg
     ports = list(range(6800, 6900)) 
+    vehicle2interacts_ports = list(range(7500,7600))
 
     @staticmethod
     def set_box_from_list(box, tlbr_list):
@@ -444,7 +445,10 @@ class SkaiEventMsg(SkaiMsg):
 class SkaiGooeyMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAI_GOOEY
     proto_msg_class = SkaiGooeyProtoMsg
-    ports = list(range(7300,7310)) # only few per dealership needed
+    # comes from globaltrackhandler to gui 
+    ports = list(range(7300,7310)) # only few per dealership needed 
+    # event from interaction to gui
+    interacts2gooey_ports = list(range(7030, 7040))
 
 if __name__=='__main__':
     pass
