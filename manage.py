@@ -7,10 +7,40 @@ from pathlib import Path
 import io
 import subprocess
 import platform
+import yaml
 
+# load container config
+with open('ContainerConfig.yaml', 'r') as f:
+    cfg = yaml.safe_load(f)
 
 class CommandManager:
-    action_choices = ('up', 'down', 'restart', 'attach', 'logs', 'status')
+    
+    # name of container stuff
+    basename = cfg['name']
+
+    # choices of actions you can take
+    action_choices = ('up', 'down', 'restart', 'attach', 'logs', 'status', 'push')
+
+    # set service name in the docker-compose.yaml using container config name
+    @staticmethod
+    def init_composefile_service_name(composefile):
+        # get basename from container config yaml
+        basename = cfg['name']
+        # read lines
+        with open(composefile, 'r') as f:
+            lines = f.readlines()
+        # replace service name
+        replaceNextLine = False
+        triggerline = '[service name below]'
+        for idx, line in enumerate(lines):
+            if replaceNextLine:
+                lines[idx] = f'  {basename}_service:\n'
+                break
+            elif triggerline in line:
+                replaceNextLine = True
+        # write lines
+        with open(composefile, 'w') as f:
+            f.writelines(lines)
 
     class ValidateCamGroupNum(argparse.Action):
         cameragroup_range = range(0, 100)
@@ -58,7 +88,7 @@ class CommandManager:
         return overall_status, statuses
 
     @staticmethod
-    def getStartingDockerComposeEnv():
+    def getSharedDockerComposeEnv():
         starting_env = []
         arch = platform.machine()
         parentdir = Path.cwd().parent.name
@@ -73,14 +103,13 @@ class CommandManager:
 
     @classmethod
     def parsecommand(cls, args):
-        # MODIFY THIS BETWEEEN DIFFERENT CONTAINERS. Shouldn't need to touch anything else...
+        # TODO make a multiple container example here 
         parentdir = Path.cwd().parent.name
-        envlist = cls.getStartingDockerComposeEnv()
-        
-        basename = 'skaimsginterface' # change this
-
+        envlist = cls.getSharedDockerComposeEnv()
+        basename = cls.basename
         envlist.append(f'BASENAME={basename}')
         composefile = 'docker-compose.yaml'
+        cls.init_composefile_service_name(composefile)
         projectname = f'{parentdir}_{basename}'
         containername = f'{basename}_instance_{parentdir}'
         cmdlist = cls.parseaction(composefile, projectname, containername, envlist)
@@ -131,11 +160,80 @@ class CommandManager:
             cmdlist.append(logcmd)
         elif args.action == 'status':
             cmdlist.append(statuscmd)
+        elif args.action == 'push':
+            cls.push_all_remotes()
         else:
             raise Exception(f'unrecognized action {args.action}!')
         return cmdlist
 
+    @classmethod
+    def verifyOrReplaceRemote(cls, remote_str, remotes, config_remote_url):
+        # check if there is already a remote
+        if remote_str in remotes:
+            # get that remote url
+            url = cls.execute_cmd_getoutput(f'git config --get remote.{remote_str}.url').strip()
+            # see if it matches the config url
+            if url == config_remote_url:
+                # all is good. return
+                return
+            else:
+                # if not then delete it
+                cls.execute_cmd(f'git remote rm {remote_str}')
+                
+        # add config remote
+        cls.execute_cmd(f'git remote add skai_remote {config_remote_url}')
+
+    @classmethod
+    def push_all_remotes(cls):
+        # get current branch name 
+        current_branch_name = cls.execute_cmd_getoutput('git rev-parse --abbrev-ref HEAD')
+        current_branch_name = current_branch_name.strip()
+
+        # if origin exists remove that remote
+        remotes = cls.execute_cmd_getoutput('git remote')
+        if 'origin' in remotes:
+            cls.execute_cmd('git remote rm origin')
+
+        # if skai_remote or gtri_remote exist and don't match
+        # then remove before adding
+        cls.verifyOrReplaceRemote('skai_remote', remotes, cfg['skai_remote'])
+        cls.verifyOrReplaceRemote('gtri_remote', remotes, cfg['gtri_remote'])
+
+        # fetch skai_remote
+        cls.execute_cmd(f'git fetch skai_remote')
+        
+        # push / set-upstream skai_remote
+        print()
+        print('================================')
+        print('trying to push to skai remote...')
+        print('================================')
+        cls.execute_cmd(f'git push --set-upstream skai_remote {current_branch_name}')
+
+        # force push / set-upstream gtri_remote
+        print()
+        print('======================================')
+        print('trying to force push to gtri remote...')
+        print('======================================')
+        cls.execute_cmd(f'git push --force --set-upstream gtri_remote {current_branch_name}')
+        
+        # set upstream to skai_remote/<current_branch>
+        print()
+        print('=======================================')
+        print('setting upstream back to skai_remote...')
+        print('=======================================')
+        cls.execute_cmd(f'git branch --set-upstream-to=skai_remote/{current_branch_name} {current_branch_name}')
+
+        # exit now 
+        exit()
     
+    @classmethod
+    def execute_cmd(cls, cmdstr):
+        subprocess.Popen(cmdstr, shell=True).wait()
+
+    @classmethod
+    def execute_cmd_getoutput(cls, cmdstr):
+        return subprocess.check_output(cmdstr.split()).decode('utf-8')
+
     @classmethod 
     def prep_env_file(cls, envlist):
         # prep .env file
@@ -154,7 +252,7 @@ class CommandManager:
         # execute command list
         for cmd in cmdlist:
             print(f'executing {cmd}')
-            subprocess.Popen(cmd, shell=True).wait()
+            cls.execute_cmd(cmd)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
