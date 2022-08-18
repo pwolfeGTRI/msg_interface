@@ -448,7 +448,7 @@ class SkaiGooeyMsg(SkaiMsg):
     # comes from globaltrackhandler to gui 
     ports = list(range(7300,7310)) # only few per dealership needed 
     # event from interaction to gui
-    interacts2gooey_ports = list(range(7030, 7040))
+    interacts2gooey_ports = list(range(7330, 7340))
 
 if __name__=='__main__':
     pass
