@@ -33,3 +33,4 @@ ARGS="$UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE"
 ./test_interactionindealership.py $ARGS
 ./test_vehicle.py $ARGS
 ./test_vehicle_spotmonitor.py $ARGS
+./test_skaigooey.py $ARGS

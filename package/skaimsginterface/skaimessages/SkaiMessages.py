@@ -415,17 +415,18 @@ class SkaiboxDatabaseCloudMsg(SkaiMsg):
 class TracksInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.TRACKS_IN_DEALERSHIP
     proto_msg_class = TracksInDealershipProtoMsg
-    ports = list(range(6600, 6700))
+    ports = list(range(7310, 7320)) # only few per dealership needed
 
 class InteractionInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.INTERACTION_IN_DEALERSHIP
     proto_msg_class = InteractionInDealershipProtoMsg
-    ports = list(range(6700, 6800))
+    ports = list(range(7320, 7330)) # only few per dealership needed
 
 class VehicleMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.VEHICLE
     proto_msg_class = VehicleProtoMsg
-    ports = list(range(6800, 6900))
+    ports = list(range(6800, 6900)) 
+    vehicle2interacts_ports = list(range(7500,7600))
 
     @staticmethod
     def set_box_from_list(box, tlbr_list):
@@ -444,7 +445,10 @@ class SkaiEventMsg(SkaiMsg):
 class SkaiGooeyMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.SKAI_GOOEY
     proto_msg_class = SkaiGooeyProtoMsg
-    ports = list(range(7300,7310)) # only few per dealership needed
+    # comes from globaltrackhandler to gui 
+    ports = list(range(7300,7310)) # only few per dealership needed 
+    # event from interaction to gui
+    interacts2gooey_ports = list(range(7330, 7340))
 
 if __name__=='__main__':
     pass
