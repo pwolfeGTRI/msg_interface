@@ -19,7 +19,7 @@ class CommandManager:
     basename = cfg['name']
 
     # choices of actions you can take
-    action_choices = ('up', 'down', 'restart', 'attach', 'logs', 'status', 'push')
+    action_choices = ('up', 'down', 'restart', 'attach', 'logs', 'status', 'push', 'init_remotes')
 
     # set service name in the docker-compose.yaml using container config name
     @staticmethod
@@ -162,6 +162,10 @@ class CommandManager:
             cmdlist.append(statuscmd)
         elif args.action == 'push':
             cls.push_all_remotes()
+            exit()
+        elif args.action == 'init_remotes':
+            cls.init_remotes()
+            exit()
         else:
             raise Exception(f'unrecognized action {args.action}!')
         return cmdlist
@@ -181,10 +185,10 @@ class CommandManager:
                 cls.execute_cmd(f'git remote rm {remote_str}')
                 
         # add config remote
-        cls.execute_cmd(f'git remote add skai_remote {config_remote_url}')
+        cls.execute_cmd(f'git remote add {remote_str} {config_remote_url}')
 
     @classmethod
-    def push_all_remotes(cls):
+    def init_remotes(cls):
         # get current branch name 
         current_branch_name = cls.execute_cmd_getoutput('git rev-parse --abbrev-ref HEAD')
         current_branch_name = current_branch_name.strip()
@@ -201,6 +205,15 @@ class CommandManager:
 
         # fetch skai_remote
         cls.execute_cmd(f'git fetch skai_remote')
+        print('\n====remotes initialized ====\n')
+
+        # return current branch name
+        return current_branch_name
+
+    @classmethod
+    def push_all_remotes(cls):
+        # init remotes first
+        current_branch_name = cls.init_remotes()
         
         # push / set-upstream skai_remote
         print()
@@ -222,9 +235,6 @@ class CommandManager:
         print('setting upstream back to skai_remote...')
         print('=======================================')
         cls.execute_cmd(f'git branch --set-upstream-to=skai_remote/{current_branch_name} {current_branch_name}')
-
-        # exit now 
-        exit()
     
     @classmethod
     def execute_cmd(cls, cmdstr):
