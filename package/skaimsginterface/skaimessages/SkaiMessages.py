@@ -7,10 +7,6 @@ import numpy as np
 from enum import Enum
 from abc import ABC, abstractmethod
 
-# elevate warnings to error
-import warnings
-warnings.filterwarnings('error')
-
 from skaiproto.ActionProtoMsg_pb2 import ActionProtoMsg
 from skaiproto.FeetPosProtoMsg_pb2 import FeetPosProtoMsg
 from skaiproto.GlobalTrackProtoMsg_pb2 import GlobalTrackProtoMsg
