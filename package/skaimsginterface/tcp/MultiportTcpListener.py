@@ -16,7 +16,7 @@ import code
 class MultiportTcpListener:
 
     def __init__(self, portlist, multiport_callback_func, ipv6=False, verbose=False, recordfile=None):
-        """skai multiport udp listener
+        """skai multiport TCP listener
 
         Args:
             portlist (list): ports to listen to 
@@ -41,7 +41,7 @@ class MultiportTcpListener:
         if recordfile is not None:
             print('opening recorder...')
             self.recorder = FileRecorder(recordfile)
-            self.recorder.open()    
+            self.recorder.open()
 
         # initialize
         self.verbose = verbose

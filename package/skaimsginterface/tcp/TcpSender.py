@@ -15,7 +15,7 @@ class TcpSender:
     def __init__(self,
                  host_ip,
                  port,
-                 retryLimit=15,
+                 retryLimit=None,
                  retryTimeoutSec=2,
                  ipv6=False, # default to ipv4
                  verbose=False) -> None:
@@ -37,24 +37,34 @@ class TcpSender:
         # try to connect with limits
         self.connect_to_destination()
 
-    def connect_to_destination(self):
-        self.connected = False
-        for i in range(self.retryLimit):
-            try:
-                self.sock.connect(self.destination)
-                if self.verbose:
-                    print(f'{self.destination} connected!')
-                self.connected = True
-                break
+    def try_to_connect(self):
+        success = False
+        try:
+            self.sock.connect(self.destination)
+            if self.verbose:
+                print(f'{self.destination} connected!')
+            success = True
 
-            except ConnectionRefusedError:
-                print(f'{self.destination} connection refused')
+        except ConnectionRefusedError:
+            print(f'{self.destination} connection refused')
 
-            except Exception as e:
-                print(f'some other exception occurred: {e}')
+        except Exception as e:
+            print(f'some other exception occurred: {e}')
 
+        if not success:
             print(f'trying again in {self.retryTimeoutSec} seconds')
             time.sleep(self.retryTimeoutSec)
+
+        return success
+
+    def connect_to_destination(self):
+        self.connected = False
+        if self.retryLimit is None:
+            while not self.connected:
+                self.connected = self.try_to_connect()
+        else:
+            for i in range(self.retryLimit):
+                self.connected = self.try_to_connect()
         
         if not self.connected:
             print('failed to connect!')

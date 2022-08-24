@@ -127,16 +127,22 @@ class SkaiMsg(ABC):
             SkaiMsg.MsgType enum
             ProtobufMsg
         """
-        msg_type_id = cls.unpack_msgid(msg_bytes)
-        classRef = cls.MsgType.get_class_from_id(msg_type_id)
-        if classRef is not None:
-            if verbose:
-                print(f'unpacking {classRef.__name__}')
-            msg = classRef.proto_msg_class()
-            msg.ParseFromString(msg_bytes[2:]) # unpack after the 2 msg type bytes
-            return classRef.msg_type, msg
-        else:
-            print('msg id not found')
+        try:
+            msg_type_id = cls.unpack_msgid(msg_bytes)
+            classRef = cls.MsgType.get_class_from_id(msg_type_id)
+            if classRef is not None:
+                if verbose:
+                    print(f'unpacking {classRef.__name__}')
+                msg = classRef.proto_msg_class()
+                msg.ParseFromString(msg_bytes[2:]) # unpack after the 2 msg type bytes
+                return classRef.msg_type, msg
+            else:
+                print('msg id not found')
+                return None, None
+        except Warning:
+            print(f'warning during SkaiMsg unpack!!')
+        except Exception as e:
+            print(f'[SkaiMsg.unpack Exception]: {e}')
             return None, None
 
     @staticmethod
