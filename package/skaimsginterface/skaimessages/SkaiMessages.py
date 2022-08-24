@@ -151,7 +151,11 @@ class SkaiMsg(ABC):
 
     @staticmethod
     def unpack_msgid(msg_bytes):
-        return struct.unpack('! H', msg_bytes[:2])[0]
+        try:
+            return struct.unpack('! H', msg_bytes[:2])[0]
+        except:
+            print(f'could not unpack msg id!')
+            return None
 
     @classmethod
     def getMessageTypeName(cls, msg_bytes):
