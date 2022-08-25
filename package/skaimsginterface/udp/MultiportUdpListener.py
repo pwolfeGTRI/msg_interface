@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+
+import hashlib
 import time
 import threading
 import socketserver
@@ -58,13 +60,20 @@ class MultiportUdpListener:
             t.start()
 
     def multiport_callback(self, data, server_address, firstpacket_timestamp):
-        if self.recorder is not None:
-            port = server_address[1]
-            if self.verbose:
-                print(f'recording msg length {len(data)} on port: {port} firstpacket_ts {firstpacket_timestamp}')
-            self.recorder.record(data, firstpacket_timestamp, port)
+        msg, checksum = data[:-16], data[-16:]
+        msg_checksum = hashlib.md5(msg).digest()
 
-        self.multiport_callback_func(data, server_address)
+        if checksum == msg_checksum:
+            if self.recorder is not None:    
+                port = server_address[1]
+                if self.verbose:
+                    print(f'recording msg length {len(msg)} on port: {port} firstpacket_ts {firstpacket_timestamp}')
+                self.recorder.record(msg, firstpacket_timestamp, port)
+
+            self.multiport_callback_func(msg, server_address)
+
+        elif self.verbose:
+            print('checksum failed')
 
     class MySinglePortListener(socketserver.ThreadingUDPServer):
 

@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
+import hashlib
 import socket
 import struct
-
 import time
 
 from skaimsginterface.skaimessages import *
+
 
 class TcpSender:
 
@@ -70,7 +71,8 @@ class TcpSender:
             print('failed to connect!')
 
     def send(self, msg_bytes):
-        msg_bytes_with_len = struct.pack('!I', len(msg_bytes)) + msg_bytes
+        msg_bytes_with_checksum = msg_bytes + hashlib.md5(msg_bytes).digest()
+        msg_bytes_with_len = struct.pack('!I', len(msg_bytes_with_checksum)) + msg_bytes_with_checksum
         while True:
             try:
                 self.sock.sendall(msg_bytes_with_len)

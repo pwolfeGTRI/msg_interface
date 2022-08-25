@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import hashlib
 import socket
 import struct
 import math
@@ -24,6 +25,9 @@ class UdpSender:
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def send(self, msg_bytes):
+        # generate checksum
+        msg_bytes += hashlib.md5(msg_bytes).digest()
+
         # send msg length & chunksize first
         packet_size = 4096
         packet_count = math.ceil(len(msg_bytes)/ packet_size)
