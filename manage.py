@@ -207,6 +207,17 @@ class CommandManager:
         cls.execute_cmd(f'git fetch skai_remote')
         print('\n====remotes initialized ====\n')
 
+        # check if on submodule and warn to switch to a branch and pull before making changes
+        if current_branch_name == 'HEAD':
+            print(f'WARNING you are not on a branch!!! If you\'re wanting to commit changes:')
+            print('    git stash')
+            print('    checkout your desired branch')
+            print('    git pull')
+            print('    git stash pop')
+            print('')
+            print('Fix this first please! now exiting...')
+            exit()
+
         # return current branch name
         return current_branch_name
 
