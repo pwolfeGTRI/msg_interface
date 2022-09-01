@@ -7,6 +7,7 @@ import struct
 from pathlib import Path
 from queue import Queue, Empty
 from threading import Thread
+import multiprocessing as mp
 
 class FileRecorder:
     def __init__(self, filepath, append=False) -> None:       
@@ -27,6 +28,47 @@ class FileRecorder:
         print(f'opening file {self.filepath} in mode {self.modifier}')
         self.fd = SafeWriter(self.filepath, self.modifier)
         # self.fd = open(self.filepath, self.modifier)
+
+    @staticmethod
+    def mp_record_process(stop_event, print_q, msg_in_q, filepath, append=False, verbose=False):
+
+        # check filepath is str and ends in skaibin
+        if not isinstance(filepath, str):
+            raise TypeError('FileRecorder file must by type str')
+        if filepath.split('.')[-1] != 'skaibin':
+            raise ValueError('FileRecorder file must end in ".skaibin"')
+        
+        # create directory if needed and decide to open and write to file fresh or append
+        FileRecorder.create_directory_if_needed(filepath)
+        modifier = 'ab' if append else 'wb'
+
+        try:
+            # open file
+            print_q.put(f'recording to file {filepath}, append={append}')
+            f = open(filepath, modifier)
+            
+            # query queue and write to file when not empty
+            while not stop_event.is_set():
+                if not msg_in_q.empty():
+                    # get info from queue
+                    msg_bytes, epoch_timestamp, port = msg_in_q.get()
+                            
+                    # pack msg type + protobuf serialized according to SkaiMsg type
+                    # append timestamp (double) port(uint16) & length (integer)
+                    msg_bytes = struct.pack('!dHI', epoch_timestamp, port, len(msg_bytes)) + msg_bytes
+                    if verbose:
+                        print_q.put(f'writing to file...')
+
+                    # write to file
+                    f.write(msg_bytes)
+
+        except Exception as e:
+            print_q.put(f'mp_record_process got exception {e}')
+        finally:
+            print_q.put(f'mp_record_process closing file {filepath}')
+            f.close()
+            
+
 
     @staticmethod
     def create_directory_if_needed(filepath):
