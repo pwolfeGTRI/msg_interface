@@ -59,6 +59,10 @@ if __name__ == '__main__':
         SkaiGooeyMsg.ports[4] # only 1 per dealership (range 0 to 9 available. using num 4 for testing)
         ]
 
+    # make a print_q for multiprocessing
+    import multiprocessing as mp
+    print_q = mp.SimpleQueue()
+
     # listen
     if args.udp_or_tcp == 'udp':
         print('multiprocessing udp support not implemented yet')
@@ -71,6 +75,7 @@ if __name__ == '__main__':
         listener = MultiportTcpListenerMP(
             portlist=ports,
             multiport_callback_func=example_multiport_callback_func,
+            print_q=print_q,
             recordfile=args.recordfile,
             ipv6=args.ipv6,
             verbose=True)
@@ -78,8 +83,8 @@ if __name__ == '__main__':
     # stay active until ctrl+c input
     try:
         while True:
-            if not listener.print_q.empty():
-                print(listener.print_q.get())
+            if not print_q.empty():
+                print(print_q.get())
             time.sleep(0.01)
     except KeyboardInterrupt:
         print('exiting now...')
@@ -88,8 +93,8 @@ if __name__ == '__main__':
         time.sleep(1)
 
         # print remaining print_q?
-        while not listener.print_q.empty():
-            print(listener.print_q.get())
+        while not print_q.empty():
+            print(print_q.get())
 
         # actually stop listeners
         listener.stop_listeners()
