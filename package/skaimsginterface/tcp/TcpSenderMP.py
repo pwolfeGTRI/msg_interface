@@ -198,30 +198,42 @@ if __name__ == '__main__':
     num_people = 2
     num_cams = 5
 
-    from examples.test_feetpos import create_example_feetposmsg
+    
+    from examples.test_skaimot import create_example_skaimotmsg
+    skaimotmsg = create_example_skaimotmsg()
+    skaimotmsg_bytes = SkaimotMsg.pack(skaimotmsg)
 
+    from examples.test_pose import create_example_posemsg
+    posemsg = create_example_posemsg()
+    posemsg_bytes = PoseMsg.pack(posemsg)
+
+    from examples.test_feetpos import create_example_feetposmsg
     feetmsg = create_example_feetposmsg()
-    feetmsg_bytes = FeetPosMsg.pack(feetmsg, verbose=True)
+    feetmsg_bytes = FeetPosMsg.pack(feetmsg)
+    
 
 
     num_send_times = 3
+    intermsg_delay = 0.0000001
     for i in range(num_send_times):
-        # skaimot_sender.send(skaimot_bytes)
-        # pose_sender.send(pose_bytes)
-        feetpos_sender.send(feetmsg_bytes)
+        skaimot_sender.send(skaimotmsg_bytes)
+        # pose_sender.send(posemsg_bytes)
+        # feetpos_sender.send(feetmsg_bytes)
         if not print_q.empty():
             while not print_q.empty():
                 print(print_q.get())
+            # time.sleep(intermsg_delay)
 
     print('waiting 5 before sending burst again')
     time.sleep(5)
     for i in range(num_send_times):
-        # skaimot_sender.send(skaimot_bytes)
-        # pose_sender.send(pose_bytes)
-        feetpos_sender.send(feetmsg_bytes)
+        skaimot_sender.send(skaimotmsg_bytes)
+        # pose_sender.send(posemsg_bytes)
+        # feetpos_sender.send(feetmsg_bytes)
         if not print_q.empty():
             while not print_q.empty():
                 print(print_q.get())
+        # time.sleep(intermsg_delay)
     
     
     # stay active until ctrl+c input

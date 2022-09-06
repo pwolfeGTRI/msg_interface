@@ -18,7 +18,7 @@ import code
 
 class MultiportTcpListenerMP:
 
-    def __init__(self, portlist, multiport_callback_func, ipv6=False, verbose=False, recordfile=None):
+    def __init__(self, portlist, multiport_callback_func, print_q, ipv6=False, verbose=False, recordfile=None):
         """skai multiport TCP listener using multiprocessing
 
         Args:
@@ -41,7 +41,7 @@ class MultiportTcpListenerMP:
 
         # Create MPC Queue, stop event, print queue for multiprocessing
         self.msg_q = mp.SimpleQueue()
-        self.print_q = mp.SimpleQueue()
+        self.print_q = print_q #mp.SimpleQueue()
         self.stop_event = mp.Event()
 
         # initialize file recorder queue & file recorder if recordfile specified
