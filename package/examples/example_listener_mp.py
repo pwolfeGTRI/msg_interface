@@ -85,7 +85,7 @@ if __name__ == '__main__':
         while True:
             if not print_q.empty():
                 print(print_q.get())
-            time.sleep(0.01)
+            time.sleep(0.001)
     except KeyboardInterrupt:
         print('exiting now...')
         
@@ -97,5 +97,5 @@ if __name__ == '__main__':
             print(print_q.get())
 
         # actually stop listeners
-        listener.stop_listeners()
+        listener.stop()
 

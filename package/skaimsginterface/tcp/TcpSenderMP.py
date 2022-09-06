@@ -257,6 +257,9 @@ if __name__ == '__main__':
         while not print_q.empty():
             print(print_q.get())
 
-        # TODO actually stop senders
+    finally:
+        skaimot_sender.stop()
+        pose_sender.stop()
+        feetpos_sender.stop()
   
     print('end')
