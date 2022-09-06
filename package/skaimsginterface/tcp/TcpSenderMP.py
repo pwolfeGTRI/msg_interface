@@ -54,6 +54,10 @@ class TcpSenderMP:
         # start sender process
         self.start_sender_process()
 
+    def stop(self):
+        self.print_q.put('setting sender stop event!')
+        self.stop_event.set()
+
     def start_sender_process(self):
         port = self.destination[1]
         self.sender_proc = mp.Process(
