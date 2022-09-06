@@ -137,7 +137,7 @@ class MultiportTcpListenerMP:
             proc.start()
             self.processes.append(proc)
 
-    def stop_listeners(self):
+    def stop(self):
         self.stop_event.set()
 
     class SinglePortListener(socketserver.ThreadingTCPServer):
