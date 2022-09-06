@@ -118,7 +118,9 @@ class TcpSenderMP:
                     break
         
         if not connected:
-            print_q.put(f'failed to connect to {destination}!')
+            print_q.put(f'failed connect attempt to {destination}!')
+        else:
+            print_q.put(f'successfully connected to {destination}!')
         
         # return results of attempt to connect
         return connected
