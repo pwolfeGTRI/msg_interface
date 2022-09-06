@@ -71,14 +71,6 @@ class MultiportTcpListenerMP:
         # start listening
         self.start_listeners()
 
-    # def __del__(self):
-    #     # initialize file recorder if recordfile specified
-    #     if self.recorder is not None:
-    #         print('closing recorder...')
-    #         self.recorder.close()
-    #     # attempt call stop event?
-    #     # self.stop_event.set()
-
 
     @staticmethod
     def multiport_process(stop_event, print_q, msg_q, user_multiport_callback, record_q):
@@ -226,15 +218,21 @@ if __name__ == '__main__':
         GlobalTrackMsg.ports[camgroup_idx], ActionMsg.ports[camgroup_idx]
     ]
 
+    # make mp print q
+    print_q = mp.SimpleQueue()
+
     # start listening
     mpl = MultiportTcpListenerMP(
         portlist=ports,
-        multiport_callback_func=example_multiport_callback_func)
+        multiport_callback_func=example_multiport_callback_func,
+        print_q=print_q)
 
     # stay active until ctrl+c input
     try:
         while True:
-            time.sleep(1)
+            if not print_q.empty():
+                print(print_q.get())
+            time.sleep(0.001)
     except KeyboardInterrupt:
         print('exiting now...')
-        mpl.stop_listeners() 
+        mpl.stop() 
