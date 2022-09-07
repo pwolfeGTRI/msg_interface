@@ -113,7 +113,10 @@ class TcpSenderMP:
         connected = False
         if retryLimit is None:
             while (not connected) and (not stop_event.is_set()):
-                connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
+                try:
+                    connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
+                except Exception as e:
+                    print_q.put(f'connection to {destination} exception: {e}')
         else:
             for i in range(retryLimit):
                 connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
@@ -122,7 +125,10 @@ class TcpSenderMP:
                     break
         
         if not connected:
-            print_q.put(f'failed connect attempt to {destination}!')
+            if retryLimit is None:
+                print_q.put(f'somehow failed connect to {destination}!')
+            else:
+                print_q.put(f'failed to connect to {destination} after {retryLimit} tries!')
         else:
             print_q.put(f'successfully connected to {destination}!')
         
