@@ -23,6 +23,8 @@ enum SkaiEvent {
     VEHICLE_EXIT_NO_PLATE = 15;
     VIP_GREETED = 16;
     VIP_NOT_GREETED = 17;
+    EMPLOYEE_IDLE = 18;
+    VEHICLE_IDLE = 19;
 }
 
 message SkaiEventProtoMsg {
