@@ -46,6 +46,745 @@ class SkaiDatabaseInterface:
         self.verbose = verbose
         self.url = database_url
 
+
+    #region global track endpoints
+    def post_new_global_track(self, global_track_data):
+        """
+        Sends a POST request for a new global track with the provided json data.
+        global_track_data : json
+            Data for new global track
+            {
+                'time_discovered': 1657982174,
+                'active': True,
+                'classification': 3,
+                'meta': {
+                    "vehicle_meta_color": "yellow",
+                    "vehicle_meta_type": "BMW",
+                    "vehicle_meta_model": "X2 Sport"
+                }
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/global_tracks/', data=json.dumps(global_track_data), headers=headers)).status_code
+
+    def get_global_track_by_pk(self, pk):
+        """
+        Sends a GET request for a global track with the passed primary key.
+        pk : int
+            Primary key for global track to receive
+        returns : Global track object as json
+        """
+        return (requests.get(f'{self.url}/global_tracks/{pk}')).json()
+
+    def get_all_global_tracks(self):
+        """
+        Sends a GET request for all global tracks within the database.
+        returns : Global track object(s) as json
+        """
+        return (requests.get(f'{self.url}/global_tracks/')).json()
+
+    def delete_global_track_by_pk(self, pk):
+        """
+        Sends a DELETE request for a global track with the passed primary key.
+        pk : int
+            Primary key for global track to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/global_tracks/{pk}')).status_code
+    
+    def update_global_track_time_discovered(self, pk, time_discovered):
+        """
+        Sends a POST request for updating the time discovered of the global track with the passed primary key.
+        pk : int
+            Primary key for global track to receive
+        time_discovered : int
+            Time discovered in unix time
+        returns : Status code
+        """
+        return (requests.post(f'{self.url}/global_tracks/set_time_discovered/{pk}/{time_discovered}')).status_code
+
+    def update_global_track_classification(self, pk, classification):
+        """
+        Sends a POST request for updating the classification of the global track with the passed primary key.
+        pk : int
+            Primary key for global track to receive
+        classification : int or string
+            Classification value that matches the CLASSIFICATION enum values
+        returns : Status code
+        """
+        return (requests.post(f'{self.url}/global_tracks/set_classification/{pk}/{classification}')).status_code
+
+    def update_global_track_meta(self, pk, meta):
+        """
+        Sends a POST request for updating the meta of the global track with the passed primary key.
+        pk : int
+            Primary key for global track to receive
+        meta : json
+            Meta data json with a structure like 
+            { 
+                'meta': {
+                    'vehicle_meta_color': 'gray',
+                    'vehicle_meta_type': 'BMW',
+                    'etc': 'etc'
+                }
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/global_tracks/set_meta/{pk}', data=json.dumps(meta), headers=headers)).status_code
+ 
+    def get_global_tracks_by_filter(self, gt_filter):
+        """
+        Sends a GET request for all global tracks within the database that match the provided filter.
+        gt_filter : json
+            Global track filter json with a structure like 
+            {
+                'time_discovered': [1657982174, 1659982174],
+                'classification': 3,
+                'meta': {
+                    "vehicle_meta_color": "yellow",
+                    "vehicle_meta_type": "BMW",
+                    "vehicle_meta_model": "X2 Sport"
+                }
+            }
+        returns : Global track object(s) that match the parameters of the filter as json
+        note: objects returned will be within the time_discovered range, have the exact classification passed, and will match at least one of the meta properties provided
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.get(f'{self.url}/global_tracks/get_by_filter', data=json.dumps(gt_filter), headers=headers)).json()
+    #endregion
+
+    #region vehicle person association endpoints
+    def post_new_vehicle_person_association(self, vehicle_person_association_data):
+        """
+        Sends a POST request for a new vehicle person association with the provided json data.
+        vehicle_person_association_data : json
+            Data for new vehicle person association with structure like
+            {
+                'car_global_track': 2,
+                'person_global_track': 1,
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/vehicle_person_associations/', data=json.dumps(vehicle_person_association_data), headers=headers)).status_code
+
+    def get_vehicle_person_association_by_pk(self, pk):
+        """
+        Sends a GET request for a vehicle person association with the passed primary key.
+        pk : int
+            Primary key for vehicle person association to receive
+        returns : Vehicle Person Association object as json
+        """
+        return (requests.get(f'{self.url}/vehicle_person_associations/{pk}')).json()
+
+    def get_all_vehicle_person_associations(self):
+        """
+        Sends a GET request for all vehicle person associations within the database.
+        returns : Vehicle Person Association(s) as json
+        """
+        return (requests.get(f'{self.url}/vehicle_person_associations/')).json()
+
+    def delete_vehicle_person_association_by_pk(self, pk):
+        """
+        Sends a DELETE request for a vehicle person association with the passed primary key.
+        pk : int
+            Primary key for vehicle person association to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/vehicle_person_associations/{pk}')).status_code
+    #endregion
+
+    #region camera endpoints
+    def post_new_camera(self, camera_data):
+        """
+        Sends a POST request for a new camera with the provided json data.
+        camera_data : json
+            Data for new camera with structure like
+            {
+                'mac_address': 'ec:71:db:23:10:c6',
+                'ip_address': '192.168.0.2',
+                'stream_uri': 'rtsp://admin:reolink@192.168.0.2//h264Preview_01_main',
+                'name': 'somename'
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/cameras/', data=json.dumps(camera_data), headers=headers)).status_code
+
+    def get_camera_by_pk(self, pk):
+        """
+        Sends a GET request for a camera with the passed primary key.
+        pk : int
+            Primary key for camera to receive
+        returns : Camera object as json
+        """
+        return (requests.get(f'{self.url}/cameras/{pk}')).json()
+
+    def get_all_cameras(self):
+        """
+        Sends a GET request for all cameras within the database.
+        returns : Camera object(s) as json
+        """
+        return (requests.get(f'{self.url}/cameras/')).json()
+
+    def delete_camera_by_pk(self, pk):
+        """
+        Sends a DELETE request for a camera with the passed primary key.
+        pk : int
+            Primary key for camera to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/cameras/{pk}')).status_code
+    
+    def update_camera_calibration_details(self, mac_address, calibration_json):
+        """
+        Sends a POST request for updating the calibration details of the camera with the passed mac address.
+        mac_address : int
+            mac address of camera to receive
+        calibration_json : json
+            Calibration details in json format with a structure like 
+            { 
+                "orig_res": [2304, 1296],
+                "cam_matrix": [[1872.613708968491, 0.0, 1355.138486070091], [0.0, 1896.4422463362916, 909.4201602392025], [0.0, 0.0, 1.0]], 
+                "dist_coeff": [[-0.6362982432948103, 0.7439771281850569, -5.324631009757216e-05, -0.0014847892764532215, 0.034204522443160634, -0.30451667904984236, 0.5344090826454042, 0.28124529498282147, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], 
+                "cam_pose": [[-0.2643004595381173, -0.3784993418146447, 0.8870645496996376, 0.6856852374803691], [-0.9643401559717386, 0.11697557082609789, -0.2374126774422785, 6.15587791992814], [-0.013904339910355524, -0.9181802459625177, -0.395918811444806, 2.1189910164597197], [0.0, 0.0, 0.0, 1.0]], 
+                "plane_eq": [0.013904339910351924, 0.9181802459625168, 0.3959188114448081, -2.118991016459728]
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/cameras/set_calibration_details/{mac_address}', data=json.dumps(calibration_json), headers=headers)).status_code
+
+    def update_camera_connection_details(self, mac_address, connection_json):
+        """
+        Sends a POST request for updating the connection details of the camera with the passed mac address.
+        mac_address : int
+            mac address of camera to receive
+        connection_json : json
+            Connection details in json format with a structure like 
+            { 
+                "ip_address": "192.168.0.3",
+                "stream_uri": "rtsp://admin:reolink@192.168.0.3//h264Preview_01_main",
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/cameras/set_calibration_details/{mac_address}', data=json.dumps(connection_json), headers=headers)).status_code
+
+    def update_camera_processing_group(self, mac_address, group_json):
+        """
+        Sends a POST request for updating the processing group of the camera with the passed mac address.
+        mac_address : int
+            mac address of camera to receive
+        group_json : json
+            Processing group details in json format with a structure like 
+            { 
+                "processing_group": 0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/cameras/set_processing_group/{mac_address}', data=json.dumps(group_json), headers=headers)).status_code
+
+    def get_camera_by_mac_address(self, mac_address):
+        """
+        Sends a GET request for the camera with the specified mac address.
+        returns : Camera object as json
+        """
+        return (requests.get(f'{self.url}/cameras/get_by_mac_address/{mac_address}')).json()
+
+    def get_camera_by_processing_group(self, processing_group):
+        """
+        Sends a GET request for the camera(s) with the specified processing group.
+        returns : Camera object(s) as json
+        """
+        return (requests.get(f'{self.url}/cameras/get_by_processing_group/{processing_group}')).json()
+
+    def get_camera_by_name(self, name):
+        """
+        Sends a GET request for the camera with the specified name.
+        returns : Camera object(s) as json
+        """
+        return (requests.get(f'{self.url}/cameras/get_by_name/{name}')).json()
+
+    # need to add deletes for cameras but want to talk to nathan about redoing the endpoints for them
+    #endregion
+
+    #region location history endpoints
+    def post_new_location_history(self, location_history_data):
+        """
+        Sends a POST request for a new location history with the provided json data.
+        location_history_data : json
+            Data for new location history with structure like
+            {
+                'globaltrack_id': 0,
+                'mac_address': 0,
+                'timestamp': 1657982174,
+                'x': 1.0,
+                'y': 1.0,
+                'z': 1.0,
+                'location_type': 0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/location_histories/', data=json.dumps(location_history_data), headers=headers)).status_code
+
+    def get_location_histories_by_pk(self, pk):
+        """
+        Sends a GET request for a location history with the passed primary key.
+        pk : int
+            Primary key for location history to receive
+        returns : Location History object as json
+        """
+        return (requests.get(f'{self.url}/location_histories/{pk}')).json()
+
+    def get_all_location_histories(self):
+        """
+        Sends a GET request for all location histories within the database.
+        returns : Location history object(s) as json
+        """
+        return (requests.get(f'{self.url}/location_histories/')).json()
+
+    def delete_location_history_by_pk(self, pk):
+        """
+        Sends a DELETE request for a location history with the passed primary key.
+        pk : int
+            Primary key for location history to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/location_histories/{pk}')).status_code
+    #endregion
+
+    #region face embedding endpoints
+    def post_new_face_embedding(self, face_embedding_data):
+        """
+        Sends a POST request for a new face embedding with the provided json data.
+        face_embedding_data : json
+            Data for new face embedding with structure like
+            {
+                'globaltrack_id': 1,
+                'vals': {},
+                'box': {},
+                'timestamp': 1657982174,
+                'mac_address': 0,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/face_embeddings/', data=json.dumps(face_embedding_data), headers=headers)).status_code
+
+    def get_face_embedding_by_pk(self, pk):
+        """
+        Sends a GET request for a face embedding with the passed primary key.
+        pk : int
+            Primary key for face embedding to receive
+        returns : Faceembedding object as json
+        """
+        return (requests.get(f'{self.url}/face_embeddings/{pk}')).json()
+
+    def get_all_face_embeddings(self):
+        """
+        Sends a GET request for all face embeddings within the database.
+        returns : Face embedding object(s) as json
+        """
+        return (requests.get(f'{self.url}/face_embeddings/')).json()
+
+    def delete_face_embedding_by_pk(self, pk):
+        """
+        Sends a DELETE request for a face embedding with the passed primary key.
+        pk : int
+            Primary key for face embedding to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/face_embeddings/{pk}')).status_code
+
+    def get_face_embeddings_by_global_track(self, global_track_id):
+        """
+        Sends a GET request for the face embeddings associated with the specified global track.
+        returns : Face embedding object(s) as json
+        """
+        return (requests.get(f'{self.url}/face_embeddings/get_by_global_track/{global_track_id}')).json()
+
+    def update_face_embeddings_by_global_track(self, global_track_id, embedding_json):
+        """
+        Sends a POST request for updating the face embedding(s) of the global track with the passed primary key.
+        global_track_id : int
+            Primary key of global track to receive
+        embedding_json: json
+            Face embedding json with a structure like 
+            {
+                'data': [
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    }
+                ]
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/face_embeddings/post_by_global_track/{global_track_id}', data=json.dumps(embedding_json), headers=headers)).status_code
+    #endregion
+
+    #region bbox embedding endpoints
+    def post_new_bbox_embedding(self, bbox_embedding_data):
+        """
+        Sends a POST request for a new bbox embedding with the provided json data.
+        bbox_embedding_data : json
+            Data for new bbox embedding with structure like
+            {
+                'globaltrack_id': 1,
+                'vals': {},
+                'box': {},
+                'timestamp': 1657982174,
+                'mac_address': 0,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/bbox_embeddings/', data=json.dumps(bbox_embedding_data), headers=headers)).status_code
+
+    def get_bbox_embedding_by_pk(self, pk):
+        """
+        Sends a GET request for a bbox embedding with the passed primary key.
+        pk : int
+            Primary key for bbox embedding to receive
+        returns : Bbox embedding object as json
+        """
+        return (requests.get(f'{self.url}/bbox_embeddings/{pk}')).json()
+
+    def get_all_bbox_embeddings(self):
+        """
+        Sends a GET request for all bbox embeddings within the database.
+        returns : Bbox embedding object(s) as json
+        """
+        return (requests.get(f'{self.url}/bbox_embeddings/')).json()
+
+    def delete_bbox_embedding_by_pk(self, pk):
+        """
+        Sends a DELETE request for a bbox embedding with the passed primary key.
+        pk : int
+            Primary key for bbox embedding to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/bbox_embeddings/{pk}')).status_code
+
+    def get_bbox_embeddings_by_global_track(self, global_track_id):
+        """
+        Sends a GET request for the bbox embeddings associated with the specified global track.
+        returns : Bbox embedding object(s) as json
+        """
+        return (requests.get(f'{self.url}/bbox_embeddings/get_by_global_track/{global_track_id}')).json()
+
+    def update_bbox_embeddings_by_global_track(self, global_track_id, embedding_json):
+        """
+        Sends a POST request for updating the bbox embedding(s) of the global track with the passed primary key.
+        global_track_id : int
+            Primary key of global track to receive
+        embedding_json: json
+            Bbox embedding json with a structure like 
+            {
+                'data': [
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    }
+                ]
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/bbox_embeddings/post_by_global_track/{global_track_id}', data=json.dumps(embedding_json), headers=headers)).status_code
+    #endregion
+
+    #region event endpoints
+    def post_new_event(self, event_data):
+        """
+        Sends a POST request for a new event with the provided json data.
+        event_data : json
+            Data for new event with structure like
+            {
+                'event_type': 0,
+                'start_timestamp': 1657000000,
+                'end_timestamp': 1657000010,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/events/', data=json.dumps(event_data), headers=headers)).status_code
+
+    def get_event_by_pk(self, pk):
+        """
+        Sends a GET request for an event with the passed primary key.
+        pk : int
+            Primary key for event to receive
+        returns : Event object as json
+        """
+        return (requests.get(f'{self.url}/events/{pk}')).json()
+
+    def get_all_events(self):
+        """
+        Sends a GET request for all events within the database.
+        returns : Event object(s) as json
+        """
+        return (requests.get(f'{self.url}/events/')).json()
+
+    def delete_event_by_pk(self, pk):
+        """
+        Sends a DELETE request for an event with the passed primary key.
+        pk : int
+            Primary key for event to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/events/{pk}')).status_code
+    
+    def get_event_by_location(self, location):
+        """
+        Sends a GET request for the event(s) associated with the specified location.
+        returns : Event object(s) as json
+        """
+        return (requests.get(f'{self.url}/events/get_by_location_type/{location}')).json()
+    #endregion
+
+    #region location endpoints
+    def post_new_location(self, location_data):
+        """
+        Sends a POST request for a new location with the provided json data.
+        location_data : json
+            Data for new location with structure like
+            {
+                'event_id': 1,
+                'x': 1.0,
+                'y': 1.0,
+                'z': 1.0,
+                'error': 1.0,
+                'location_type': 'some location'
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/locations/', data=json.dumps(location_data), headers=headers)).status_code
+
+    def get_location_by_pk(self, pk):
+        """
+        Sends a GET request for a location with the passed primary key.
+        pk : int
+            Primary key for location to receive
+        returns : Location object as json
+        """
+        return (requests.get(f'{self.url}/locations/{pk}')).json()
+
+    def get_all_locations(self):
+        """
+        Sends a GET request for all locations within the database.
+        returns : Location object(s) as json
+        """
+        return (requests.get(f'{self.url}/locations/')).json()
+
+    def delete_location_by_pk(self, pk):
+        """
+        Sends a DELETE request for a location with the passed primary key.
+        pk : int
+            Primary key for location to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/locations/{pk}')).status_code
+    #endregion
+
+    #region primary global tracks in event endpoints
+    def post_new_primary_global_tracks_in_event(self, primary_global_tracks_in_event_data):
+        """
+        Sends a POST request for a new primary global track in event with the provided json data.
+        primary_global_tracks_in_event_data : json
+            Data for new primary global track in event with structure like
+            {
+                'global_track_id': 1,
+                'event_id': 1,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/primary_global_tracks_in_events/', data=json.dumps(primary_global_tracks_in_event_data), headers=headers)).status_code
+
+    def get_primary_global_tracks_in_event_by_pk(self, pk):
+        """
+        Sends a GET request for a primary global tracks in event with the passed primary key.
+        pk : int
+            Primary key for primary global tracks in event to receive
+        returns : Primary global tracks in event object as json
+        """
+        return (requests.get(f'{self.url}/primary_global_tracks_in_events/{pk}')).json()
+
+    def get_all_primary_global_tracks_in_events(self):
+        """
+        Sends a GET request for all primary global tracks in events within the database.
+        returns : Primary global tracks in event object(s) as json
+        """
+        return (requests.get(f'{self.url}/primary_global_tracks_in_events/')).json()
+
+    def delete_primary_global_tracks_in_event_by_pk(self, pk):
+        """
+        Sends a DELETE request for a primary global tracks in event with the passed primary key.
+        pk : int
+            Primary key for primary global tracks in event to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/primary_global_tracks_in_events/{pk}')).status_code
+    #endregion
+
+    #region supporting global tracks in event endpoints
+    def post_new_supporting_global_tracks_in_event(self, supporting_global_tracks_in_event_data):
+        """
+        Sends a POST request for a new supporting global track in event with the provided json data.
+        supporting_global_tracks_in_event_data : json
+            Data for new supporting global track in event with structure like
+            {
+                'global_track_id': 1,
+                'event_id': 1,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/supporting_global_tracks_in_events/', data=json.dumps(supporting_global_tracks_in_event_data), headers=headers)).status_code
+
+    def get_supporting_global_tracks_in_event_by_pk(self, pk):
+        """
+        Sends a GET request for a supporting global tracks in event with the passed primary key.
+        pk : int
+            Primary key for supporting global tracks in event to receive
+        returns : Supporting global tracks in event object as json
+        """
+        return (requests.get(f'{self.url}/supporting_global_tracks_in_events/{pk}')).json()
+
+    def get_all_supporting_global_tracks_in_events(self):
+        """
+        Sends a GET request for all supporting global tracks in events within the database.
+        returns : Supporting global tracks in event object(s) as json
+        """
+        return (requests.get(f'{self.url}/supporting_global_tracks_in_events/')).json()
+
+    def delete_supporting_global_tracks_in_event_by_pk(self, pk):
+        """
+        Sends a DELETE request for a supporting global track in event with the passed primary key.
+        pk : int
+            Primary key for supporting global track in event to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/supporting_global_tracks_in_events/{pk}')).status_code
+    #endregion
+    
+    #region camera event endpoints
+    def post_new_camera_event(self, camera_event_data):
+        """
+        Sends a POST request for a new camera event with the provided json data.
+        camera_event_data : json
+            Data for new camera event with structure like
+            {
+                'camera_id': 1,
+                'event_id': 1,
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/camera_events/', data=json.dumps(camera_event_data), headers=headers)).status_code
+
+    def get_camera_event_by_pk(self, pk):
+        """
+        Sends a GET request for a camera event with the passed primary key.
+        pk : int
+            Primary key for camera event to receive
+        returns : Camera event object as json
+        """
+        return (requests.get(f'{self.url}/camera_events/{pk}')).json()
+
+    def get_all_camera_events(self):
+        """
+        Sends a GET request for all camera events within the database.
+        returns : Camera event object(s) as json
+        """
+        return (requests.get(f'{self.url}/camera_events/')).json()
+
+    def delete_camera_event_by_pk(self, pk):
+        """
+        Sends a DELETE request for a camera event with the passed primary key.
+        pk : int
+            Primary key for camera event to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/camera_events/{pk}')).status_code
+    #endregion
+
+
     def _database_write(self, url_ext, msg, update=False):
         """private database write function that sends post req
 
