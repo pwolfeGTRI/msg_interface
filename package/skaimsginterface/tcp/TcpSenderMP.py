@@ -16,7 +16,7 @@ class TcpSenderMP:
     def __init__(self,
                  host_ip,
                  port,
-                 print_q, # required
+                 print_q=None,
                  retryLimit=None,
                  retryTimeoutSec=2,
                  ipv6=False, # default to ipv4
@@ -55,7 +55,8 @@ class TcpSenderMP:
         self.start_sender_process()
 
     def stop(self):
-        self.print_q.put('setting sender stop event!')
+        if self.print_q is not None:
+            self.print_q.put('setting sender stop event!')
         self.stop_event.set()
 
     def start_sender_process(self):
@@ -92,17 +93,21 @@ class TcpSenderMP:
         success = False
         try:
             sock.connect(destination)
-            print_q.put(f'connected to {destination}!')
+            if print_q is not None:
+                print_q.put(f'connected to {destination}!')
             success = True
 
         except ConnectionRefusedError:
-            print_q.put(f'{destination} connection refused')
+            if print_q is not None:
+                print_q.put(f'{destination} connection refused')
 
         except Exception as e:
-            print(f'TcpSenderMP try_to_connect exception: {e}')
+            if print_q is not None:
+                print_q.put(f'TcpSenderMP try_to_connect exception: {e}')
 
         if not success:
-            print(f'trying to connect to {destination} again in {retryTimeoutSec} seconds')
+            if print_q is not None:
+                print_q.put(f'trying to connect to {destination} again in {retryTimeoutSec} seconds')
             time.sleep(retryTimeoutSec)
 
         return success
@@ -116,21 +121,24 @@ class TcpSenderMP:
                 try:
                     connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
                 except Exception as e:
-                    print_q.put(f'connection to {destination} exception: {e}')
+                    if print_q is not None:
+                        print_q.put(f'connection to {destination} exception: {e}')
         else:
             for i in range(retryLimit):
                 connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
                 if stop_event.is_set():
-                    print_q.put('stop event set')
+                    if print_q is not None:
+                        print_q.put('stop event set')
                     break
         
-        if not connected:
-            if retryLimit is None:
-                print_q.put(f'somehow failed connect to {destination}!')
+        if print_q is not None:
+            if not connected:
+                if retryLimit is None:
+                        print_q.put(f'somehow failed connect to {destination}!')
+                else:
+                        print_q.put(f'failed to connect to {destination} after {retryLimit} tries!')
             else:
-                print_q.put(f'failed to connect to {destination} after {retryLimit} tries!')
-        else:
-            print_q.put(f'successfully connected to {destination}!')
+                print_q.put(f'successfully connected to {destination}!')
         
         # return results of attempt to connect
         return connected
@@ -156,11 +164,13 @@ class TcpSenderMP:
                             # print_q.put(
                             #     f'sent { SkaiMsg.getMessageTypeName(msg_bytes)} message bytes with length {len(msg_bytes)}'
                             # )
-                            print_q.put(f'sent message to {destination}')
+                            if print_q is not None:
+                                print_q.put(f'sent message to {destination}')
                         sent = True
 
                     except BrokenPipeError:
-                        print_q.put(f'{destination} connection broken! reconnecting...')
+                        if print_q is not None:
+                            print_q.put(f'{destination} connection broken! reconnecting...')
 
                         # close, recreate, and try to reconnect
                         sock.close()
@@ -176,11 +186,15 @@ class TcpSenderMP:
                         )
 
                     except Exception as e:
-                        print_q.put(f'TcpSenderMP Exception: {e}')
+                        if print_q is not None:
+                            print_q.put(f'TcpSenderMP Exception: {e}')
 
                     if not sent:
-                        print_q.put('msg not sent. retrying...')
+                        if print_q is not None:
+                            print_q.put('msg not sent. retrying...')
            
+                # delay between repeated sends
+                time.sleep(0.001)
 
     def send(self, msg_bytes):
         # calc checksum and append
@@ -200,7 +214,7 @@ if __name__ == '__main__':
 
     # create senders
     verbose = True
-    skaimot_sender = TcpSenderMP('127.0.0.1', SkaimotMsg.ports[cam_group_idx], print_q, verbose=verbose)
+    skaimot_sender = TcpSenderMP('127.0.0.1', SkaimotMsg.ports[cam_group_idx], print_q=None, verbose=verbose)
     pose_sender = TcpSenderMP('127.0.0.1', PoseMsg.ports[cam_group_idx], print_q, verbose=verbose)
     feetpos_sender = TcpSenderMP('127.0.0.1', FeetPosMsg.ports[cam_group_idx], print_q, verbose=verbose)
 
@@ -226,9 +240,10 @@ if __name__ == '__main__':
 
 
     num_send_times = 3
-    intermsg_delay = 0.0000001
+    # intermsg_delay = 0.001
     for i in range(num_send_times):
         skaimot_sender.send(skaimotmsg_bytes)
+        # time.sleep(intermsg_delay)
         # pose_sender.send(posemsg_bytes)
         # feetpos_sender.send(feetmsg_bytes)
         if not print_q.empty():
@@ -236,16 +251,19 @@ if __name__ == '__main__':
                 print(print_q.get())
             # time.sleep(intermsg_delay)
 
-    print('waiting 5 before sending burst again')
-    time.sleep(5)
+    print('waiting 2 before sending burst again')
+    time.sleep(2)
     for i in range(num_send_times):
         skaimot_sender.send(skaimotmsg_bytes)
+        # time.sleep(intermsg_delay)
         # pose_sender.send(posemsg_bytes)
         # feetpos_sender.send(feetmsg_bytes)
         if not print_q.empty():
             while not print_q.empty():
                 print(print_q.get())
         # time.sleep(intermsg_delay)
+
+    print('done')
     
     
     # stay active until ctrl+c input

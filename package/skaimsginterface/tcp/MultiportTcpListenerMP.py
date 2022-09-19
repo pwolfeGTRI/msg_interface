@@ -18,7 +18,7 @@ import code
 
 class MultiportTcpListenerMP:
 
-    def __init__(self, portlist, multiport_callback_func, print_q, ipv6=False, verbose=False, recordfile=None):
+    def __init__(self, portlist, multiport_callback_func, print_q=None, ipv6=False, verbose=False, recordfile=None):
         """skai multiport TCP listener using multiprocessing
 
         Args:
@@ -95,12 +95,14 @@ class MultiportTcpListenerMP:
         spl = ListenerClass(addr_port, print_q, msg_q)
 
         # now listen for messages on port until stop event
-        print_q.put(f'now listening on {addr_port}...')
+        if print_q is not None:
+            print_q.put(f'now listening on {addr_port}...')
         try:
             while not stop_event.is_set():
                 spl.handle_request()
         except Exception as e:
-            print_q.put(f'something went wrong in single port request handling: {e}')
+            if print_q is not None:
+                print_q.put(f'something went wrong in single port request handling: {e}')
         finally:
             # close server after stop event
             spl.server_close()
@@ -177,7 +179,7 @@ class MultiportTcpListenerMP:
                         # pass to msg queue
                         self.server.msg_q.put( (msg_bytes, firstpacket_timestamp, self.server.server_address) )
                     else:
-                        if self.server.print_q:
+                        if self.server.print_q is not None:
                             self.server.print_q.put(f'checksum failed on {self.server.server_address}')
 
         def __init__(self, server_address, print_q, msg_q, ipv6=False):
