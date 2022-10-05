@@ -564,6 +564,109 @@ class SkaiDatabaseInterface:
         return (requests.post(f'{self.url}/bbox_embeddings/post_by_global_track/{global_track_id}', data=json.dumps(embedding_json), headers=headers)).status_code
     #endregion
 
+    #region license plate endpoints
+    def post_new_license_plate(self, license_plate_data):
+        """
+        Sends a POST request for a new license plate with the provided json data.
+        license_plate_data : json
+            Data for new license plate with structure like
+            {
+                'globaltrack_id': 1,
+                'vals': {},
+                'box': {},
+                'timestamp': 1657982174,
+                'mac_address': 0,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/license_plates/', data=json.dumps(license_plate_data), headers=headers)).status_code
+
+    def get_license_plate_by_pk(self, pk):
+        """
+        Sends a GET request for a license plate with the passed primary key.
+        pk : int
+            Primary key for license plate to receive
+        returns : License plate object as json
+        """
+        return (requests.get(f'{self.url}/license_plates/{pk}')).json()
+
+    def get_all_license_plates(self):
+        """
+        Sends a GET request for all license plates within the database.
+        returns : License plate object(s) as json
+        """
+        return (requests.get(f'{self.url}/license_plates/')).json()
+
+    def delete_license_plate_by_pk(self, pk):
+        """
+        Sends a DELETE request for a license plate with the passed primary key.
+        pk : int
+            Primary key for license plate to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/license_plates/{pk}')).status_code
+
+    def get_license_plates_by_global_track(self, global_track_id):
+        """
+        Sends a GET request for the license plates associated with the specified global track.
+        returns : License plate object(s) as json
+        """
+        return (requests.get(f'{self.url}/license_plates/get_by_global_track/{global_track_id}')).json()
+
+    def update_license_plates_by_global_track(self, global_track_id, license_json):
+        """
+        Sends a POST request for updating the license plate(s) of the global track with the passed primary key.
+        global_track_id : int
+            Primary key of global track to receive
+        license_json: json
+            license plate json with a structure like 
+            {
+                'data': [
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    }
+                ]
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/license_plates/post_by_global_track/{global_track_id}', data=json.dumps(license_json), headers=headers)).status_code
+    #endregion
+
     #region event endpoints
     def post_new_event(self, event_data):
         """
