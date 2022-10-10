@@ -16,9 +16,12 @@ message TracksInDealershipProtoMsg {
         skaiproto.pose.Vector3D orientation = 4;
         repeated string skaimot_person_tags = 5;
         repeated uint64 camera_ids = 6;
+        repeated skaiproto.skaimot.BoundingBox bboxes = 7;
     }
     message Vehicle {
         uint64 id = 1;
+        repeated uint64 camera_ids = 2;
+        repeated skaiproto.skaimot.BoundingBox bboxes = 3;
     }
     
     // actual message field definitions
