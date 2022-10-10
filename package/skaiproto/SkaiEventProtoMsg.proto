@@ -3,6 +3,7 @@ syntax = "proto3";
 package skaiproto.skaievent;
 
 import "skaiproto/SkaimotProtoMsg.proto";
+import "skaiproto/InteractionProtoMsg.proto";
 
 enum SkaiEvent {
     DEFAULT = 0;
@@ -47,20 +48,7 @@ message SkaiEventProtoMsg {
             // people or vehicles
             message Object {
                 // simple bbox type def
-                message SimpleBBox {
-                    // float 0 to 1 top, left, bottom, right
-                    // scale to your desired resolution for your video snippet
-                    // (top & bottom multiply by frame height)
-                    // (left & right multiply by frame width)
-                    float top = 1;
-                    float left = 2;
-                    float bottom = 3;
-                    float right = 4;
-
-                    uint64 global_id = 5;
-                }
-
-                repeated SimpleBBox bboxes = 1;
+                repeated skaiproto.interaction.GlobalBBox bboxes = 1;
             }
             repeated Object objects_in_frame = 3;
             
