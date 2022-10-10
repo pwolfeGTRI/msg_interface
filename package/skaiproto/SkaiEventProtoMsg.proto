@@ -36,29 +36,18 @@ message SkaiEventProtoMsg {
         uint64 start_timestamp = 2;
         uint64 end_timestamp = 3;
 
-        // bbox frame + people msg type def 
-        message TimeRangeCameraFrame {
-
-            // camera mac address turned into serial num
-            uint64 camera_id = 1;
+        // bbox time range type
+        message TimeRangeBBoxes {
 
             // 1e9 * epoch timestamp
-            uint64 timestamp = 2;
+            uint64 timestamp = 1;
 
             // people or vehicles
-            message Object {
-                // simple bbox type def
-                repeated skaiproto.interaction.GlobalBBox bboxes = 1;
-            }
-            repeated Object objects_in_frame = 3;
-            
+            repeated skaiproto.interaction.GlobalBBox bboxes = 2;
         }
-        repeated TimeRangeCameraFrame camera_frames = 4;
+        repeated TimeRangeBBoxes tr_boxes = 4;
      
     }
-
-    
-
 
     message Object {
         uint64 global_id = 1;

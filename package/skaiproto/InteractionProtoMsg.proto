@@ -18,6 +18,7 @@ message GlobalBBox {
     float right = 4;
 
     uint64 global_id = 5;
+    uint64 camera_id = 6;
 }
 
 message TracksInDealershipProtoMsg {
@@ -28,13 +29,11 @@ message TracksInDealershipProtoMsg {
         skaiproto.feetpos.FeetPosition feet_position = 3;
         skaiproto.pose.Vector3D orientation = 4;
         repeated string skaimot_person_tags = 5;
-        repeated uint64 camera_ids = 6;
-        repeated GlobalBBox boxes = 7;
+        repeated GlobalBBox boxes = 6;
     }
     message Vehicle {
         uint64 id = 1;
-        repeated uint64 camera_ids = 2;
-        repeated skaiproto.skaimot.BoundingBox bboxes = 3;
+        repeated GlobalBBox boxes = 2;
     }
     
     // actual message field definitions
