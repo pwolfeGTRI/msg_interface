@@ -34,6 +34,7 @@ message TracksInDealershipProtoMsg {
     message Vehicle {
         uint64 id = 1;
         repeated GlobalBBox boxes = 2;
+        repeated string object_tags = 3;  
     }
     
     // actual message field definitions
@@ -47,7 +48,7 @@ message InteractionInDealershipProtoMsg {
     message Track {
         uint64 id = 1;
         skaiproto.skaimot.Classification classification = 2;
-        repeated string skaimot_person_tags = 3;
+        repeated string object_tags = 3;
         repeated uint64 camera_ids = 4;
     }
     // actual message field definitions
