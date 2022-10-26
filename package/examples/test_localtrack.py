@@ -46,7 +46,7 @@ if __name__=='__main__':
             person.skaimot_id = skaimotperson.id
             person.classification = skaimotperson.classification
             person.box.CopyFrom(skaimotperson.box)
-            person.skaimot_person_tags.extend(skaimotperson.tags)
+            person.skaimot_person_tags.extend(skaimotperson.object_tags)
 
             # copy basic embed data & append global track handler info
             person.face_embed.CopyFrom(skaimotperson.face_embedding)

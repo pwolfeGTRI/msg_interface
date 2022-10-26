@@ -87,8 +87,8 @@ message SkaimotProtoMsg {
             FaceEmbedding face_embedding = 4;
             BBoxEmbedding bbox_embedding = 5;
 
-            // optional tags like for title, etc...
-            repeated string tags = 6;
+            // tags for title, etc...
+            repeated string object_tags = 6;
         }
         repeated Person people_in_frame = 3;
 
