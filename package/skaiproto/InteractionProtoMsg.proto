@@ -29,7 +29,7 @@ message TracksInDealershipProtoMsg {
         skaiproto.feetpos.FeetPosition feet_position = 3;
         skaiproto.pose.Vector3D orientation = 4;
         repeated string skaimot_person_tags = 5;
-        repeated string location_tags = 6
+        repeated string location_tags = 6;
         repeated GlobalBBox boxes = 7;
     }
     message Vehicle {
