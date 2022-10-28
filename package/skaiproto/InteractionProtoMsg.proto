@@ -7,6 +7,20 @@ import "skaiproto/FeetPosProtoMsg.proto";
 import "skaiproto/PoseProtoMsg.proto";
 
 
+message GlobalBBox {
+    // float 0 to 1 top, left, bottom, right
+    // scale to your desired resolution for your video snippet
+    // (top & bottom multiply by frame height)
+    // (left & right multiply by frame width)
+    float top = 1;
+    float left = 2;
+    float bottom = 3;
+    float right = 4;
+
+    uint64 global_id = 5;
+    uint64 camera_id = 6;
+}
+
 message TracksInDealershipProtoMsg {
     // type definitions
     message Person {
@@ -15,10 +29,14 @@ message TracksInDealershipProtoMsg {
         skaiproto.feetpos.FeetPosition feet_position = 3;
         skaiproto.pose.Vector3D orientation = 4;
         repeated string skaimot_person_tags = 5;
-        repeated uint64 camera_ids = 6;
+        repeated string location_tags = 6;
+        repeated GlobalBBox boxes = 7;
     }
     message Vehicle {
         uint64 id = 1;
+        repeated GlobalBBox boxes = 2;
+        repeated string object_tags = 3;  
+        repeated string location_tags = 4;
     }
     
     // actual message field definitions
@@ -32,8 +50,9 @@ message InteractionInDealershipProtoMsg {
     message Track {
         uint64 id = 1;
         skaiproto.skaimot.Classification classification = 2;
-        repeated string skaimot_person_tags = 3;
-        repeated uint64 camera_ids = 4;
+        repeated string object_tags = 3;
+        repeated string location_tags = 4;
+        repeated uint64 camera_ids = 5;
     }
     // actual message field definitions
     uint64 timestamp = 1;
