@@ -46,7 +46,7 @@ def create_example_skaimotmsg(num_people=2, num_cams=5, id=None):
             SkaimotMsg.set_bbox(person, bbox)
             SkaimotMsg.set_face_embed(person, face_embed)
             SkaimotMsg.set_bbox_embed(person, bbox_embed)
-            person.object_tags.extend(tags)
+            person.tags.extend(tags)
     return msg
 
 if __name__=='__main__':
