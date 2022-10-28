@@ -3,48 +3,42 @@ syntax = "proto3";
 package skaiproto.skaievent;
 
 import "skaiproto/SkaimotProtoMsg.proto";
-import "skaiproto/InteractionProtoMsg.proto";
 
 enum SkaiEvent {
     DEFAULT = 0;
-    CUSTOMER_DETECTED = 1;
-    CUSTOMER_NOT_GREETED = 2;
-    CUSTOMER_GREETING_STARTED = 3;
-    CUSTOMER_GREETING_ENDED = 4;
-    EMPLOYEE_NOT_IDLE = 5;
-    EMPLOYEE_IDLE = 6;
-    VEHICLE_DETECTED = 7;
-    VEHICLE_IDLE = 8;
-    VEHICLE_SERVICE_STARTED = 9;
-    VEHICLE_SERVICE_ENDED = 10;
+    ADVISOR_TIRE_INSPECTION = 1;
+    CUSTOMER_GREETED = 2;
+    CUSTOMER_NOT_GREETED = 3;
+    CUSTOMER_WALKOUT = 4;
+    GUN_DETECTED = 5;
+    POTENTIAL_BAD_ACTOR = 6;
+    PRESENTED_SALES_FIGURES = 7;
+    SALES_COMPLETED = 8;
+    SERVICE_COMPLETED = 9;
+    SERVICE_MENU_PRESENTED = 10;
+    TECH_PARTS_DELAY = 11;
+    TEST_DRIVE_COMPLETED = 12;
+    TEST_DRIVE_STARTED = 13;
+    TIRE_DEPTH_CHECKED = 14;
+    VEHICLE_EXIT_NO_PLATE = 15;
+    VIP_GREETED = 16;
+    VIP_NOT_GREETED = 17;
+    EMPLOYEE_IDLE = 18;
+    VEHICLE_IDLE = 19;
 }
 
 message SkaiEventProtoMsg {
     // type defs
     message CameraTimeRanges {
-          
         uint64 camera_id = 1;
         uint64 start_timestamp = 2;
         uint64 end_timestamp = 3;
-
-        // bbox time range type
-        message TimeRangeBBoxes {
-
-            // 1e9 * epoch timestamp
-            uint64 timestamp = 1;
-
-            // people or vehicles
-            repeated skaiproto.interaction.GlobalBBox bboxes = 2;
-        }
-        repeated TimeRangeBBoxes tr_boxes = 4;
-
     }
 
     message Object {
         uint64 global_id = 1;
         skaiproto.skaimot.Classification classification = 2;
         float confidence = 3;
-        repeated string object_tags = 4;
     }    
 
     // message fields

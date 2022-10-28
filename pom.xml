@@ -6,13 +6,13 @@
     <parent>
         <groupId>com.skai</groupId>
         <artifactId>skai-build-parent-maven</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>${root}/skai-build-parent-maven${suffix}</relativePath>
     </parent>
 
     <groupId>com.skai</groupId>
     <artifactId>skai-ai-message-interface</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>skai-ai-message-interface</name>
@@ -73,4 +73,4 @@
         </repository>
     </repositories>
 
-</project> 
+</project>
