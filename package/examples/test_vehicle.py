@@ -24,9 +24,11 @@ def create_example_vehiclemsg(num_vehicles=2, num_cams=5):
         frame = msg.camera_frames.add() 
         frame.timestamp = timestamp
         frame.camera_id = camera_id
-        for box_count in range(num_vehicles):
-            box = frame.boxes.add()
-            VehicleMsg.set_box_from_list(box, example_box)
+        
+        for vehicle_count in range(num_vehicles):
+            vehicle = frame.vehicles.add()
+            VehicleMsg.set_box_from_list(vehicle.box, example_box)
+            vehicle.object_tags.extend(['example_vehicle_tag1', 'example_vehicle_tag2'])
 
     return msg
 

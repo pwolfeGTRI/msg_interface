@@ -21,7 +21,7 @@ def create_example_interactionindealership(num_associated_tracks=2):
     msg.confidence = 0.80
     msg.primary_track.id = 69
     msg.primary_track.classification = SkaiMsg.CLASSIFICATION.CUSTOMER
-    msg.primary_track.skaimot_person_tags.extend(example_tags)
+    msg.primary_track.object_tags.extend(example_tags)
     msg.primary_track.camera_ids.extend(fake_camera_ids)
     msg.interaction_type = 'greeting'
 
@@ -29,7 +29,7 @@ def create_example_interactionindealership(num_associated_tracks=2):
         associated_track = msg.associated_tracks.add()
         associated_track.id = person_count+1
         associated_track.classification = SkaiMsg.CLASSIFICATION.EMPLOYEE
-        associated_track.skaimot_person_tags.extend(example_tags)
+        associated_track.object_tags.extend(example_tags)
         associated_track.camera_ids.extend(fake_camera_ids)
 
     return msg
