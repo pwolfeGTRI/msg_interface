@@ -390,6 +390,13 @@ class GlobalTrackMsg(SkaiMsg):
     proto_msg_class = GlobalTrackProtoMsg
     ports = list(range(6400, 6500))
 
+    @staticmethod
+    def copy_tlbr_box_to_global_bbox(tlbr_box, global_bbox):
+        global_bbox.top = tlbr_box.top
+        global_bbox.left = tlbr_box.left
+        global_bbox.bottom = tlbr_box.bottom
+        global_bbox.right = tlbr_box.right
+
 class ActionMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.ACTION
     proto_msg_class = ActionProtoMsg
