@@ -13,7 +13,7 @@ message VehicleProtoMsg {
 
         // vehicle type
         message Vehicle {
-            skaiproto.skaimot.BoundingBox box = 1; // top left bottom right floats from 0 to 1
+            skaiproto.skaimot.TLBR_Box box = 1; // top left bottom right floats from 0 to 1
             repeated string object_tags = 2;     
         }
 

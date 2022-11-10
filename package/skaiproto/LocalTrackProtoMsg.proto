@@ -24,7 +24,7 @@ message LocalTrackProtoMsg {
             // skaimot stuff
             uint64 skaimot_id = 1;
             skaiproto.skaimot.Classification classification = 2;
-            skaiproto.skaimot.BoundingBox box = 3;
+            skaiproto.skaimot.TLBR_Box box = 3;
             skaiproto.skaimot.FaceEmbedding face_embed = 4;
             skaiproto.skaimot.BBoxEmbedding bbox_embed = 5;
             repeated string skaimot_person_tags = 6;

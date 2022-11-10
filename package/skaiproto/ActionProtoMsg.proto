@@ -20,11 +20,11 @@ message Action {
     ActionType action = 1;
 
     // box around the action 
-    skaiproto.skaimot.BoundingBox location = 2;
+    skaiproto.skaimot.TLBR_Box location = 2;
 
     // list of boxes of relevant people, cars, etc associated with action
     // your process can receive from skaimot or whatever to get these
-    repeated skaiproto.skaimot.BoundingBox associated_boxes = 3;
+    repeated skaiproto.skaimot.TLBR_Box associated_boxes = 3;
 }
 
 message ActionProtoMsg {

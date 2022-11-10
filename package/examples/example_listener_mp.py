@@ -26,7 +26,7 @@ def unpack_and_print_cam_id_and_timestamp_per_frame(msg_bytes):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'))
+    parser.add_argument('--udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'), default='tcp')
     parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
     parser.add_argument('--recordfile', help='skaibin file to record to', nargs='?', type=str, default=None)
     parser.add_argument('--ipv6', help='use ipv6 instead of ipv4 default', nargs='?', type=bool, const=True, default=False)

@@ -4,18 +4,12 @@ package skaiproto.skaimot;
 
 // bounding box defined with 
 // top left, bottom right corners that are floats from 0 to 1
-message BoundingBox {
-    // float 0 to 1
-    message xy {
-        float x = 1;
-        float y = 2;
-    }
-    xy topleft = 1;
-    xy botright = 2;
-
-    // metadata only used by other messages
-    uint64 timestamp = 3;   
-    uint64 skaimot_id = 4;  
+message TLBR_Box {
+    // floats from 0 to 1 scaled with width/height
+    float top = 1;
+    float left = 2;
+    float bottom = 3;
+    float right = 4;
 }
 
 // face embedding for improving recall/recognition
@@ -32,7 +26,7 @@ message FaceEmbedding {
 
     // appended by global track handler
     uint64 camera_id = 5; // camera mac address turned into serial num
-    BoundingBox box = 6; // tlbr 0 to 1 scaled
+    TLBR_Box box = 6; // tlbr 0 to 1 scaled
 }
 
 // bbox embedding for improving recall/recognition
@@ -49,7 +43,7 @@ message BBoxEmbedding {
 
     // appended by global track handler
     uint64 camera_id = 5; // camera mac address turned into serial num
-    BoundingBox box = 6; // tlbr 0 to 1 scaled
+    TLBR_Box box = 6; // tlbr 0 to 1 scaled
 }
 
 // employee vs customer vs uninitialized classification
@@ -81,7 +75,7 @@ message SkaimotProtoMsg {
             Classification classification = 2;
 
             // top left bottom right defined bounding box
-            BoundingBox box = 3;
+            TLBR_Box box = 3;
 
             // embeddings (list of floats) to help recognition
             FaceEmbedding face_embedding = 4;
