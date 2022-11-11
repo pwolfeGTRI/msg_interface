@@ -211,13 +211,10 @@ class SkaimotMsg(SkaiMsg):
     pose_ports = list(range(6600, 6700))
 
     """ person metadata setting helper functions """
-    
     @staticmethod
-    def set_bbox(person, tlbr, timestamp=None):
+    def set_bbox(person, tlbr):
         box = person.box
-        box.topleft.x, box.topleft.y, box.botright.x, box.botright.y = tlbr
-        if timestamp:
-            box.timestamp = timestamp
+        box.top, box.left, box.bottom, box.right = tlbr
 
     @staticmethod
     def set_face_embed(person, face_embed, timestamp=None):
@@ -393,6 +390,13 @@ class GlobalTrackMsg(SkaiMsg):
     proto_msg_class = GlobalTrackProtoMsg
     ports = list(range(6400, 6500))
 
+    @staticmethod
+    def copy_tlbr_box_to_global_bbox(tlbr_box, global_bbox):
+        global_bbox.top = tlbr_box.top
+        global_bbox.left = tlbr_box.left
+        global_bbox.bottom = tlbr_box.bottom
+        global_bbox.right = tlbr_box.right
+
 class ActionMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.ACTION
     proto_msg_class = ActionProtoMsg
@@ -440,7 +444,7 @@ class VehicleMsg(SkaiMsg):
 
     @staticmethod
     def set_box_from_list(box, tlbr_list):
-        box.topleft.y, box.topleft.x, box.botright.y, box.botright.x = tlbr_list
+        box.top, box.left, box.bottom, box.right = tlbr_list
 
 class VehicleSpotMonitorMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.VEHICLE_SPOT_MONITOR

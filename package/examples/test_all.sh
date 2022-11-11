@@ -1,5 +1,5 @@
 #!/bin/bash
-UDP_OR_TCP=$1
+UDP_OR_TCP=${1:-tcp}
 CAMGROUP=$2
 EXAMPLEOUT=$3
 
