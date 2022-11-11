@@ -210,10 +210,10 @@ class SkaimotMsg(SkaiMsg):
     ports = list(range(6000, 6100))
     pose_ports = list(range(6600, 6700))
 
-    """ person metadata setting helper functions """
+    """ object metadata setting helper functions """
     @staticmethod
-    def set_bbox(person, tlbr):
-        box = person.box
+    def set_bbox(person_or_vehicle, tlbr):
+        box = person_or_vehicle.box
         box.top, box.left, box.bottom, box.right = tlbr
 
     @staticmethod
@@ -223,10 +223,10 @@ class SkaimotMsg(SkaiMsg):
             person.face_embedding.timestamp = timestamp
 
     @staticmethod
-    def set_bbox_embed(person, bbox_embed, timestamp=None):
-        person.bbox_embedding.vals.extend(bbox_embed)
+    def set_bbox_embed(person_or_vehicle, bbox_embed, timestamp=None):
+        person_or_vehicle.bbox_embedding.vals.extend(bbox_embed)
         if timestamp:
-            person.bbox_embedding.timestamp = timestamp
+            person_or_vehicle.bbox_embedding.timestamp = timestamp
 
 class PoseMsg(SkaiMsg):
     """Pose message packing/unpacking/port definitions"""
