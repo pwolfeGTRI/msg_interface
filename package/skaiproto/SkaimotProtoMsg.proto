@@ -14,7 +14,7 @@ message TLBR_Box {
 
 // face embedding for improving recall/recognition
 message FaceEmbedding {
-    // 512 list of floats
+    // list of floats
     repeated float vals = 1;
 
     // metadata only used by other messages
@@ -31,7 +31,7 @@ message FaceEmbedding {
 
 // bbox embedding for improving recall/recognition
 message BBoxEmbedding {
-    // 2048 list of floats
+    // list of floats
     repeated float vals = 1;
 
     // metadata only used by other messages
@@ -85,6 +85,21 @@ message SkaimotProtoMsg {
             repeated string object_tags = 6;
         }
         repeated Person people_in_frame = 3;
+        
+        // vehicles in frame
+        message Vehicle {
+            // skaimot id
+            uint64 id = 1;
+            // tlbr 0 to 1 bounding box
+            TLBR_Box box = 2;
+            // bbox embedding
+            BBoxEmbedding bbox_embedding = 3;
+            // license plate string
+            string license_plate = 4;
+            // tags for other things
+            repeated string object_tags = 5;
+        }
+        repeated Vehicle vehicles_in_frame = 4;
 
     }
     repeated CameraFrame camera_frames = 1;
