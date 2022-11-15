@@ -34,9 +34,10 @@ message TracksInDealershipProtoMsg {
     }
     message Vehicle {
         uint64 id = 1;
-        repeated GlobalBBox boxes = 2;
-        repeated string object_tags = 3;  
-        repeated string location_tags = 4;
+        skaiproto.feetpos.FeetPosition feet_position = 2;
+        repeated GlobalBBox boxes = 3;
+        repeated string object_tags = 4;  
+        repeated string location_tags = 5;
     }
     
     // actual message field definitions
