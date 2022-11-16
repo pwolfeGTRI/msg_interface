@@ -21,6 +21,11 @@ message GlobalBBox {
     uint64 camera_id = 6;
 }
 
+message LicensePlate {
+    string license_plate = 1;
+    uint64 camera_id = 2;
+}
+
 message TracksInDealershipProtoMsg {
     // type definitions
     message Person {
@@ -38,6 +43,7 @@ message TracksInDealershipProtoMsg {
         repeated GlobalBBox boxes = 3;
         repeated string object_tags = 4;  
         repeated string location_tags = 5;
+        repeated LicensePlate license_plates = 6;
     }
     
     // actual message field definitions
