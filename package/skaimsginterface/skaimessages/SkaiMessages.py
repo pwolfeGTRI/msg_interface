@@ -430,6 +430,7 @@ class TracksInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.TRACKS_IN_DEALERSHIP
     proto_msg_class = TracksInDealershipProtoMsg
     ports = list(range(7310, 7320)) # only few per dealership needed
+    ports_skai = list(range(7340,7350)) # send duplicate message to skai
 
 class InteractionInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.INTERACTION_IN_DEALERSHIP
