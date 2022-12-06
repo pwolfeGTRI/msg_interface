@@ -887,6 +887,112 @@ class SkaiDatabaseInterface:
         return (requests.delete(f'{self.url}/camera_events/{pk}')).status_code
     #endregion
 
+    #region camera event endpoints
+    def post_new_marker(self, marker_data):
+        """
+        Sends a POST request for a new marker with the provided json data.
+        marker_data : json
+            Data for new marker with structure like
+            {
+                'name': 'name1',
+                'x': 0,
+                'y': 1,
+                'z': 2
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/markers/', data=json.dumps(marker_data), headers=headers)).status_code
+
+    def get_marker_by_pk(self, pk):
+        """
+        Sends a GET request for a marker with the passed primary key.
+        pk : int
+            Primary key for marker to receive
+        returns : Marker object as json
+        """
+        return (requests.get(f'{self.url}/markers/{pk}')).json()
+
+    def get_all_markers(self):
+        """
+        Sends a GET request for all markers within the database.
+        returns : Marker object(s) as json
+        """
+        return (requests.get(f'{self.url}/markers/')).json()
+
+    def delete_marker_by_pk(self, pk):
+        """
+        Sends a DELETE request for a marker with the passed primary key.
+        pk : int
+            Primary key for marker to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/markers/{pk}')).status_code
+
+    def get_marker_by_name(self, name):
+        """
+        Sends a GET request for the marker with the specified name.
+        returns : Marker object as json
+        """
+        return (requests.get(f'{self.url}/markers/get_by_name/{name}')).json()
+    
+    def update_marker_name_by_id(self, pk, name):
+        """
+        Sends a POST request for updating the name of the marker with the passed primary key.
+        pk : int
+            Primary key for marker to receive
+        name : string
+            New name to be set to marker
+        returns : Status code
+        """
+        return (requests.post(f'{self.url}/markers/set_new_name_by_id/{pk}/{name}')).status_code
+
+    def update_marker_name(self, old_name, new_name):
+        """
+        Sends a POST request for updating the name of the marker with the passed old name.
+        old_name: string
+            Old name of marker to receive
+        new_name : string
+            New name to be set to marker
+        returns : Status code
+        """
+        return (requests.post(f'{self.url}/markers/set_new_name/{old_name}/{new_name}')).status_code
+
+    def update_marker_pose_by_id(self, pk, pose_json):
+        """
+        Sends a POST request for updating the pose of the marker with the passed primary key.
+        pk : int
+            primary key of marker to receive
+        pose_json : json
+            Pose info in json format with a structure like 
+            { 
+                "x": 1,
+                "y": 2, 
+                "z": 3
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/markers/set_pose_by_id/{pk}', data=json.dumps(pose_json), headers=headers)).status_code
+
+    def update_marker_pose_by_name(self, name, pose_json):
+        """
+        Sends a POST request for updating the pose of the marker with the passed name.
+        name : string
+            name of marker to receive
+        pose_json : json
+            Pose info in json format with a structure like 
+            { 
+                "x": 1,
+                "y": 2, 
+                "z": 3
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/markers/set_pose/{name}', data=json.dumps(pose_json), headers=headers)).status_code
+    #endregion
+
 
     def _database_write(self, url_ext, msg, update=False):
         """private database write function that sends post req
