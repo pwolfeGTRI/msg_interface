@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package skaiproto.status;
+
+// adat modules enum
+enum AdatModule {
+    NO_MODULE = 0;
+    SKAIMOT = 1;
+    GLOBAL_TRACK_HANDLER = 2;
+    EVENT_MANAGER = 3;
+    VEHICLE_YOLO = 4;
+    HUMAN_POSE = 5;
+    LOCAL_TRACK_HANDLER = 6;
+}
+
+// connection status enum
+enum ConnectionStatus {
+    NO_CONNECTION = 0;
+    CONNECTING = 1;
+    CONNECTED = 2;
+}
+
+// status of an adat module
+message ModuleStatusProtoMsg {
+    message Connection {
+        string connection_name = 1;
+        AdatModule destination_module = 2;
+        uint32 port = 3;
+        ConnectionStatus status = 4;
+        uint64 timestamp = 5;
+    }
+    message Error {
+        string error_msg = 1;
+        uint64 timestamp = 2;
+    }
+        
+    AdatModule module = 1;
+    repeated Connection connections = 2;
+    repeated Error errors = 3;
+}
+
+message AdatStatusProtoMsg {
+    repeated AdatModule missing_heartbeats = 1;
+    repeated ModuleStatusProtoMsg.Connection connection_statuses = 2;
+    repeated ModuleStatusProtoMsg.Error module_errors_list = 3;
+}
