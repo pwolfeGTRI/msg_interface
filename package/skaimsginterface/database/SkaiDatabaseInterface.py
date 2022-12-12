@@ -564,6 +564,109 @@ class SkaiDatabaseInterface:
         return (requests.post(f'{self.url}/bbox_embeddings/post_by_global_track/{global_track_id}', data=json.dumps(embedding_json), headers=headers)).status_code
     #endregion
 
+    #region license plate endpoints
+    def post_new_license_plate(self, license_plate_data):
+        """
+        Sends a POST request for a new license plate with the provided json data.
+        license_plate_data : json
+            Data for new license plate with structure like
+            {
+                'globaltrack_id': 1,
+                'vals': {},
+                'box': {},
+                'timestamp': 1657982174,
+                'mac_address': 0,
+                'confidence': 1.0
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/license_plates/', data=json.dumps(license_plate_data), headers=headers)).status_code
+
+    def get_license_plate_by_pk(self, pk):
+        """
+        Sends a GET request for a license plate with the passed primary key.
+        pk : int
+            Primary key for license plate to receive
+        returns : License plate object as json
+        """
+        return (requests.get(f'{self.url}/license_plates/{pk}')).json()
+
+    def get_all_license_plates(self):
+        """
+        Sends a GET request for all license plates within the database.
+        returns : License plate object(s) as json
+        """
+        return (requests.get(f'{self.url}/license_plates/')).json()
+
+    def delete_license_plate_by_pk(self, pk):
+        """
+        Sends a DELETE request for a license plate with the passed primary key.
+        pk : int
+            Primary key for license plate to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/license_plates/{pk}')).status_code
+
+    def get_license_plates_by_global_track(self, global_track_id):
+        """
+        Sends a GET request for the license plates associated with the specified global track.
+        returns : License plate object(s) as json
+        """
+        return (requests.get(f'{self.url}/license_plates/get_by_global_track/{global_track_id}')).json()
+
+    def update_license_plates_by_global_track(self, global_track_id, license_json):
+        """
+        Sends a POST request for updating the license plate(s) of the global track with the passed primary key.
+        global_track_id : int
+            Primary key of global track to receive
+        license_json: json
+            license plate json with a structure like 
+            {
+                'data': [
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    },   
+                    {
+                        'vals': {},
+                        'box': {},
+                        'timestamp': 1657000000,
+                        'mac_address': 0,
+                        'confidence': 1
+                    }
+                ]
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/license_plates/post_by_global_track/{global_track_id}', data=json.dumps(license_json), headers=headers)).status_code
+    #endregion
+
     #region event endpoints
     def post_new_event(self, event_data):
         """
@@ -782,6 +885,112 @@ class SkaiDatabaseInterface:
         returns : Status code
         """
         return (requests.delete(f'{self.url}/camera_events/{pk}')).status_code
+    #endregion
+
+    #region camera event endpoints
+    def post_new_marker(self, marker_data):
+        """
+        Sends a POST request for a new marker with the provided json data.
+        marker_data : json
+            Data for new marker with structure like
+            {
+                'name': 'name1',
+                'x': 0,
+                'y': 1,
+                'z': 2
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/markers/', data=json.dumps(marker_data), headers=headers)).status_code
+
+    def get_marker_by_pk(self, pk):
+        """
+        Sends a GET request for a marker with the passed primary key.
+        pk : int
+            Primary key for marker to receive
+        returns : Marker object as json
+        """
+        return (requests.get(f'{self.url}/markers/{pk}')).json()
+
+    def get_all_markers(self):
+        """
+        Sends a GET request for all markers within the database.
+        returns : Marker object(s) as json
+        """
+        return (requests.get(f'{self.url}/markers/')).json()
+
+    def delete_marker_by_pk(self, pk):
+        """
+        Sends a DELETE request for a marker with the passed primary key.
+        pk : int
+            Primary key for marker to delete
+        returns : Status code
+        """
+        return (requests.delete(f'{self.url}/markers/{pk}')).status_code
+
+    def get_marker_by_name(self, name):
+        """
+        Sends a GET request for the marker with the specified name.
+        returns : Marker object as json
+        """
+        return (requests.get(f'{self.url}/markers/get_by_name/{name}')).json()
+    
+    def update_marker_name_by_id(self, pk, name):
+        """
+        Sends a POST request for updating the name of the marker with the passed primary key.
+        pk : int
+            Primary key for marker to receive
+        name : string
+            New name to be set to marker
+        returns : Status code
+        """
+        return (requests.post(f'{self.url}/markers/set_new_name_by_id/{pk}/{name}')).status_code
+
+    def update_marker_name(self, old_name, new_name):
+        """
+        Sends a POST request for updating the name of the marker with the passed old name.
+        old_name: string
+            Old name of marker to receive
+        new_name : string
+            New name to be set to marker
+        returns : Status code
+        """
+        return (requests.post(f'{self.url}/markers/set_new_name/{old_name}/{new_name}')).status_code
+
+    def update_marker_pose_by_id(self, pk, pose_json):
+        """
+        Sends a POST request for updating the pose of the marker with the passed primary key.
+        pk : int
+            primary key of marker to receive
+        pose_json : json
+            Pose info in json format with a structure like 
+            { 
+                "x": 1,
+                "y": 2, 
+                "z": 3
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/markers/set_pose_by_id/{pk}', data=json.dumps(pose_json), headers=headers)).status_code
+
+    def update_marker_pose_by_name(self, name, pose_json):
+        """
+        Sends a POST request for updating the pose of the marker with the passed name.
+        name : string
+            name of marker to receive
+        pose_json : json
+            Pose info in json format with a structure like 
+            { 
+                "x": 1,
+                "y": 2, 
+                "z": 3
+            }
+        returns : Status code
+        """
+        headers = {'Content-type': 'application/json'}
+        return (requests.post(f'{self.url}/markers/set_pose/{name}', data=json.dumps(pose_json), headers=headers)).status_code
     #endregion
 
 

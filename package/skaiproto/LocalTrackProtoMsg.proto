@@ -24,7 +24,7 @@ message LocalTrackProtoMsg {
             // skaimot stuff
             uint64 skaimot_id = 1;
             skaiproto.skaimot.Classification classification = 2;
-            skaiproto.skaimot.BoundingBox box = 3;
+            skaiproto.skaimot.TLBR_Box box = 3;
             skaiproto.skaimot.FaceEmbedding face_embed = 4;
             skaiproto.skaimot.BBoxEmbedding bbox_embed = 5;
             repeated string skaimot_person_tags = 6;
@@ -41,6 +41,19 @@ message LocalTrackProtoMsg {
             skaiproto.action.Action action_list = 11;
         }
         repeated Person people_in_frame = 2;
+
+        message Vehicle {
+            uint64 skaimot_id = 1;
+            skaiproto.skaimot.TLBR_Box box = 2;
+            skaiproto.skaimot.BBoxEmbedding bbox_embedding = 3;
+            string license_plate = 4;
+            repeated string object_tags = 5;
+
+              // vehicle 3D position
+            skaiproto.feetpos.FeetPosition feet_position = 6;
+            float feet_position_confidence = 7;
+        }
+        repeated Vehicle vehicles_in_frame = 3;
     }
     repeated CameraFrame camera_frames = 2;
 }

@@ -11,7 +11,7 @@ cd skai-ai-message-interface
 
 To push changes to all remotes:
 ```bash
-./manage.py push
+./container.py push
 ```
 
 ### AUTHENTICATION NOTE: 
@@ -69,12 +69,12 @@ Examples folder has many examples to get you setup:
 ### Testing the Examples
 ```bash
 # in first terminal bring up container and attach 
-./manage.py up
-./manage.py attach
+./container.py up
+./container.py attach
 ./example_listener.py tcp
 
 # in second terminal
-./manage.py attach
+./container.py attach
 ./test_all.sh tcp
 ```
 
@@ -109,12 +109,12 @@ For message time synchronization example see local track handler repo, metadata_
 4. test it out
     ```bash
     # in first terminal bring up container and attach 
-    ./manage.py up
-    ./manage.py attach
+    ./container.py up
+    ./container.py attach
     ./example_listener.py tcp
 
     # in second terminal
-    ./manage.py attach
+    ./container.py attach
     ./test_yourmsgname.py tcp
 
     # if that works then add your test to the test_all.sh script and run that

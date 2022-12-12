@@ -10,7 +10,14 @@ message VehicleProtoMsg {
     message CameraFrame {
         uint64 timestamp = 1; // epoch time double * 1e9 turned to uint64
         uint64 camera_id = 2; // mac address
-        repeated skaiproto.skaimot.BoundingBox boxes = 3; // top left bottom right floats from 0 to 1
+
+        // vehicle type
+        message Vehicle {
+            skaiproto.skaimot.TLBR_Box box = 1; // top left bottom right floats from 0 to 1
+            repeated string object_tags = 2;     
+        }
+
+        repeated Vehicle vehicles = 3; // list of vehicle objects        
     }
 
     // fields here

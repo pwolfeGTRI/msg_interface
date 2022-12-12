@@ -210,14 +210,11 @@ class SkaimotMsg(SkaiMsg):
     ports = list(range(6000, 6100))
     pose_ports = list(range(6600, 6700))
 
-    """ person metadata setting helper functions """
-    
+    """ object metadata setting helper functions """
     @staticmethod
-    def set_bbox(person, tlbr, timestamp=None):
-        box = person.box
-        box.topleft.x, box.topleft.y, box.botright.x, box.botright.y = tlbr
-        if timestamp:
-            box.timestamp = timestamp
+    def set_bbox(person_or_vehicle, tlbr):
+        box = person_or_vehicle.box
+        box.top, box.left, box.bottom, box.right = tlbr
 
     @staticmethod
     def set_face_embed(person, face_embed, timestamp=None):
@@ -226,10 +223,10 @@ class SkaimotMsg(SkaiMsg):
             person.face_embedding.timestamp = timestamp
 
     @staticmethod
-    def set_bbox_embed(person, bbox_embed, timestamp=None):
-        person.bbox_embedding.vals.extend(bbox_embed)
+    def set_bbox_embed(person_or_vehicle, bbox_embed, timestamp=None):
+        person_or_vehicle.bbox_embedding.vals.extend(bbox_embed)
         if timestamp:
-            person.bbox_embedding.timestamp = timestamp
+            person_or_vehicle.bbox_embedding.timestamp = timestamp
 
 class PoseMsg(SkaiMsg):
     """Pose message packing/unpacking/port definitions"""
@@ -393,6 +390,13 @@ class GlobalTrackMsg(SkaiMsg):
     proto_msg_class = GlobalTrackProtoMsg
     ports = list(range(6400, 6500))
 
+    @staticmethod
+    def copy_tlbr_box_to_global_bbox(tlbr_box, global_bbox):
+        global_bbox.top = tlbr_box.top
+        global_bbox.left = tlbr_box.left
+        global_bbox.bottom = tlbr_box.bottom
+        global_bbox.right = tlbr_box.right
+
 class ActionMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.ACTION
     proto_msg_class = ActionProtoMsg
@@ -426,6 +430,7 @@ class TracksInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.TRACKS_IN_DEALERSHIP
     proto_msg_class = TracksInDealershipProtoMsg
     ports = list(range(7310, 7320)) # only few per dealership needed
+    ports_skai = list(range(7340,7350)) # send duplicate message to skai
 
 class InteractionInDealershipMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.INTERACTION_IN_DEALERSHIP
@@ -440,7 +445,7 @@ class VehicleMsg(SkaiMsg):
 
     @staticmethod
     def set_box_from_list(box, tlbr_list):
-        box.topleft.y, box.topleft.x, box.botright.y, box.botright.x = tlbr_list
+        box.top, box.left, box.bottom, box.right = tlbr_list
 
 class VehicleSpotMonitorMsg(SkaiMsg):
     msg_type = SkaiMsg.MsgType.VEHICLE_SPOT_MONITOR

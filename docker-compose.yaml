@@ -2,7 +2,7 @@ version: "3.9"
 services:
 
   ###### name service ######
-  # [service name below] line below gets replaced by manage.py with your container config name
+  # [service name below] line below gets replaced by container.py with your container config name
   skaimsginterface_service:
     #### name image  & container ####
     image: ${BASENAME}_img_${PARENTDIR}
