@@ -12,7 +12,7 @@
 
     <groupId>com.skai</groupId>
     <artifactId>skai-ai-message-interface</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>skai-ai-message-interface</name>
