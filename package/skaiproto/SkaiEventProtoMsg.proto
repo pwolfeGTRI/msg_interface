@@ -18,6 +18,7 @@ enum SkaiEvent {
     VEHICLE_IDLE = 9;
     VEHICLE_SERVICE_STARTED = 10;
     VEHICLE_SERVICE_ENDED = 11;
+    TRACK_LOCATION_CHANGE = 12;
 }
 
 message SkaiEventProtoMsg {
