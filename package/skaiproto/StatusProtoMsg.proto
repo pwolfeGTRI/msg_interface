@@ -37,6 +37,7 @@ message ModuleStatusProtoMsg {
     AdatModule module = 1;
     repeated Connection connections = 2;
     repeated Error errors = 3;
+    string container_status = 4;
 }
 
 message AdatStatusProtoMsg {
