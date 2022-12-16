@@ -104,14 +104,14 @@ For message time synchronization example see local track handler repo, metadata_
   - create any helper functions to pack your message
   - install using `install_skaimsginterface.sh` (auto upgrades if already installed)
 3. add an example
-  - in `examples/example_listener.py` add your msg to be listened to
+  - in `examples/example_listener.py` add your msg's port to be listened to to the ports list
   - make an `examples/test_yourmsgname.py` file to show how to pack your message & send to listener. (see other examples and .proto files for reference)
 4. test it out
     ```bash
     # in first terminal bring up container and attach 
     ./container.py up
     ./container.py attach
-    ./example_listener.py tcp
+    ./example_listener_mp.py tcp
 
     # in second terminal
     ./container.py attach

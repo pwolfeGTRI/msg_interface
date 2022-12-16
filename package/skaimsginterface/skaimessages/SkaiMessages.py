@@ -18,6 +18,7 @@ from skaiproto.SkaiboxMsgsProtoMsg_pb2 import SkaiboxDealershipMsgProtoMsg, Skai
 from skaiproto.InteractionProtoMsg_pb2 import TracksInDealershipProtoMsg, InteractionInDealershipProtoMsg
 from skaiproto.VehicleProtoMsg_pb2 import VehicleProtoMsg, VehicleSpotMonitorProtoMsg
 from skaiproto.SkaiGooeyProtoMsg_pb2 import SkaiGooeyProtoMsg
+from skaiproto.StatusProtoMsg_pb2 import ModuleStatusProtoMsg, AdatStatusProtoMsg
 from skaiproto import *
 
 class SkaiMsg(ABC):
@@ -38,7 +39,9 @@ class SkaiMsg(ABC):
     SKAIEVENT = SkaiEventProtoMsg_pb2.SkaiEvent
     SKAIBOX_COMMAND = SkaiboxMsgsProtoMsg_pb2.SkaiboxCommand
     SKAIBOX_RESPONSE = SkaiboxMsgsProtoMsg_pb2.SkaiboxResponse
-
+    CONNECTION_STATUS = StatusProtoMsg_pb2.ConnectionStatus
+    ADAT_MODULE = StatusProtoMsg_pb2.AdatModule
+    
     # add to list check max length
     @classmethod
     def add_to_list_w_maxlength(cls, protobuflist, max_length=100):
@@ -70,6 +73,8 @@ class SkaiMsg(ABC):
         VEHICLE_SPOT_MONITOR = 14
         SKAI_EVENT = 15
         SKAI_GOOEY = 16
+        MODULE_STATUS = 17
+        ADAT_STATUS = 18
 
         @classmethod
         def get_class_from_id(cls, id):
@@ -105,6 +110,10 @@ class SkaiMsg(ABC):
                 return SkaiEventMsg
             elif id == cls.SKAI_GOOEY.value:
                 return SkaiGooeyMsg
+            elif id == cls.MODULE_STATUS.value:
+                return ModuleStatusMsg
+            elif id == cls.ADAT_STATUS.value:
+                return AdatStatusMsg
             else:
                 return None
 
@@ -464,6 +473,16 @@ class SkaiGooeyMsg(SkaiMsg):
     ports = list(range(7300,7310)) # only few per dealership needed 
     # event from interaction to gui
     interacts2gooey_ports = list(range(7330, 7340))
+
+class ModuleStatusMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.MODULE_STATUS
+    proto_msg_class = ModuleStatusProtoMsg
+    ports = list(range(7350, 7360))
+    
+class AdatStatusMsg(SkaiMsg):
+    msg_type = SkaiMsg.MsgType.ADAT_STATUS
+    proto_msg_class = AdatStatusProtoMsg
+    ports = list(range(7360, 7370))
 
 if __name__=='__main__':
     pass

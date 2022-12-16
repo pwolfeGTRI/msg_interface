@@ -56,8 +56,10 @@ if __name__ == '__main__':
         VehicleMsg.ports[camgroup_idx],
         VehicleSpotMonitorMsg.ports[camgroup_idx],
         SkaiEventMsg.ports[camgroup_idx],
-        SkaiGooeyMsg.ports[4] # only 1 per dealership (range 0 to 9 available. using num 4 for testing)
-        ]
+        SkaiGooeyMsg.ports[dealership_test_idx],
+        ModuleStatusMsg.ports[dealership_test_idx],
+        AdatStatusMsg.ports[dealership_test_idx]
+    ]
 
     # listen
     if args.udp_or_tcp == 'udp':
