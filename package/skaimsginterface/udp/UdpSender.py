@@ -24,9 +24,20 @@ class UdpSender:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    def send(self, msg_bytes):
-        # generate checksum
-        msg_bytes += hashlib.md5(msg_bytes).digest()
+    def send(self, msg_bytes, send_failed_checksum=False):
+
+        # calc checksum 
+        clean_checksum = hashlib.md5(msg_bytes).digest()
+        # if you want to send a intentionally false checksum then mutate the bytes
+        if send_failed_checksum:
+            # add 1 to each bytes
+            checksum = b''
+            for b in clean_checksum:
+                checksum += bytes([b+1])
+        else:
+            checksum = clean_checksum
+        # and append to end 
+        msg_bytes += checksum
 
         # send msg length & chunksize first
         packet_size = 4096

@@ -10,7 +10,7 @@ from skaimsginterface.udp import UdpSender
 
 dealership_test_idx = 4
 
-def create_example_module_status(module_enum, connection_status, error_msg=None):
+def create_example_module_status(error_msg=None):
     msg = ModuleStatusMsg.new_msg()
     timestamp = int(time.time() * 1e9)  # integer version of double * 1e9
 
@@ -18,6 +18,7 @@ def create_example_module_status(module_enum, connection_status, error_msg=None)
     
     # event manager connections added like this
     em_connection = msg.connections.add()
+    em_connection.module = msg.module
     em_connection.connection_name = 'TracksInDealership'
     em_connection.destination_module = SkaiMsg.ADAT_MODULE.EVENT_MANAGER
     em_connection.port = TracksInDealershipMsg.ports[dealership_test_idx]
@@ -26,11 +27,31 @@ def create_example_module_status(module_enum, connection_status, error_msg=None)
     # errors added like this
     if error_msg is not None:
         example_error = msg.errors.add()
+        example_error.module = msg.module
         example_error.timestamp = timestamp
         example_error.error_msg = error_msg
 
+    return msg
+
 def create_example_adat_status():
     msg = AdatStatusMsg.new_msg()
+    msg.missing_heartbeats.extend([SkaiMsg.ADAT_MODULE.EVENT_MANAGER, SkaiMsg.ADAT_MODULE.SKAIMOT])
+    
+    example_conn_status = msg.connection_statuses.add()
+    example_conn_status.module = SkaiMsg.ADAT_MODULE.GLOBAL_TRACK_HANDLER
+    example_conn_status.connection_name = 'TracksInDealership'
+    example_conn_status.destination_module = SkaiMsg.ADAT_MODULE.EVENT_MANAGER
+    example_conn_status.port = TracksInDealershipMsg.ports[dealership_test_idx]
+    example_conn_status.status = SkaiMsg.CONNECTION_STATUS.CONNECTED
+
+    msgerr = msg.module_errors_list.add()
+    msgerr.module = SkaiMsg.ADAT_MODULE.GLOBAL_TRACK_HANDLER
+    msgerr.error_msg = 'some error happened be descriptive'
+    msgerr.timestamp = int(time.time() * 1e9)
+    
+    return msg
+    
+
 
 
 if __name__=='__main__':
