@@ -78,7 +78,7 @@ class TcpSender:
             # add 1 to each bytes
             checksum = b''
             for b in clean_checksum:
-                checksum += bytes([b+1])
+                checksum += bytes([ min(255, max(b+1, 0)) ])
         else:
             checksum = clean_checksum
         # and append
@@ -107,6 +107,7 @@ class TcpSender:
             except Exception as e:
                 print(f'some other Exception {e} occurred. exiting...')
                 exit(1)
+        time.sleep(0.005)
 
 
 if __name__ == '__main__':

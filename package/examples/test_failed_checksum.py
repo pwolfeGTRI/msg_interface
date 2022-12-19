@@ -5,8 +5,10 @@ from pathlib import Path
 from argparse import ArgumentParser
 
 from skaimsginterface.skaimessages import *
-from skaimsginterface.tcp import TcpSender
+from skaimsginterface.tcp import TcpSender, TcpSenderMP
 from skaimsginterface.udp import UdpSender
+
+import multiprocessing as mp
 
 def create_example_skaimotmsg(num_people=2, num_cams=5, id=None):    
     if id is None:
@@ -51,7 +53,7 @@ def create_example_skaimotmsg(num_people=2, num_cams=5, id=None):
 
 if __name__=='__main__':
     parser = ArgumentParser()
-    parser.add_argument('udp_or_tcp', type=str, help='protocol to listen on', choices=('tcp', 'udp'))
+    parser.add_argument('--udp_or_tcp',type=str, help='protocol to listen on', choices=('tcp', 'udp'), default='tcp')
     parser.add_argument('--exampleout', help='dump an example message text file under a folder example_msg_prints', nargs='?', type=bool, const=True, default=False)
     parser.add_argument('--camgroup', help='camera group number (default 0)', nargs='?', type=int, default=0)
     parser.add_argument('--ipv6', help='use ipv6 instead of ipv4 default', nargs='?', type=bool, const=True, default=False)
@@ -59,6 +61,8 @@ if __name__=='__main__':
 
     msg = create_example_skaimotmsg()
     
+    print_q = mp.SimpleQueue()
+
     # write example message to file for viewing
     if args.exampleout:
         filename = 'example_msg_prints/skaimot.txt'
@@ -76,11 +80,36 @@ if __name__=='__main__':
     if args.udp_or_tcp == 'udp':
         sender = UdpSender(destination_ip, SkaimotMsg.ports[cam_group_idx], verbose=True)
     else:    
-        sender = TcpSender(destination_ip, SkaimotMsg.ports[cam_group_idx], ipv6=args.ipv6, verbose=True)
+        sender = TcpSenderMP(destination_ip, SkaimotMsg.ports[cam_group_idx], print_q=print_q, verbose=True)
     
-    # send with fake checksum 
-    sender.send(msg_bytes, send_failed_checksum=True)
-    # wait a bit
-    time.sleep(0.0001)
-    # send with real checksum 
-    sender.send(msg_bytes)
+    # send with fake checksum and real altnerating
+    for i in range(10):
+        sender.send(msg_bytes, send_failed_checksum=True)
+        sender.send(msg_bytes)
+
+    # send normal 3 times
+    for i in range(3):
+        sender.send(msg_bytes)
+
+
+ # stay active until ctrl+c input
+    num_send_times = 3
+    # intermsg_delay = 0.001
+    try:
+        while True:
+            time.sleep(2)
+
+    except KeyboardInterrupt:
+        print('exiting now...')
+        
+        # wait a second
+        time.sleep(1)
+
+        # print remaining print_q?
+        while not print_q.empty():
+            print(print_q.get())
+
+    finally:
+        sender.stop()
+  
+    print('end')
