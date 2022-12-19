@@ -70,8 +70,20 @@ class TcpSender:
         if not self.connected:
             print('failed to connect!')
 
-    def send(self, msg_bytes):
-        msg_bytes_with_checksum = msg_bytes + hashlib.md5(msg_bytes).digest()
+    def send(self, msg_bytes, send_failed_checksum=False):
+        # calc checksum 
+        clean_checksum = hashlib.md5(msg_bytes).digest()
+        # if you want to send a intentionally false checksum then mutate the bytes
+        if send_failed_checksum:
+            # add 1 to each bytes
+            checksum = b''
+            for b in clean_checksum:
+                checksum += bytes([ min(255, max(b+1, 0)) ])
+        else:
+            checksum = clean_checksum
+        # and append
+        msg_bytes_with_checksum = msg_bytes + checksum
+
         msg_bytes_with_len = struct.pack('!I', len(msg_bytes_with_checksum)) + msg_bytes_with_checksum
         while True:
             try:
@@ -95,6 +107,7 @@ class TcpSender:
             except Exception as e:
                 print(f'some other Exception {e} occurred. exiting...')
                 exit(1)
+        time.sleep(0.005)
 
 
 if __name__ == '__main__':

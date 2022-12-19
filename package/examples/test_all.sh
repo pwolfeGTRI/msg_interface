@@ -26,11 +26,13 @@ ARGS="$UDP_OR_TCP $EXAMPLEOUT $CAMGROUPCHANGE"
 
 ./test_action.py $ARGS
 ./test_feetpos.py $ARGS
+./test_interactionindealership.py $ARGS
 ./test_localtrack.py $ARGS
 ./test_pose.py $ARGS
-./test_skaimot.py $ARGS
-./test_tracksindealership.py $ARGS
-./test_interactionindealership.py $ARGS
-./test_vehicle.py $ARGS
-./test_vehicle_spotmonitor.py $ARGS
+./test_skaievent.py $ARGS
 ./test_skaigooey.py $ARGS
+./test_skaimot.py $ARGS
+./test_status.py $ARGS
+./test_tracksindealership.py $ARGS
+./test_vehicle_spotmonitor.py $ARGS
+./test_vehicle.py $ARGS

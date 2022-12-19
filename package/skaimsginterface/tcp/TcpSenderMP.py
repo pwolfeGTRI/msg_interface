@@ -240,6 +240,7 @@ class TcpSenderMP:
                         if connected_event.is_set():
                             msg_bytes_with_checksum_and_length = send_q.get()
                         else:
+                            print_q.put('connected event not set!')
                             raise BrokenPipeError
 
                         sock.sendall(msg_bytes_with_checksum_and_length)
@@ -290,11 +291,21 @@ class TcpSenderMP:
                             print_q.put('msg not sent. retrying...')
            
                 # delay between repeated sends
-                time.sleep(0.001)
+                time.sleep(0.005)
 
-    def send(self, msg_bytes):
-        # calc checksum and append
-        msg_bytes_with_checksum = msg_bytes + hashlib.md5(msg_bytes).digest()
+    def send(self, msg_bytes, send_failed_checksum=False):
+        # calc checksum 
+        clean_checksum = hashlib.md5(msg_bytes).digest()
+        # if you want to send a intentionally false checksum then mutate the bytes
+        if send_failed_checksum:
+            # add 1 to each bytes
+            checksum = b''
+            for b in clean_checksum:
+                checksum += bytes([ min(255, max(b+1, 0)) ])
+        else:
+            checksum = clean_checksum
+        # and append
+        msg_bytes_with_checksum = msg_bytes + checksum
         # calc length and prepend
         msg_bytes_with_checksum_and_length = struct.pack('!I', len(msg_bytes_with_checksum)) + msg_bytes_with_checksum
         # add to send queue to be sent
