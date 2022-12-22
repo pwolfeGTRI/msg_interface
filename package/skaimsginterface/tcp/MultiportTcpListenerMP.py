@@ -16,6 +16,13 @@ import multiprocessing as mp
 
 import code
 
+import logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s [%(levelname)8s] %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filename='Listener.log',
+                    filemode='w')
+
 class MultiportTcpListenerMP:
 
     def __init__(self, portlist, multiport_callback_func, print_q=None, ipv6=False, verbose=False, recordfile=None):
@@ -139,48 +146,52 @@ class MultiportTcpListenerMP:
         class RequestHandler(socketserver.BaseRequestHandler):
 
             def handle(self):
-                # note: socket will close at end of handle method
-                while True:
+                try:
+                    # note: socket will close at end of handle method
+                    while True:
 
-                    # assumes first 4 bytes designate length of message
-                    # (packed as network endian unsigned int)
-                    bytes_in = self.request.recv(4)
-                    if not bytes_in:
-                        continue  # continue if no new message
+                        # assumes first 4 bytes designate length of message
+                        # (packed as network endian unsigned int)
+                        bytes_in = self.request.recv(4)
+                        if not bytes_in:
+                            continue  # continue if no new message
 
-                    # otherwise log timestamp of first packet arrival
-                    firstpacket_timestamp = time.time()
+                        # otherwise log timestamp of first packet arrival
+                        firstpacket_timestamp = time.time()
 
-                    # and parse the length
-                    length = struct.unpack('!I', bytes_in)[0]
+                        # and parse the length
+                        length = struct.unpack('!I', bytes_in)[0]
 
-                    # receive in chunks
-                    chunksize = 4096
-                    data = bytes()
-                    for chunk in range(math.ceil(length / chunksize)):
-                        data += self.request.recv(chunksize)
+                        # receive in chunks
+                        chunksize = 4096
+                        data = bytes()
+                        for chunk in range(math.ceil(length / chunksize)):
+                            data += self.request.recv(chunksize)
 
-                    # variables = globals().copy()
-                    # variables.update(locals())
-                    # shell = code.InteractiveConsole(variables)
-                    # shell.interact()
+                        # variables = globals().copy()
+                        # variables.update(locals())
+                        # shell = code.InteractiveConsole(variables)
+                        # shell.interact()
 
-                    # socket = self.request.getsockname()
-                    # print(
-                    #     f'client {self.client_address}\n\twrote {data}\n\tto {self.server.server_address}'
-                    # )
+                        # socket = self.request.getsockname()
+                        # print(
+                        #     f'client {self.client_address}\n\twrote {data}\n\tto {self.server.server_address}'
+                        # )
 
-                    # verify checksum
-                    msg_bytes, checksum_bytes = data[:-16], data[-16:]
-                    computed_checksum = hashlib.md5(msg_bytes).digest()
+                        # verify checksum
+                        msg_bytes, checksum_bytes = data[:-16], data[-16:]
+                        computed_checksum = hashlib.md5(msg_bytes).digest()
 
-                    # pass onwards if verified, otherwise add an error msg to print_q
-                    if checksum_bytes == computed_checksum:
-                        # pass to msg queue
-                        self.server.msg_q.put( (msg_bytes, firstpacket_timestamp, self.server.server_address) )
-                    else:
-                        if self.server.print_q is not None:
-                            self.server.print_q.put(f'checksum failed on {self.server.server_address}')
+                        # pass onwards if verified, otherwise add an error msg to print_q
+                        if checksum_bytes == computed_checksum:
+                            # pass to msg queue
+                            self.server.msg_q.put( (msg_bytes, firstpacket_timestamp, self.server.server_address) )
+                        else:
+                            if self.server.print_q is not None:
+                                self.server.print_q.put(f'checksum failed on {self.server.server_address}')
+                except Exception as e:
+                    self.server.print_q.put(f'handle failed...logging the exception')
+                    logging.exception(f'Handling Exception: {e}')
 
         def __init__(self, server_address, print_q, msg_q, ipv6=False):
             # store reference to mp vars
