@@ -45,8 +45,8 @@ class TcpSenderMP:
         self.first_connection_event = mp.Event()
         self.connected_event = mp.Event()
         self.pause_event = mp.Event()
-        self.print_q = print_q # mp.SimpleQueue()
-        self.send_q = mp.SimpleQueue()
+        self.print_q = print_q
+        self.send_q = mp.Queue()
 
         # socket creation info
         self.destination = (host_ip, port)
@@ -273,7 +273,7 @@ class TcpSenderMP:
                     try:
                         # get msg bytes with checksum appended and length prepended
                         if connected_event.is_set():
-                            msg_bytes_with_checksum_and_length = send_q.get()
+                            msg_bytes_with_checksum_and_length = send_q.get_nowait()
                         else:
                             printmsg = 'connected event not set!'
                             logger.info(printmsg)
@@ -350,7 +350,7 @@ class TcpSenderMP:
         # calc length and prepend
         msg_bytes_with_checksum_and_length = struct.pack('!I', len(msg_bytes_with_checksum)) + msg_bytes_with_checksum
         # add to send queue to be sent
-        self.send_q.put(msg_bytes_with_checksum_and_length)
+        self.send_q.put_nowait(msg_bytes_with_checksum_and_length)
         
 if __name__ == '__main__':
 

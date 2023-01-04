@@ -50,8 +50,8 @@ class MultiportTcpListenerMP:
                 )
 
         # Create MPC Queue, stop event, print queue for multiprocessing
-        self.msg_q = mp.SimpleQueue()
-        self.print_q = print_q #mp.SimpleQueue()
+        self.msg_q = mp.Queue()
+        self.print_q = print_q 
         self.stop_event = mp.Event()
 
         # initialize file recorder queue & file recorder if recordfile specified
@@ -85,23 +85,24 @@ class MultiportTcpListenerMP:
     @staticmethod
     def multiport_process(stop_event, print_q, msg_q, user_multiport_callback, record_q):
         while not stop_event.is_set():
-            if not msg_q.empty():
-                # grab msg off queue
-                msg_bytes, firstpacket_timestamp, server_address = msg_q.get()
-                
-                # record 
-                if record_q is not None:
-                    # msg_bytes, epoch_timestamp, port
-                    port = server_address[1]
-                    record_q.put( (msg_bytes, firstpacket_timestamp, port) )
-                
-                # forward msg_bytes to user callback
-                if print_q is not None:
-                    print_q.put(f'g')
-
-                printmsg = f'got data length {len(msg_bytes)} from {server_address}. calling user callback...'
-                logger.info(printmsg)
-                user_multiport_callback(msg_bytes, server_address)
+            try:
+                if not msg_q.empty():
+                    # grab msg off queue
+                    msg_bytes, firstpacket_timestamp, server_address = msg_q.get_nowait()
+                    
+                    # record 
+                    if record_q is not None:
+                        # msg_bytes, epoch_timestamp, port
+                        port = server_address[1]
+                        record_q.put( (msg_bytes, firstpacket_timestamp, port) )
+                    
+                    # forward msg_bytes to user callback
+                    printmsg = f'got data length {len(msg_bytes)} from {server_address}. calling user callback...'
+                    logger.info(printmsg)
+                    user_multiport_callback(msg_bytes, server_address)
+            except Exception as e:
+                printmsg = f'mp_listener exception: {e}'
+                logger.exception(printmsg)
 
 
     @staticmethod
@@ -197,7 +198,7 @@ class MultiportTcpListenerMP:
                         # pass onwards if verified, otherwise add an error msg to print_q
                         if checksum_bytes == computed_checksum:
                             # pass to msg queue
-                            self.server.msg_q.put( (msg_bytes, firstpacket_timestamp, self.server.server_address) )
+                            self.server.msg_q.put_nowait( (msg_bytes, firstpacket_timestamp, self.server.server_address) )
                         else:
                             printmsg = f'checksum failed on {self.server.server_address}'
                             logger.error(printmsg)
