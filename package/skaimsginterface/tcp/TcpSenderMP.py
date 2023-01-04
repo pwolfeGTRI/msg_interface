@@ -119,11 +119,14 @@ class TcpSenderMP:
 
     @staticmethod
     def create_socket(ipv6=False):
+        
         if ipv6:
             sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         else:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        send_timeout_sec = 0.0
+        sock.settimeout(send_timeout_sec)
         return sock
 
     @staticmethod
@@ -226,6 +229,8 @@ class TcpSenderMP:
         while not first_connection_event.is_set():
             time.sleep(0.01)
 
+
+        # send_timeout_sec = 0.8
         while not stop_event.is_set():
             
             # check if anything to send
@@ -240,9 +245,10 @@ class TcpSenderMP:
                         if connected_event.is_set():
                             msg_bytes_with_checksum_and_length = send_q.get()
                         else:
-                            print_q.put('connected event not set!')
+                            if print_q is not None:
+                                print_q.put('connected event not set!')
                             raise BrokenPipeError
-
+                        
                         sock.sendall(msg_bytes_with_checksum_and_length)
                         if verbose:
                             # length added in front as an unsigned int
