@@ -17,11 +17,14 @@ import multiprocessing as mp
 import code
 
 import logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s [%(levelname)8s] %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    filename='Listener.log',
-                    filemode='w')
+log_format = logging.Formatter('%(asctime)s [%(levelname)8s] %(message)s')
+log_fh = logging.FileHandler('listener_mp.log', mode='w')
+log_fh.setFormatter(log_format)
+logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(log_fh)
+
 
 class MultiportTcpListenerMP:
 
@@ -93,6 +96,11 @@ class MultiportTcpListenerMP:
                     record_q.put( (msg_bytes, firstpacket_timestamp, port) )
                 
                 # forward msg_bytes to user callback
+                if print_q is not None:
+                    print_q.put(f'g')
+
+                printmsg = f'got data length {len(msg_bytes)} from {server_address}. calling user callback...'
+                logger.info(printmsg)
                 user_multiport_callback(msg_bytes, server_address)
 
 
@@ -102,14 +110,18 @@ class MultiportTcpListenerMP:
         spl = ListenerClass(addr_port, print_q, msg_q)
 
         # now listen for messages on port until stop event
+        printmsg = f'now listening on {addr_port}...'
+        logger.info(printmsg)
         if print_q is not None:
-            print_q.put(f'now listening on {addr_port}...')
+            print_q.put(printmsg)
         try:
             while not stop_event.is_set():
                 spl.handle_request()
         except Exception as e:
+            printmsg = f'something went wrong in single port request handling: {e}'
+            logger.exception(printmsg)
             if print_q is not None:
-                print_q.put(f'something went wrong in single port request handling: {e}')
+                print_q.put(printmsg)
         finally:
             # close server after stop event
             spl.server_close()
@@ -187,11 +199,15 @@ class MultiportTcpListenerMP:
                             # pass to msg queue
                             self.server.msg_q.put( (msg_bytes, firstpacket_timestamp, self.server.server_address) )
                         else:
+                            printmsg = f'checksum failed on {self.server.server_address}'
+                            logger.error(printmsg)
                             if self.server.print_q is not None:
-                                self.server.print_q.put(f'checksum failed on {self.server.server_address}')
+                                self.server.print_q.put(printmsg)
                 except Exception as e:
-                    self.server.print_q.put(f'handle failed...logging the exception')
-                    logging.exception(f'Handling Exception: {e}')
+                    printmsg = f'Handling Exception: {e}'
+                    logger.exception(printmsg)
+                    if self.server.print_q is not None:
+                        self.server.print_q.put(printmsg)
 
         def __init__(self, server_address, print_q, msg_q, ipv6=False):
             # store reference to mp vars
@@ -216,9 +232,9 @@ class MultiportTcpListenerMP:
 def example_multiport_callback_func(msg_bytes, server_address):
     # store it, unpack, etc do as you wish
     msg_type, msg = SkaiMsg.unpack(msg_bytes)
-    print(
-        f'got some data length {len(msg_bytes)} from {server_address} msg type {msg_type}\n'
-    )
+    printmsg = f'got some data length {len(msg_bytes)} from {server_address} msg type {msg_type}\n'
+    logger.info(printmsg)
+    print(printmsg)
 
 
 if __name__ == '__main__':

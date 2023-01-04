@@ -9,6 +9,15 @@ from skaimsginterface.skaimessages import *
 import multiprocessing as mp
 import threading
 
+import logging
+log_format = logging.Formatter('%(asctime)s [%(levelname)8s] %(message)s')
+log_fh = logging.FileHandler('sender_mp.log', mode='w')
+log_fh.setFormatter(log_format)
+logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(log_fh)
+
 class TcpSenderMP:
 
     ipv4_localhost = '127.0.0.1'
@@ -67,7 +76,9 @@ class TcpSenderMP:
 
     def stop(self):
         if self.print_q is not None:
-            self.print_q.put('setting sender stop event!')
+            printmsg = 'setting sender stop event!'
+            logger.info(printmsg)
+            self.print_q.put(printmsg)
         self.stop_event.set()
 
     '''
@@ -134,21 +145,29 @@ class TcpSenderMP:
         success = False
         try:
             sock.connect(destination)
+            printmsg = f'connected to {destination}!'
+            logger.info(printmsg)
             if print_q is not None:
-                print_q.put(f'connected to {destination}!')
+                print_q.put(printmsg)
             success = True
 
         except ConnectionRefusedError:
+            printmsg = f'{destination} connection refused'
+            logger.info(printmsg)
             if print_q is not None:
-                print_q.put(f'{destination} connection refused')
+                print_q.put(printmsg)
 
         except Exception as e:
+            printmsg = f'TcpSenderMP try_to_connect exception: {e}'
+            logger.info(printmsg)
             if print_q is not None:
-                print_q.put(f'TcpSenderMP try_to_connect exception: {e}')
+                print_q.put(printmsg)
 
         if not success:
+            printmsg = f'trying to connect to {destination} again in {retryTimeoutSec} seconds'
+            logger.info(printmsg)
             if print_q is not None:
-                print_q.put(f'trying to connect to {destination} again in {retryTimeoutSec} seconds')
+                print_q.put(printmsg)
             time.sleep(retryTimeoutSec)
 
         return success
@@ -178,32 +197,43 @@ class TcpSenderMP:
                     try:
                         connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
                     except Exception as e:
+                        printmsg = f'connection to {destination} exception: {e}'
+                        logger.info(printmsg)
                         if print_q is not None:
-                            print_q.put(f'connection to {destination} exception: {e}')
+                            print_q.put(printmsg)
             else:
                 for i in range(retryLimit):
                     connected = TcpSenderMP.try_to_connect(print_q, sock, destination, retryTimeoutSec, verbose)
                     if stop_event.is_set():
+                        printmsg = 'stop event set'
+                        logger.info(printmsg)
                         if print_q is not None:
-                            print_q.put('stop event set')
+                            print_q.put(printmsg)
                         break
                     elif connected:
                         break
             
             if connected:
                 connected_event.set()
+                printmsg = f'successfully connected to {destination}!'
+                logger.info(printmsg)
                 if print_q is not None:
-                    print_q.put(f'successfully connected to {destination}!')
+                    print_q.put(printmsg)
 
                 if not first_connection_event.is_set():
                     first_connection_event.set()
             else:
                 connected_event.clear()
-                if print_q is not None:
-                    if retryLimit is None:
-                        print_q.put(f'somehow failed connect to {destination}!')
-                    else:
-                        print_q.put(f'failed to connect to {destination} after {retryLimit} tries!')
+                if retryLimit is None:
+                    printmsg = f'somehow failed connect to {destination}!'
+                    logger.info(printmsg)
+                    if print_q is not None:
+                        print_q.put(printmsg)
+                else:
+                    printmsg = f'failed to connect to {destination} after {retryLimit} tries!'
+                    logger.info(printmsg)
+                    if print_q is not None:
+                        print_q.put(printmsg)
 
                 if not first_connection_event.is_set():
                     first_connection_event.set()
@@ -245,24 +275,27 @@ class TcpSenderMP:
                         if connected_event.is_set():
                             msg_bytes_with_checksum_and_length = send_q.get()
                         else:
+                            printmsg = 'connected event not set!'
+                            logger.info(printmsg)
                             if print_q is not None:
-                                print_q.put('connected event not set!')
+                                print_q.put(printmsg)
                             raise BrokenPipeError
                         
+                        logger.info(f'sending {len(msg_bytes_with_checksum_and_length)} bytes...')
                         sock.sendall(msg_bytes_with_checksum_and_length)
                         if verbose:
-                            # length added in front as an unsigned int
-                            # print_q.put(
-                            #     f'sent { SkaiMsg.getMessageTypeName(msg_bytes)} message bytes with length {len(msg_bytes)}'
-                            # )
+                            printmsg = f'sent message to {destination}'
+                            logger.info(printmsg)
                             if print_q is not None:
-                                print_q.put(f'sent message to {destination}')
+                                print_q.put(printmsg)
                         sent = True
 
                     except BrokenPipeError:
                         connected_event.clear()
+                        printmsg = f'{destination} connection broken! reconnecting...'
+                        logger.error(printmsg)
                         if print_q is not None:
-                            print_q.put(f'{destination} connection broken! reconnecting...')
+                            print_q.put(printmsg)
 
                         # close, recreate, and try to reconnect
                         sock.close()
@@ -281,8 +314,10 @@ class TcpSenderMP:
                         
                         # pause the thread and resume when pause_event is unset
                         if not connected:
+                            printmsg = f'pausing sender process due to {retryLimit} unsuccessful reconnect attempts'
+                            logger.info(printmsg)
                             if print_q is not None:
-                                print_q.put(f'pausing sender process due to {retryLimit} unsuccessful reconnect attempts')
+                                print_q.put(printmsg)
                             pause_event.set()
                             time.sleep(0.5)
                             while pause_event.is_set():
