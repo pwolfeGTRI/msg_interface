@@ -290,7 +290,13 @@ class TcpSenderMP:
                                 print_q.put(printmsg)
                         sent = True
 
-                    except BrokenPipeError:
+                    # except BrokenPipeError:
+                    except Exception as e:
+                        printmsg = f'TcpSenderMP Exception: {e}'
+                        logger.exception(printmsg)
+                        if print_q is not None:
+                            print_q.put(printmsg)
+
                         connected_event.clear()
                         printmsg = f'{destination} connection broken! reconnecting...'
                         logger.error(printmsg)
@@ -323,13 +329,15 @@ class TcpSenderMP:
                             while pause_event.is_set():
                                 time.sleep(0.1)
 
-                    except Exception as e:
-                        if print_q is not None:
-                            print_q.put(f'TcpSenderMP Exception: {e}')
+                    # except Exception as e:
+                    #     if print_q is not None:
+                    #         print_q.put(f'TcpSenderMP Exception: {e}')
 
                     if not sent:
+                        printmsg = 'msg not sent. retrying...'
+                        logger.info(printmsg)
                         if print_q is not None:
-                            print_q.put('msg not sent. retrying...')
+                            print_q.put(printmsg)
            
                 # delay between repeated sends
                 time.sleep(0.005)
