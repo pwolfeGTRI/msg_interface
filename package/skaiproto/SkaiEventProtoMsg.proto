@@ -19,6 +19,8 @@ enum SkaiEvent {
     VEHICLE_SERVICE_STARTED = 10;
     VEHICLE_SERVICE_ENDED = 11;
     TRACK_LOCATION_CHANGE = 12;
+    CARWASH_BACKUP = 13;
+    LICENSE_PLATE_DETECTED = 14;
 }
 
 message SkaiEventProtoMsg {
